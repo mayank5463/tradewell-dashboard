@@ -1,0 +1,99 @@
+.index-ticker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.index-ticker__pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-4);
+  border-radius: var(--radius-round);
+}
+
+.index-ticker__pill.is-up {
+  background: var(--success-bg);
+}
+.index-ticker__pill.is-down {
+  background: var(--danger-bg);
+}
+
+/* NEW — loading state for whichever index (Sensex/Nifty) hasn't arrived
+   yet from the first poll. Keeps the pill's shape/position stable so the
+   ticker doesn't jump when the real value lands a moment later. */
+.index-ticker__pill--loading {
+  background: var(--surface-tertiary);
+}
+
+.index-ticker__skeleton {
+  width: 60px;
+  height: 12px;
+  border-radius: var(--radius-xs);
+  background: var(--skeleton-base);
+}
+
+/* The one signature flourish - a small pulse to signal "this is live". */
+.index-ticker__live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: index-ticker-pulse 2s ease-in-out infinite;
+}
+.index-ticker__pill.is-up .index-ticker__live-dot {
+  color: var(--success-fill);
+}
+.index-ticker__pill.is-down .index-ticker__live-dot {
+  color: var(--danger-fill);
+}
+
+.index-ticker__name {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--navbar-text-muted);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.index-ticker__value {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--navbar-text);
+}
+
+.index-ticker__change {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+}
+.index-ticker__pill.is-up .index-ticker__change {
+  color: var(--success-fill);
+}
+.index-ticker__pill.is-down .index-ticker__change {
+  color: var(--danger-fill);
+}
+
+@keyframes index-ticker-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .index-ticker__live-dot {
+    animation: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .index-ticker {
+    display: none;
+  }
+}

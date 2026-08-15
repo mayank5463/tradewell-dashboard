@@ -1,0 +1,87 @@
+/* ============================================================
+   TRADE ANALYTICS STAT CARDS
+   .is-up / .is-down come from global.css (--success-fill /
+   --danger-fill) — same green/red convention used everywhere
+   else in the app, including in dark mode.
+   ============================================================ */
+
+.trade-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-4);
+}
+
+.trade-stats--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 100px;
+  padding: var(--space-6);
+
+  text-align: center;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-muted);
+
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+}
+
+.trade-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  padding: var(--card-padding-sm);
+
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.trade-stat-card--clickable {
+  cursor: pointer;
+}
+
+.trade-stat-card--clickable:hover {
+  background: var(--card-hover);
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.trade-stat-card__label {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--card-subtitle);
+}
+
+.trade-stat-card__value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.trade-stat-card__sub {
+  font-size: var(--font-size-2xs);
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 576px) {
+  .trade-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

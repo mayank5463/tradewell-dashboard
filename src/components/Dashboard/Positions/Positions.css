@@ -1,0 +1,306 @@
+/* ==========================================================================
+   POSITIONS PAGE
+   Uses tokens from styles/variables.css and styles/icons.css only.
+   .is-up / .is-down come from global.css and are shared app-wide.
+
+   Home.css's .app-shell__main > * caps and centers every routed page;
+   this page sets no competing max-width of its own.
+
+   UPDATED — neutral digit values (Avg. Price, LTP, the "Profitable"
+   count) now read --text-numeric instead of --text-primary, same token
+   Holdings/Orders/Funds use, so figures render pure white in dark mode
+   instead of --gray-50. P&L values keep their explicit is-up/is-down
+   colors, unchanged.
+   ========================================================================== */
+
+.positions-page {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.positions-page__count {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--surface-tertiary);
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+}
+
+/* ── Summary strip ─────────────────────────────────────────────────────── */
+
+.positions-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.positions-summary__stat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.positions-summary__label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.positions-summary__value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--text-numeric);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.positions-summary__value.is-up {
+  color: var(--success-fill);
+}
+
+.positions-summary__value.is-down {
+  color: var(--danger-fill);
+}
+
+.positions-summary__sub {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.positions-summary__divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border-primary);
+}
+
+/* ── P&L by position chart ───────────────────────────────────────────── */
+
+.positions-chart {
+  padding: var(--card-padding-lg);
+}
+
+.positions-chart .recharts-cartesian-axis-tick-value {
+  fill: var(--chart-label);
+  font-family: var(--font-family-mono);
+}
+
+.positions-pnl-tooltip {
+  min-width: 176px;
+  padding: var(--space-4);
+  background: var(--chart-tooltip-bg);
+  border: 1px solid var(--chart-tooltip-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.positions-pnl-tooltip__symbol {
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--chart-tooltip-border);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--chart-tooltip-text);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.positions-pnl-tooltip__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: 3px 0;
+  font-size: var(--font-size-2xs);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.positions-pnl-tooltip__row strong {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
+  color: var(--chart-tooltip-text);
+  font-variant-numeric: tabular-nums lining-nums;
+  text-transform: none;
+}
+
+.positions-pnl-tooltip__row.is-up strong { color: var(--success-fill); }
+.positions-pnl-tooltip__row.is-down strong { color: var(--danger-fill); }
+
+/* ── Empty state ──────────────────────────────────────────────────────── */
+
+.positions-page .empty-state {
+  gap: var(--space-2);
+}
+
+/* ── Table ────────────────────────────────────────────────────────────── */
+
+.positions-table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.positions-table-wrap {
+  overflow-x: auto;
+}
+
+.positions-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+  /* Numeric columns (Qty., Avg. Price, LTP, P&L) share the same digit
+     font as every other page's figures — table text stays --table-text,
+     numeric cells override to the mono/tabular stack below. */
+  color: var(--table-text);
+}
+
+.positions-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--table-header-bg);
+  text-align: right;
+  padding: var(--space-3);
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  color: var(--table-header-text);
+  border-bottom: 1px solid var(--table-border);
+}
+
+.positions-table th.is-left,
+.positions-table td.is-left {
+  text-align: left;
+}
+
+.positions-table td {
+  padding: var(--space-3);
+  text-align: right;
+  border-bottom: 1px solid var(--table-border);
+  color: var(--table-text);
+}
+
+/* Numeric cells: Qty., Avg. Price, LTP, P&L — 2nd through 5th column.
+   Uses the shared digit font + --text-numeric (white in dark mode),
+   same as Holdings/Orders/Funds. The P&L cell's is-up/is-down class
+   still wins on color since it's more specific and comes later in the
+   cascade below. */
+.positions-table td:not(.is-left):not(:last-child) {
+  font-family: var(--font-family-mono);
+  color: var(--text-numeric);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Same color-mix zebra approach as Orders.css, referenced against the
+   table's own row background rather than a generic card background so
+   striping stays correct even when the table isn't sitting directly on
+   --card-bg. */
+.positions-table tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--table-row-bg, var(--card-bg)) 96%, var(--text-primary) 4%);
+}
+
+.positions-table__row {
+  transition: background 0.12s ease;
+}
+
+.positions-table__row:hover td {
+  background: var(--table-row-hover);
+}
+
+.positions-table__row:last-child td {
+  border-bottom: none;
+}
+
+.positions-table__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.positions-table__symbol {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.positions-table__name {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.positions-table__ltp-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.positions-table__live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success-fill);
+  animation: positions-live-pulse 2s ease-in-out infinite;
+}
+
+@keyframes positions-live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.positions-table__pnl {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.positions-table__pnl-pct {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+/* P&L column keeps its explicit sign color, applied to the whole cell
+   (parent td gets .is-up/.is-down in Positions.jsx), overriding the
+   neutral --text-numeric rule above. */
+.positions-table td.is-up,
+.positions-table td.is-up .positions-table__pnl-pct {
+  color: var(--success-fill);
+}
+.positions-table td.is-down,
+.positions-table td.is-down .positions-table__pnl-pct {
+  color: var(--danger-fill);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .positions-page {
+    padding: var(--space-4);
+  }
+
+  .positions-table__name {
+    display: none;
+  }
+
+  .positions-summary {
+    gap: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .positions-table__live-dot {
+    animation: none;
+  }
+  .positions-table__row {
+    transition: none;
+  }
+}

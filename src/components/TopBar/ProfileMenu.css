@@ -1,0 +1,79 @@
+.profile-menu__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px 6px 6px;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.profile-menu__trigger:hover {
+  background: var(--surface-hover);
+}
+
+.profile-menu__avatar.MuiAvatar-root {
+  width: 30px;
+  height: 30px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+}
+
+.profile-menu__name {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-menu__caret {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .profile-menu__name {
+    display: none;
+  }
+}
+
+/* MUI Menu paper overrides - flat elevation, no heavy 3D shadow */
+.profile-menu__paper.MuiPaper-root {
+  min-width: 200px;
+  margin-top: 6px;
+  border-radius: var(--radius-lg);
+  background: var(--dropdown-bg);
+  border: 1px solid var(--dropdown-border);
+  box-shadow: var(--dropdown-shadow);
+}
+
+.profile-menu__paper .MuiMenuItem-root {
+  font-size: var(--font-size-sm);
+  color: var(--dropdown-text);
+  border-radius: var(--radius-sm);
+  margin: 2px var(--space-2);
+}
+
+.profile-menu__paper .MuiMenuItem-root:hover {
+  background: var(--dropdown-item-hover);
+}
+
+.profile-menu__paper .MuiDivider-root {
+  border-color: var(--border-secondary);
+  margin: var(--space-2) 0;
+}
+
+.profile-menu__logout-item.MuiMenuItem-root {
+  color: var(--danger-fill);
+}
+
+.profile-menu__logout-icon.MuiSvgIcon-root {
+  color: var(--danger-fill);
+}

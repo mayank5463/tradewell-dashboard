@@ -1,0 +1,1034 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================
+   PnL CALENDAR HEATMAP
+   Rolling calendar showing daily realized P&L, with a
+   3M / 6M / 1Y range selector.
+   Optimized for dark mode, light mode, and all themes.
+
+   NOTE ON SIZING — cell size, cell gap, and cell radius are driven
+   by JS (CELL_SIZE_BY_RANGE + a ResizeObserver that stretches the
+   gap to fill the card's measured width) and set as inline custom
+   properties on `.pnl-heatmap__vars`. This file just *consumes*
+   --cell-size / --cell-gap / --cell-radius wherever needed.
+
+   NOTE ON HOVER DETAILS — there is no more floating per-cell
+   tooltip. Hovering/focusing a cell now populates the docked
+   `.pnl-heatmap__detail` panel under the grid, which also fills
+   the space that used to sit empty below the calendar.
+   ============================================================ */
+
+.pnl-heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--card-padding-md);
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+}
+
+/* Invisible wrapper that carries the JS-computed sizing custom
+   properties down to every descendant. `display: contents` means it
+   doesn't participate in layout itself — its children sit directly
+   in .pnl-heatmap's flex column — while still acting as the
+   inheritance root for --cell-size / --cell-gap / --cell-radius. The
+   literal values here are just a sane fallback (3M sizing) in case
+   the inline style hasn't been set yet on first paint. */
+.pnl-heatmap__vars {
+  display: contents;
+  --cell-size: 22px;
+  --cell-gap: 3px;
+  --cell-radius: 6px;
+}
+
+/* ============================================================
+   HEADER — title/subtitle on the left, range total + range
+   selector grouped together on the right
+   ============================================================ */
+
+.pnl-heatmap__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: 0;
+}
+
+.section-heading__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section-heading__title {
+  display: block;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.section-heading__subtitle {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.pnl-heatmap__header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* Headline stat — total realized P&L across the visible range. */
+.pnl-heatmap__range-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.15;
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.pnl-heatmap__range-total.is-up {
+  color: var(--success-fill);
+}
+
+.pnl-heatmap__range-total.is-down {
+  color: var(--danger-fill);
+}
+
+.pnl-heatmap__range-total small {
+  margin-top: 2px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+/* ============================================================
+   RANGE SELECTOR — 3M / 6M / 1Y pill group
+   ============================================================ */
+
+.pnl-heatmap__range {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: var(--surface-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.pnl-heatmap__range-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.3px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.pnl-heatmap__range-btn:hover {
+  color: var(--text-primary);
+  background: var(--surface-hover);
+}
+
+.pnl-heatmap__range-btn.is-active {
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+}
+
+.pnl-heatmap__range-btn:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.pnl-heatmap__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  padding: var(--space-6);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-secondary);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+}
+
+/* ============================================================
+   SCROLL REGION — month labels + grid scroll together
+   horizontally. The JS gap-stretching keeps 3M/6M/1Y all filling
+   the card's full width without a scrollbar on most containers;
+   very narrow containers fall back to BASE_GAP and scroll instead.
+   Defaults to showing "today" (the right edge) via JS scrollLeft.
+   ============================================================ */
+
+.pnl-heatmap__scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+}
+
+.pnl-heatmap__scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+/* ============================================================
+   MONTH LABELS - Top row showing month abbreviations
+   ============================================================ */
+
+.pnl-heatmap__months {
+  display: flex;
+  gap: var(--cell-gap);
+  margin-bottom: var(--space-2);
+  width: max-content;
+  min-width: 100%;
+}
+
+.pnl-heatmap__month-cell {
+  position: relative;
+  width: var(--cell-size);
+  flex: 0 0 var(--cell-size);
+  height: 16px;
+}
+
+.pnl-heatmap__month-cell span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   HEATMAP GRID - Main calendar display
+   ============================================================ */
+
+.pnl-heatmap__grid {
+  display: flex;
+  gap: var(--cell-gap);
+  width: max-content;
+  min-width: 100%;
+}
+
+.pnl-heatmap__week {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cell-gap);
+  flex: 0 0 var(--cell-size);
+}
+
+/* ============================================================
+   CELLS - Individual day cells
+   ============================================================ */
+
+.pnl-heatmap__cell {
+  position: relative;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border-radius: var(--cell-radius);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  cursor: pointer;
+}
+
+/* Hover/focus state — scale up slightly and hand off to the docked
+   detail panel below for the actual information (see
+   .pnl-heatmap__detail). No floating tooltip anymore. */
+.pnl-heatmap__cell:not(.is-future):hover,
+.pnl-heatmap__cell:not(.is-future):focus-visible {
+  transform: scale(1.4);
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+
+/* Explicit "this is the day shown in the panel" state — driven by JS
+   (activeDay), kept in sync with hover/focus but resilient to the
+   scale transform above so the highlighted cell stays legible. */
+.pnl-heatmap__cell.is-active {
+  box-shadow:
+    0 0 0 2px var(--brand-primary),
+    0 0 14px -2px color-mix(in srgb, var(--brand-primary) 65%, transparent);
+  z-index: 11;
+}
+
+/* Future dates - empty/transparent */
+.pnl-heatmap__cell.is-future {
+  background: transparent;
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+/* Today marker - visible ring */
+.pnl-heatmap__cell.is-today {
+  box-shadow: 0 0 0 2px var(--brand-primary) inset;
+}
+
+.pnl-heatmap__cell.is-today.is-active {
+  box-shadow:
+    0 0 0 2px var(--brand-primary) inset,
+    0 0 14px -2px color-mix(in srgb, var(--brand-primary) 65%, transparent);
+}
+
+/* Focus visible for accessibility */
+.pnl-heatmap__cell:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   DETAIL PANEL — docked under the grid. Fills the space that used
+   to sit empty below the calendar. Idle state shows a placeholder
+   + the legend; hovering/focusing any (non-future) cell swaps in
+   that day's full breakdown. Fixed min-height keeps the card from
+   jumping in size as content changes.
+   ============================================================ */
+
+.pnl-heatmap__detail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 148px;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-primary);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--brand-primary) 4%, var(--surface-secondary)) 0%,
+    var(--surface-secondary) 100%
+  );
+  overflow: hidden;
+  transition:
+    border-color var(--transition-normal, 0.25s ease),
+    box-shadow var(--transition-normal, 0.25s ease),
+    background var(--transition-normal, 0.25s ease);
+}
+
+/* Soft themed glow that only appears while a day is active — built
+   from --brand-primary so it repaints correctly across every theme
+   (navy/olive/charcoal/sand) and both modes automatically. */
+.pnl-heatmap__detail::before {
+  content: "";
+  position: absolute;
+  inset: -60% -20% auto -20%;
+  height: 220px;
+  background: radial-gradient(
+    circle at 18% 0%,
+    color-mix(in srgb, var(--brand-primary) 35%, transparent),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity var(--transition-normal, 0.3s ease);
+  pointer-events: none;
+}
+
+.pnl-heatmap__detail[data-state="active"] {
+  border-color: color-mix(in srgb, var(--brand-primary) 45%, var(--border-primary));
+  box-shadow:
+    0 10px 28px -16px color-mix(in srgb, var(--brand-primary) 45%, transparent),
+    var(--shadow-md);
+}
+
+.pnl-heatmap__detail[data-state="active"]::before {
+  opacity: 1;
+}
+
+.pnl-heatmap__detail-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: pnlDetailIn 0.2s ease;
+}
+
+@keyframes pnlDetailIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pnl-heatmap__detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.pnl-heatmap__detail-date {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+.pnl-heatmap__detail-date strong {
+  font-weight: var(--font-weight-semibold);
+}
+
+.pnl-heatmap__detail-today {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-inverse);
+  background: var(--brand-primary);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.pnl-heatmap__detail-pnl {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.pnl-heatmap__detail-pnl small {
+  margin-top: 2px;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.pnl-heatmap__detail-pnl.is-up {
+  color: var(--success-fill);
+}
+
+.pnl-heatmap__detail-pnl.is-down {
+  color: var(--danger-fill);
+}
+
+.pnl-heatmap__detail-pnl.is-empty {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.pnl-heatmap__detail-symbols {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-2) var(--space-3);
+}
+
+.pnl-heatmap__detail-symbol-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  transition:
+    transform var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.pnl-heatmap__detail-symbol-row:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--brand-primary) 40%, var(--border-secondary));
+}
+
+.pnl-heatmap__detail-symbol-name {
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.pnl-heatmap__detail-symbol-pnl {
+  font-weight: var(--font-weight-semibold);
+}
+
+.pnl-heatmap__detail-symbol-pnl.is-up {
+  color: var(--success-fill);
+}
+
+.pnl-heatmap__detail-symbol-pnl.is-down {
+  color: var(--danger-fill);
+}
+
+.pnl-heatmap__detail-empty-note {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+/* Idle placeholder — occupies the same vertical rhythm as the active
+   content so the panel doesn't resize when hover starts/stops. */
+.pnl-heatmap__detail-placeholder {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 64px;
+  padding: var(--space-4) var(--space-2);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+.pnl-heatmap__detail-placeholder-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--brand-primary) 16%, var(--surface-tertiary));
+  border: 1px dashed color-mix(in srgb, var(--brand-primary) 40%, var(--border-secondary));
+}
+
+/* ============================================================
+   LEGEND — a single smooth gradient bar (loss → neutral → profit),
+   now the fixed footer of the detail panel.
+   ============================================================ */
+
+.pnl-heatmap__legend {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-secondary);
+  font-size: var(--font-size-2xs);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: var(--font-weight-medium);
+}
+
+.pnl-heatmap__legend-gradient {
+  display: inline-block;
+  width: 120px;
+  height: 10px;
+  border-radius: var(--radius-full, 999px);
+  border: 1px solid var(--border-secondary);
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--danger-fill) 80%, var(--surface-tertiary)),
+    var(--surface-tertiary),
+    color-mix(in srgb, var(--success-fill) 80%, var(--surface-tertiary))
+  );
+}
+
+/* ============================================================
+   COMPACT VARIANT - For when stock analytics is shown
+   ============================================================ */
+
+.pnl-heatmap--compact {
+  padding: var(--card-padding-sm);
+}
+
+.pnl-heatmap--compact .section-heading__subtitle {
+  display: none;
+}
+
+.pnl-heatmap--compact .pnl-heatmap__range-btn {
+  padding: 4px 8px;
+}
+
+.pnl-heatmap--compact .pnl-heatmap__range-total {
+  font-size: var(--font-size-sm);
+}
+
+.pnl-heatmap--compact .pnl-heatmap__detail {
+  min-height: 116px;
+  padding: var(--space-3);
+}
+
+/* ============================================================
+   DARK MODE OPTIMIZATION
+   All values below are pulled from tokens that already repaint
+   per theme + mode in variables.css — nothing hardcoded here, so
+   the card (and now the detail panel) reads correctly against
+   dark surfaces in every theme (navy/olive/charcoal/sand) without
+   extra overrides for color, only for extra depth/contrast.
+   ============================================================ */
+
+[data-mode="dark"] .pnl-heatmap {
+  background: var(--card-bg);
+  border-color: var(--border-primary);
+}
+
+[data-mode="dark"] .pnl-heatmap__range {
+  background: var(--surface-tertiary);
+  border-color: var(--border-primary);
+}
+
+[data-mode="dark"] .pnl-heatmap__detail {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--brand-primary) 7%, var(--surface-secondary)) 0%,
+    var(--surface-secondary) 100%
+  );
+  border-color: var(--border-primary);
+}
+
+[data-mode="dark"] .pnl-heatmap__detail[data-state="active"] {
+  border-color: color-mix(in srgb, var(--brand-primary) 55%, var(--border-primary));
+  box-shadow:
+    0 12px 32px -14px color-mix(in srgb, var(--brand-primary) 55%, transparent),
+    var(--shadow-lg);
+}
+
+[data-mode="dark"] .pnl-heatmap__detail-symbol-row {
+  background: var(--surface-secondary);
+  border-color: var(--border-secondary);
+}
+
+[data-mode="dark"] .section-heading__title {
+  color: var(--text-primary);
+}
+
+[data-mode="dark"] .section-heading__subtitle {
+  color: var(--text-secondary);
+}
+
+[data-mode="dark"] .pnl-heatmap__month-cell span {
+  color: var(--text-tertiary);
+}
+
+[data-mode="dark"] .pnl-heatmap__legend {
+  border-top-color: var(--border-secondary);
+  color: var(--text-tertiary);
+}
+
+/* ============================================================
+   THEME VARIATIONS — today-ring, active pill, and the detail
+   panel's hover glow all follow each theme's own brand token
+   automatically via --brand-primary. Kept here only for the
+   explicit dark-mode contrast bump on each theme's accent,
+   matching the pattern already used for is-today elsewhere.
+   ============================================================ */
+
+[data-theme="navy"][data-mode="dark"] .pnl-heatmap__cell.is-today {
+  box-shadow: 0 0 0 2px var(--navy-400) inset;
+}
+[data-theme="navy"][data-mode="dark"] .pnl-heatmap__detail::before {
+  background: radial-gradient(
+    circle at 18% 0%,
+    color-mix(in srgb, var(--navy-400) 40%, transparent),
+    transparent 65%
+  );
+}
+
+[data-theme="olive"][data-mode="dark"] .pnl-heatmap__cell.is-today {
+  box-shadow: 0 0 0 2px var(--olive-400) inset;
+}
+[data-theme="olive"][data-mode="dark"] .pnl-heatmap__detail::before {
+  background: radial-gradient(
+    circle at 18% 0%,
+    color-mix(in srgb, var(--olive-400) 40%, transparent),
+    transparent 65%
+  );
+}
+
+[data-theme="charcoal"][data-mode="dark"] .pnl-heatmap__cell.is-today {
+  box-shadow: 0 0 0 2px var(--charcoal-400) inset;
+}
+[data-theme="charcoal"][data-mode="dark"] .pnl-heatmap__detail::before {
+  background: radial-gradient(
+    circle at 18% 0%,
+    color-mix(in srgb, var(--charcoal-400) 40%, transparent),
+    transparent 65%
+  );
+}
+
+[data-theme="sand"][data-mode="dark"] .pnl-heatmap__cell.is-today {
+  box-shadow: 0 0 0 2px var(--sand-400) inset;
+}
+[data-theme="sand"][data-mode="dark"] .pnl-heatmap__detail::before {
+  background: radial-gradient(
+    circle at 18% 0%,
+    color-mix(in srgb, var(--sand-400) 40%, transparent),
+    transparent 65%
+  );
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   Cell size/gap/radius are NOT overridden here — they're driven
+   entirely by the component's inline custom properties, which
+   already adapt to the container's real width at every breakpoint.
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .pnl-heatmap {
+    padding: var(--card-padding-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .pnl-heatmap {
+    padding: var(--space-3);
+  }
+
+  .pnl-heatmap__header {
+    align-items: center;
+  }
+
+  .pnl-heatmap__header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pnl-heatmap__cell:not(.is-future):hover {
+    transform: scale(1.25);
+  }
+
+  .section-heading {
+    gap: var(--space-2);
+  }
+
+  .section-heading__title {
+    font-size: var(--font-size-sm);
+  }
+
+  .section-heading__subtitle {
+    font-size: 10px;
+  }
+
+  .pnl-heatmap__range-total {
+    font-size: var(--font-size-sm);
+  }
+
+  .pnl-heatmap__detail {
+    min-height: 128px;
+    padding: var(--space-3);
+  }
+
+  .pnl-heatmap__detail-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .pnl-heatmap__detail-pnl {
+    align-items: flex-start;
+  }
+
+  .pnl-heatmap__detail-symbols {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .pnl-heatmap {
+    padding: var(--space-2);
+  }
+
+  .pnl-heatmap__legend {
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+    font-size: 9px;
+  }
+
+  .pnl-heatmap__legend-gradient {
+    width: 80px;
+    height: 8px;
+  }
+
+  .pnl-heatmap__range-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .pnl-heatmap__range-total {
+    font-size: var(--font-size-xs);
+  }
+
+  .pnl-heatmap__detail {
+    min-height: 112px;
+  }
+
+  .pnl-heatmap__detail-symbols {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .pnl-heatmap__cell {
+    transition: none;
+  }
+
+  .pnl-heatmap__cell:not(.is-future):hover {
+    transform: none;
+  }
+
+  .pnl-heatmap__detail,
+  .pnl-heatmap__detail::before {
+    transition: none;
+  }
+
+  .pnl-heatmap__detail-content {
+    animation: none;
+  }
+
+  .pnl-heatmap__scroll {
+    scroll-behavior: auto;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .pnl-heatmap {
+    border-width: 2px;
+  }
+
+  .pnl-heatmap__cell {
+    border: 1px solid var(--border-primary);
+  }
+
+  .pnl-heatmap__cell.is-today {
+    box-shadow: 0 0 0 3px var(--brand-primary) inset !important;
+  }
+
+  .pnl-heatmap__detail {
+    border-width: 2px;
+  }
+
+  .pnl-heatmap__legend {
+    border-top-width: 2px;
+  }
+
+  .pnl-heatmap__legend-gradient {
+    border-width: 2px;
+  }
+
+  .pnl-heatmap__range {
+    border-width: 2px;
+  }
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+
+@media print {
+  .pnl-heatmap {
+    border: 1px solid #000;
+    page-break-inside: avoid;
+  }
+
+  .pnl-heatmap__range {
+    display: none;
+  }
+
+  .pnl-heatmap__cell:hover {
+    transform: none;
+  }
+
+  .pnl-heatmap__detail::before {
+    display: none;
+  }
+
+  .pnl-heatmap__cell.is-today {
+    border: 2px solid #000;
+  }
+}

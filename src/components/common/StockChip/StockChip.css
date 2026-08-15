@@ -1,0 +1,24 @@
+.stock-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-chip--up {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.stock-chip--down {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.stock-chip__pct {
+  font-weight: var(--font-weight-medium);
+}

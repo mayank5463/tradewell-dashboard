@@ -1,0 +1,560 @@
+/* ==========================================================================
+   PAGE SHELL
+   ========================================================================== */
+
+/* No max-width/margin here — Home.css's .app-shell__main > * already
+   caps and centers every routed page at var(--content-max-width). A
+   second, tighter max-width here was making Funds narrower than
+   Holdings/Summary. */
+.funds-page {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.funds-page__header-row {
+  align-items: center;
+}
+
+
+
+.funds-page__eyebrow {
+  margin: 0 0 4px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.funds-page__disclaimer {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  text-align: center;
+  padding: var(--space-2) var(--space-4);
+  line-height: var(--line-height-relaxed);
+}
+
+@media (max-width: 640px) {
+  .funds-page {
+    padding: var(--space-4);
+  }
+}
+
+/* ==========================================================================
+   SEGMENT TABS (Equity / F&O / Commodity)
+   ========================================================================== */
+
+.funds-tabs {
+  display: flex;
+  gap: var(--space-2);
+  background: var(--surface-tertiary);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-primary);
+}
+
+.funds-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.funds-tab:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.funds-tab--active {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.funds-tab__badge {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--text-tertiary, var(--text-muted));
+  background: var(--surface-secondary, var(--surface-tertiary));
+  border: 1px solid var(--border-primary);
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+@media (max-width: 640px) {
+  .funds-page__header-row .funds-tabs {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   HERO — available balance, allocation bar, reset action
+   ========================================================================== */
+
+.funds-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.funds-hero__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--text-secondary);
+}
+
+/* Headline balance uses --text-numeric so it renders pure white in dark
+   mode, same token every other page's figures use. */
+.funds-hero__value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-3xl, 2.25rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-numeric);
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: 1.15;
+  margin-top: 4px;
+}
+
+.funds-hero__sub {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  line-height: var(--line-height-relaxed);
+  max-width: 60ch;
+}
+
+.funds-hero__actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* ── cash vs invested allocation bar ── */
+
+.funds-allocation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-primary);
+}
+
+.funds-allocation__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.funds-allocation__row strong {
+  color: var(--text-numeric);
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.funds-allocation__bar {
+  display: flex;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface-tertiary);
+}
+
+.funds-allocation__segment {
+  height: 100%;
+  transition: width 0.25s ease;
+}
+
+.funds-allocation__segment--cash {
+  background: var(--brand-primary, var(--success-fill));
+}
+
+.funds-allocation__segment--invested {
+  background: var(--chart-neutral, var(--text-muted));
+}
+
+.funds-allocation__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.funds-allocation__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.funds-allocation__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-round);
+  flex-shrink: 0;
+}
+
+.funds-allocation__dot--cash {
+  background: var(--brand-primary, var(--success-fill));
+}
+
+.funds-allocation__dot--invested {
+  background: var(--chart-neutral, var(--text-muted));
+}
+
+/* ==========================================================================
+   NET WORTH TREND CHART
+   ========================================================================== */
+
+.funds-trend {
+  padding: var(--card-padding-lg);
+}
+
+.funds-trend__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  padding: var(--space-6);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-muted);
+}
+
+.funds-trend__tooltip {
+  min-width: 160px;
+  padding: var(--space-3);
+  background: var(--chart-tooltip-bg);
+  border: 1px solid var(--chart-tooltip-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.funds-trend__tooltip-date {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--chart-tooltip-text);
+  margin-bottom: var(--space-2);
+}
+
+.funds-trend__tooltip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.funds-trend__tooltip-row strong {
+  color: var(--chart-tooltip-text);
+}
+
+/* ==========================================================================
+   STAT ROW — Invested / Today's P&L / Realized P&L / Net worth
+   ========================================================================== */
+
+.funds-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  overflow: hidden;
+}
+
+@media (max-width: 992px) {
+  .funds-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .funds-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.funds-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--card-padding-md);
+  border-right: 1px solid var(--card-border);
+  transition: background var(--transition-fast, 0.12s ease);
+}
+
+.funds-stats > .funds-stat-card:last-child {
+  border-right: none;
+}
+
+@media (max-width: 992px) {
+  .funds-stat-card:nth-child(2n) {
+    border-right: none;
+  }
+  .funds-stat-card:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--card-border);
+  }
+}
+
+@media (max-width: 480px) {
+  .funds-stat-card {
+    border-right: none;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .funds-stats > .funds-stat-card:last-child {
+    border-bottom: none;
+  }
+}
+
+.funds-stat-card:hover {
+  background: var(--card-hover, var(--table-row-hover));
+}
+
+.funds-stat-card__label {
+  font-size: var(--font-size-2xs, var(--font-size-xs));
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest, var(--letter-spacing-wide));
+  color: var(--text-tertiary, var(--text-secondary));
+}
+
+.funds-stat-card__value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-2xl, 1.5rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-numeric);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight, 1.2);
+}
+
+.funds-stat-card__value.is-up {
+  color: var(--success-fill);
+}
+
+.funds-stat-card__value.is-down {
+  color: var(--danger-fill);
+}
+
+.funds-stat-card__caption {
+  font-size: var(--font-size-2xs, var(--font-size-xs));
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   TRANSACTION HISTORY
+   ========================================================================== */
+
+.funds-history__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.funds-history__title {
+  font-size: var(--font-size-md, 1.0625rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.funds-history__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.funds-chip {
+  appearance: none;
+  border: 1px solid var(--border-primary);
+  background: var(--surface-tertiary);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.funds-chip:hover {
+  background: var(--table-row-hover);
+  color: var(--text-primary);
+}
+
+.funds-chip--active {
+  background: var(--brand-primary, var(--text-primary));
+  border-color: var(--brand-primary, var(--text-primary));
+  color: var(--card-bg, #fff);
+}
+
+.funds-history__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.funds-history__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.funds-history__list .funds-history__row:last-child {
+  border-bottom: none;
+}
+
+.funds-history__row-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.funds-history__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-round);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.funds-history__icon--deposit {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+}
+
+.funds-history__icon--withdrawal {
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+}
+
+.funds-history__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.funds-history__type {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.funds-history__date {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.funds-history__amount {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+
+.funds-history__amount.is-up {
+  color: var(--success-text);
+}
+
+.funds-history__amount.is-down {
+  color: var(--danger-text);
+}
+
+.funds-empty {
+  padding: var(--space-6) var(--space-4);
+}
+
+/* ==========================================================================
+   TOAST
+   ========================================================================== */
+
+.funds-toast {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-6);
+  transform: translateX(-50%);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  box-shadow: var(--shadow-lg, var(--shadow-md));
+  z-index: 50;
+  color: var(--text-primary);
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+}
+
+.funds-toast--success {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border-color: var(--success-fill);
+}
+
+.funds-toast--neutral {
+  color: var(--text-primary);
+  background: var(--surface-tertiary);
+}
+
+.funds-toast--danger {
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border-color: var(--danger-fill);
+}
+
+.page-header__title {
+  color: black;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 760px) {
+  .funds-hero__actions {
+    width: 100%;
+  }
+
+  .funds-history__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

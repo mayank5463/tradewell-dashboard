@@ -1,0 +1,15 @@
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-normal), border-color var(--transition-normal);
+}
+
+.card--padded {
+  padding: var(--space-5);
+}
+
+.card--raised {
+  box-shadow: var(--card-shadow);
+  border-color: transparent;
+}

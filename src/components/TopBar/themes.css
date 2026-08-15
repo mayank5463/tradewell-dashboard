@@ -1,0 +1,86 @@
+/* ============================================================
+   themes.css
+   Adds two additional theme skins on top of whatever Light/Dark
+   already exist in variables.css: [data-theme="midnight"] and
+   [data-theme="emerald"].
+
+   Only re-themes COLOR tokens (backgrounds, text, borders, brand
+   and semantic colors, shadows) — spacing, radius, font-size and
+   font-family are structural and stay inherited from :root, same
+   as they already do for the existing dark theme.
+
+   This file is purely additive: it doesn't touch, override, or
+   duplicate the existing [data-theme="dark"] block. If
+   variables.css defines color tokens beyond what's listed here,
+   send that file over and these two blocks can be extended to
+   match — until then, anything not explicitly set below just
+   inherits :root's (light) value, which fails safely rather than
+   breaking anything.
+
+   Imported once from ThemeSwitcher.jsx, which is always mounted
+   in the navbar — CSS isn't module-scoped, so that one import
+   applies globally for the whole app, the same way Profile.css
+   already does for every profile page that imports it.
+   ============================================================ */
+
+[data-theme="midnight"] {
+  --bg-app: #05070f;
+  --bg-surface: #0c0f1c;
+  --bg-surface-raised: #12162a;
+
+  --text-primary: #eef0fb;
+  --text-secondary: #9099b8;
+
+  --border-default: #232945;
+
+  --color-primary-100: rgba(124, 108, 240, 0.16);
+  --color-primary-300: #a89bf6;
+  --color-primary-500: #7c6cf0;
+  --color-primary-700: #5b4bd1;
+
+  --color-danger-100: rgba(244, 63, 94, 0.14);
+  --color-danger-600: #fb7185;
+
+  --color-success-100: rgba(16, 185, 129, 0.14);
+  --color-success-600: #34d399;
+
+  --color-gray-100: #171b2e;
+  --color-gray-200: #1e2338;
+  --color-gray-300: #2c3350;
+
+  --color-white: #ffffff;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -14px rgba(124, 108, 240, 0.35);
+  --shadow-modal: 0 20px 50px -20px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="emerald"] {
+  --bg-app: #f7faf7;
+  --bg-surface: #ffffff;
+  --bg-surface-raised: #ffffff;
+
+  --text-primary: #0d1b13;
+  --text-secondary: #5c6b60;
+
+  --border-default: #dbe8de;
+
+  --color-primary-100: #dcf3e4;
+  --color-primary-300: #6cc492;
+  --color-primary-500: #0f9d58;
+  --color-primary-700: #0b7d45;
+
+  --color-danger-100: rgba(225, 29, 72, 0.08);
+  --color-danger-600: #e11d48;
+
+  --color-success-100: #dcf3e4;
+  --color-success-600: #0f9d58;
+
+  --color-gray-100: #eef4f0;
+  --color-gray-200: #e2ebe4;
+  --color-gray-300: #c7d6cc;
+
+  --color-white: #ffffff;
+
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 24px -14px rgba(15, 157, 88, 0.18);
+  --shadow-modal: 0 20px 45px -18px rgba(15, 23, 42, 0.25);
+}

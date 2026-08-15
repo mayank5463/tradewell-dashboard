@@ -1,0 +1,76 @@
+/* ==========================================================
+   MARKET INDICES TICKER
+   Replaces the "Ask NiveshAI" CTA in TopBar's search row.
+   Built entirely from existing tokens (card/text/is-up/is-down),
+   so it repaints correctly across all 4 themes and both modes
+   with zero new color literals.
+   ========================================================== */
+
+.market-ticker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-2) var(--space-5);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.market-ticker__divider {
+  width: 1px;
+  height: 28px;
+  background: var(--divider-primary);
+}
+
+.market-ticker__block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 108px;
+}
+
+.market-ticker__label {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.market-ticker__figures {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.market-ticker__value {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-numeric);
+}
+
+.market-ticker__change {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* .is-up / .is-down already defined globally in global.css — reused here */
+
+.market-ticker__skeleton {
+  width: 90px;
+  height: 14px;
+  border-radius: var(--radius-xs);
+  background: var(--skeleton-base);
+}
+
+@media (max-width: 768px) {
+  .market-ticker {
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+  }
+  .market-ticker__block {
+    min-width: 84px;
+  }
+}

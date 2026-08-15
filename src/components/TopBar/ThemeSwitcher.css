@@ -1,0 +1,64 @@
+/* components/TopBar/ThemeSwitcher.css
+   Track colors switched from white-overlay (assumed a dark navbar
+   behind it) to theme surface tokens, since the navbar is now a
+   light, theme-tinted bar. */
+.mode-toggle {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.mode-toggle__track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  padding: 3px;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-primary);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.mode-toggle__track.is-dark {
+  background: var(--brand-dark, #0d1b2a);
+  border-color: transparent;
+  justify-content: flex-end;
+}
+
+.mode-toggle__thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--brand-primary, #1f4e91);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease, color 0.2s ease;
+}
+
+.mode-toggle__track.is-dark .mode-toggle__thumb {
+  background: #1c2130;
+  color: #ffd166;
+}
+
+.mode-toggle:hover .mode-toggle__track {
+  background: var(--surface-active);
+}
+.mode-toggle:hover .mode-toggle__track.is-dark {
+  background: #16293e;
+}
+
+.mode-toggle:active .mode-toggle__thumb {
+  transform: scale(0.9);
+}
+
+.mode-toggle:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
+}

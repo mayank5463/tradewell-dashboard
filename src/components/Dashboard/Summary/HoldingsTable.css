@@ -1,0 +1,599 @@
+/* ==========================================================
+   HOLDINGS TABLE - Premium Trading Style
+   Inspired by Zerodha & Groww
+   Clean, Minimal, Professional
+   ========================================================== */
+
+.holdings-table-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+/* Table Wrapper */
+.holdings-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar - minimal */
+.holdings-table-wrap::-webkit-scrollbar {
+  height: 4px;
+}
+
+.holdings-table-wrap::-webkit-scrollbar-track {
+  background: var(--border-secondary);
+}
+
+.holdings-table-wrap::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: var(--radius-round);
+}
+
+/* ==========================================================
+   TABLE
+   ========================================================== */
+
+.holdings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  min-width: 820px;
+}
+
+/* ==========================================================
+   HEADER - Clean & Consistent
+   ========================================================== */
+
+.holdings-table thead {
+  background: var(--surface-secondary);
+  border-bottom: 2px solid var(--border-primary);
+}
+
+.holdings-table th {
+  padding: var(--space-4) var(--space-3);
+  text-align: right;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-2xs);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-secondary);
+  transition: color var(--transition-fast);
+}
+
+/* Left-aligned header - Symbol column */
+.holdings-table th.is-left {
+  text-align: left;
+  padding-left: var(--space-5);
+}
+
+/* Right-aligned headers - all numeric columns */
+.holdings-table th:not(.is-left) {
+  text-align: right;
+  padding-right: var(--space-4);
+}
+
+/* ==========================================================
+   BODY ROWS - Clean & Consistent
+   ========================================================== */
+
+.holdings-table tbody tr {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-secondary);
+  transition: background var(--transition-fast);
+}
+
+/* Alternating rows - very subtle */
+.holdings-table tbody tr:nth-child(even) {
+  background: var(--surface-secondary);
+}
+
+/* Hover state - premium feel */
+.holdings-table tbody tr:hover {
+  background: var(--surface-hover);
+  cursor: pointer;
+}
+
+/* Active/Click state */
+.holdings-table tbody tr:active {
+  background: var(--surface-active);
+}
+
+/* Last row - no border */
+.holdings-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* ==========================================================
+   CELLS - Consistent Alignment
+   ========================================================== */
+
+.holdings-table td {
+  padding: var(--space-4) var(--space-3);
+  text-align: right;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  border-bottom: 1px solid var(--border-secondary);
+  transition: all var(--transition-fast);
+}
+
+/* Left-aligned cells - Symbol column */
+.holdings-table td.is-left {
+  text-align: left;
+  padding-left: var(--space-5);
+}
+
+/* Right-aligned cells - all numeric columns */
+.holdings-table td:not(.is-left) {
+  text-align: right;
+  padding-right: var(--space-4);
+}
+
+/* ==========================================================
+   SYMBOL COLUMN - Premium Look
+   ========================================================== */
+
+.holdings-table__symbol {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Small indicator dot - like Zerodha */
+.holdings-table__symbol::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--brand-primary);
+  opacity: 0.4;
+  transition: opacity var(--transition-fast);
+}
+
+.holdings-table tbody tr:hover .holdings-table__symbol::before {
+  opacity: 1;
+}
+
+/* ==========================================================
+   NUMERIC VALUES - Clean & Readable
+   ========================================================== */
+
+/* Positive values */
+.holdings-table td.is-up {
+  color: var(--success-fill);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Negative values */
+.holdings-table td.is-down {
+  color: var(--danger-fill);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Neutral values (zero) */
+.holdings-table td.is-neutral {
+  color: var(--text-muted);
+}
+
+/* ==========================================================
+   PRICE FLASH - Subtle Update Indicator
+   ========================================================== */
+
+@keyframes flash-up {
+  0% { background-color: rgba(34, 197, 94, 0.12); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-down {
+  0% { background-color: rgba(239, 68, 68, 0.12); }
+  100% { background-color: transparent; }
+}
+
+.flash-up {
+  animation: flash-up 0.5s ease;
+}
+
+.flash-down {
+  animation: flash-down 0.5s ease;
+}
+
+/* ==========================================================
+   DARK MODE - Premium Dark Theme
+   ========================================================== */
+
+[data-mode="dark"] .holdings-table thead {
+  background: var(--surface-secondary);
+  border-bottom-color: var(--border-primary);
+}
+
+[data-mode="dark"] .holdings-table th {
+  background: var(--surface-secondary);
+  color: var(--text-tertiary);
+  border-bottom-color: var(--border-primary);
+}
+
+[data-mode="dark"] .holdings-table tbody tr {
+  background: var(--card-bg);
+  border-bottom-color: var(--border-secondary);
+}
+
+[data-mode="dark"] .holdings-table tbody tr:nth-child(even) {
+  background: var(--surface-secondary);
+}
+
+[data-mode="dark"] .holdings-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+[data-mode="dark"] .holdings-table td {
+  border-bottom-color: var(--border-secondary);
+  color: var(--text-primary);
+}
+
+[data-mode="dark"] .holdings-table td.is-up {
+  color: #4ade80; /* Brighter green for dark mode */
+}
+
+[data-mode="dark"] .holdings-table td.is-down {
+  color: #f87171; /* Brighter red for dark mode */
+}
+
+[data-mode="dark"] .holdings-table__symbol {
+  color: var(--text-primary);
+}
+
+[data-mode="dark"] .holdings-table__symbol::before {
+  background: var(--brand-primary);
+  opacity: 0.6;
+}
+
+[data-mode="dark"] .holdings-table tbody tr:hover .holdings-table__symbol::before {
+  opacity: 1;
+}
+
+[data-mode="dark"] .flash-up {
+  animation: flash-up-dark 0.5s ease;
+}
+
+[data-mode="dark"] .flash-down {
+  animation: flash-down-dark 0.5s ease;
+}
+
+@keyframes flash-up-dark {
+  0% { background-color: rgba(74, 222, 128, 0.15); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-down-dark {
+  0% { background-color: rgba(248, 113, 113, 0.15); }
+  100% { background-color: transparent; }
+}
+
+/* ==========================================================
+   THEME VARIATIONS - Consistent Across All Themes
+   ========================================================== */
+
+/* Navy Theme */
+[data-theme="navy"] .holdings-table thead {
+  background: var(--navy-50);
+}
+
+[data-theme="navy"] .holdings-table th {
+  color: var(--navy-700);
+}
+
+[data-theme="navy"] .holdings-table tbody tr:nth-child(even) {
+  background: var(--navy-50);
+}
+
+[data-theme="navy"] .holdings-table tbody tr:hover {
+  background: var(--navy-100);
+}
+
+[data-theme="navy"][data-mode="dark"] .holdings-table thead {
+  background: var(--navy-900);
+}
+
+[data-theme="navy"][data-mode="dark"] .holdings-table th {
+  color: var(--navy-300);
+}
+
+[data-theme="navy"][data-mode="dark"] .holdings-table tbody tr:nth-child(even) {
+  background: var(--navy-950);
+}
+
+[data-theme="navy"][data-mode="dark"] .holdings-table tbody tr:hover {
+  background: var(--navy-900);
+}
+
+/* Olive Theme */
+[data-theme="olive"] .holdings-table thead {
+  background: var(--olive-50);
+}
+
+[data-theme="olive"] .holdings-table th {
+  color: var(--olive-700);
+}
+
+[data-theme="olive"] .holdings-table tbody tr:nth-child(even) {
+  background: var(--olive-50);
+}
+
+[data-theme="olive"] .holdings-table tbody tr:hover {
+  background: var(--olive-100);
+}
+
+[data-theme="olive"][data-mode="dark"] .holdings-table thead {
+  background: var(--olive-900);
+}
+
+[data-theme="olive"][data-mode="dark"] .holdings-table th {
+  color: var(--olive-300);
+}
+
+[data-theme="olive"][data-mode="dark"] .holdings-table tbody tr:nth-child(even) {
+  background: var(--olive-950);
+}
+
+[data-theme="olive"][data-mode="dark"] .holdings-table tbody tr:hover {
+  background: var(--olive-900);
+}
+
+/* Charcoal Theme */
+[data-theme="charcoal"] .holdings-table thead {
+  background: var(--charcoal-50);
+}
+
+[data-theme="charcoal"] .holdings-table th {
+  color: var(--charcoal-700);
+}
+
+[data-theme="charcoal"] .holdings-table tbody tr:nth-child(even) {
+  background: var(--charcoal-50);
+}
+
+[data-theme="charcoal"] .holdings-table tbody tr:hover {
+  background: var(--charcoal-100);
+}
+
+[data-theme="charcoal"][data-mode="dark"] .holdings-table thead {
+  background: var(--charcoal-900);
+}
+
+[data-theme="charcoal"][data-mode="dark"] .holdings-table th {
+  color: var(--charcoal-300);
+}
+
+[data-theme="charcoal"][data-mode="dark"] .holdings-table tbody tr:nth-child(even) {
+  background: var(--charcoal-950);
+}
+
+[data-theme="charcoal"][data-mode="dark"] .holdings-table tbody tr:hover {
+  background: var(--charcoal-900);
+}
+
+/* Sand Theme */
+[data-theme="sand"] .holdings-table thead {
+  background: var(--sand-50);
+}
+
+[data-theme="sand"] .holdings-table th {
+  color: var(--sand-700);
+}
+
+[data-theme="sand"] .holdings-table tbody tr:nth-child(even) {
+  background: var(--sand-50);
+}
+
+[data-theme="sand"] .holdings-table tbody tr:hover {
+  background: var(--sand-100);
+}
+
+[data-theme="sand"][data-mode="dark"] .holdings-table thead {
+  background: var(--sand-900);
+}
+
+[data-theme="sand"][data-mode="dark"] .holdings-table th {
+  color: var(--sand-300);
+}
+
+[data-theme="sand"][data-mode="dark"] .holdings-table tbody tr:nth-child(even) {
+  background: var(--sand-950);
+}
+
+[data-theme="sand"][data-mode="dark"] .holdings-table tbody tr:hover {
+  background: var(--sand-900);
+}
+
+/* ==========================================================
+   RESPONSIVE - Consistent at all sizes
+   ========================================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .holdings-table {
+    font-size: var(--font-size-xs);
+    min-width: 700px;
+  }
+
+  .holdings-table th,
+  .holdings-table td {
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .holdings-table th.is-left,
+  .holdings-table td.is-left {
+    padding-left: var(--space-3);
+  }
+
+  .holdings-table__symbol {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .holdings-table-card {
+    border-radius: var(--radius-sm);
+    border-left: none;
+    border-right: none;
+  }
+
+  .holdings-table {
+    font-size: var(--font-size-2xs);
+    min-width: 600px;
+  }
+
+  .holdings-table th,
+  .holdings-table td {
+    padding: var(--space-2) var(--space-1);
+  }
+
+  .holdings-table th.is-left,
+  .holdings-table td.is-left {
+    padding-left: var(--space-2);
+  }
+
+  .holdings-table__symbol {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Hide dot on mobile for cleaner look */
+  .holdings-table__symbol::before {
+    display: none;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .holdings-table {
+    font-size: var(--font-size-3xs);
+    min-width: 500px;
+  }
+
+  .holdings-table th,
+  .holdings-table td {
+    padding: var(--space-1);
+  }
+
+  .holdings-table th.is-left,
+  .holdings-table td.is-left {
+    padding-left: var(--space-1);
+  }
+
+  .holdings-table__symbol {
+    font-size: var(--font-size-2xs);
+  }
+}
+
+/* ==========================================================
+   ACCESSIBILITY
+   ========================================================== */
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .flash-up,
+  .flash-down,
+  .flash-up-dark,
+  .flash-down-dark {
+    animation: none !important;
+  }
+
+  .holdings-table tbody tr:hover {
+    background: var(--surface-hover);
+  }
+}
+
+/* High Contrast */
+@media (prefers-contrast: high) {
+  .holdings-table-card {
+    border-width: 2px;
+  }
+
+  .holdings-table thead {
+    border-bottom-width: 2px;
+  }
+
+  .holdings-table th {
+    border-bottom-width: 2px;
+  }
+
+  .holdings-table td {
+    border-bottom-width: 1px;
+  }
+
+  .holdings-table tbody tr:nth-child(even) {
+    background: var(--surface-tertiary);
+  }
+
+  .holdings-table tbody tr:hover {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: -2px;
+  }
+}
+
+/* ==========================================================
+   PRINT
+   ========================================================== */
+
+@media print {
+  .holdings-table-card {
+    border: 1px solid #000;
+    box-shadow: none !important;
+  }
+
+  .holdings-table tbody tr:hover {
+    background: transparent !important;
+  }
+
+  .holdings-table__symbol::before {
+    display: none !important;
+  }
+
+  .flash-up,
+  .flash-down {
+    animation: none !important;
+  }
+}
+
+/* ==========================================================
+   EMPTY STATE
+   ========================================================== */
+
+.holdings-table-card:empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.holdings-table-card:empty::after {
+  content: 'No holdings in your portfolio';
+  letter-spacing: var(--letter-spacing-wide);
+}

@@ -1,0 +1,212 @@
+/* ============================================================
+   STOCK ANALYTICS PANEL
+   Sits between Top Traded and the P&L calendar (see
+   TradingAnalyticsSection.jsx) rather than nested inside the
+   Top Traded card. All headings/labels route through
+   --text-primary / --text-tertiary — remapped correctly in
+   [data-mode="dark"] with no separate overrides needed here.
+   ============================================================ */
+
+.stock-analytics-panel {
+  padding: var(--space-5);
+
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+
+  animation: stock-analytics-in 0.18s ease;
+}
+
+@keyframes stock-analytics-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stock-analytics-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.stock-analytics-panel__label {
+  display: block;
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 2px;
+}
+
+.stock-analytics-panel__header h4 {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary) !important;
+  margin: 0;
+}
+
+.stock-analytics-panel__company {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.stock-analytics-panel__close {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.stock-analytics-panel__close:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.stock-analytics-panel__close:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.stock-analytics-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.stock-analytics-panel__card {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+}
+
+.stock-analytics-panel__card span {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-tertiary);
+}
+
+.stock-analytics-panel__card strong {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-analytics-panel__performance {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+  border: 1px dashed var(--card-border);
+  border-radius: var(--radius-md);
+}
+
+.stock-analytics-panel__performance > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stock-analytics-panel__performance span {
+  font-size: var(--font-size-2xs);
+  color: var(--text-tertiary);
+}
+
+.stock-analytics-panel__performance strong {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-analytics-panel__trades {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.stock-analytics-panel__trades > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.stock-analytics-panel__trades span {
+  font-size: var(--font-size-2xs);
+  color: var(--text-tertiary);
+}
+
+.stock-analytics-panel__trades strong {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-analytics-panel__open-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: var(--button-height-md);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.stock-analytics-panel__open-btn:hover {
+  background: var(--button-primary-hover);
+}
+
+.stock-analytics-panel__open-btn:active {
+  transform: scale(0.99);
+}
+
+.stock-analytics-panel__open-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.stock-analytics-panel__open-btn span {
+  transition: transform var(--transition-fast);
+}
+
+.stock-analytics-panel__open-btn:hover span {
+  transform: translateX(3px);
+}
+
+@media (max-width: 640px) {
+  .stock-analytics-panel__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,150 @@
+/* ============================================================
+   Home.css — app shell layout
+   Home.jsx renders: TopBar (top) + .app-shell__sidebar > WatchList
+   (sidebar) + Outlet (main).
+
+   .app-shell is a real, fixed-height 100vh box; .topbar-shell
+   (flex-shrink: 0, set in TopBar.css) keeps whatever height its content
+   actually needs; .app-shell__body with flex:1 + min-height:0
+   automatically absorbs exactly what's left - correct no matter how tall
+   the header ends up being, without hardcoding a topbar height anywhere.
+   ============================================================ */
+
+/* -- Loading screen (shown while useAuth() status === "checking") -- */
+
+.home-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--app-background);
+  font-family: var(--font-family-base);
+}
+
+.home-loading-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.home-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border-primary);
+  border-top-color: var(--brand-primary);
+  border-radius: 50%;
+  animation: home-spin 0.7s linear infinite;
+}
+
+@keyframes home-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.home-loading-text {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.home-loading-sub {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-spinner {
+    animation-duration: 1.4s;
+  }
+}
+
+/* ============================================================
+   App shell - TopBar + Sidebar (WatchList) + Main (Outlet)
+   ============================================================ */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+
+  /* Hard height, not min-height: makes .app-shell a real, bounded box
+     instead of one that grows with its content. Nothing scrolls at this
+     level or above it - only .app-shell__main and .watchlist-panel__list
+     scroll internally, each within their own region. */
+  height: 100vh;
+  overflow: hidden;
+
+  background: var(--app-background);
+}
+
+.app-shell__body {
+  display: flex;
+  align-items: stretch;
+
+  /* Takes exactly whatever height TopBar didn't use - regardless of how
+     tall TopBar's stacked rows actually render. */
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* -- Sidebar wrapper (holds WatchList) -- */
+
+.app-shell__sidebar {
+  flex: 0 0 auto;
+  min-width: 0;
+  height: 100%;
+  border-right: 1px solid var(--border-primary);
+  background: var(--surface-primary);
+  overflow: hidden; /* WatchList's own scroll area inside handles scrolling, not this element */
+}
+
+/* -- Main content (Outlet - Summary/Holdings/Orders/Positions/Funds/StockDetail) -- */
+
+.app-shell__main {
+  flex: 1 1 auto;
+  min-width: 0; /* prevents inner tables/cards forcing this wider than available space */
+  height: 100%;
+  overflow-y: auto;
+  background: var(--app-background);
+}
+
+/* Caps content width so it doesn't stretch edge-to-edge on wide monitors.
+   Each page's own CSS still controls its own internal padding. */
+.app-shell__main > * {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   Responsive - stack sidebar above main on tablet/mobile
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .app-shell {
+    height: auto;
+    overflow: visible;
+  }
+
+  .app-shell__body {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .app-shell__sidebar {
+    width: 100%;
+    max-width: 100%;
+    flex-basis: auto;
+    height: auto;
+    max-height: 320px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  .app-shell__main {
+    height: auto;
+  }
+}

@@ -1,0 +1,293 @@
+
+.risk-modal__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.risk-modal__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-round);
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  flex-shrink: 0;
+}
+
+.risk-modal__intro {
+  margin: 0 0 var(--space-4);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.risk-modal__list {
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.risk-modal__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-normal);
+}
+
+.risk-modal__bullet {
+  flex-shrink: 0;
+  margin-top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--warning-fill);
+}
+
+.risk-modal__footnote {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-2xs);
+  line-height: var(--line-height-normal);
+}
+
+.risk-modal__remember {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-right: auto;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.risk-modal__remember input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--brand-primary);
+  cursor: pointer;
+}
+
+/* Modal's footer is a flex row already; this just lets the checkbox sit on
+   the left while the action buttons stay on the right. */
+.risk-modal-footer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: var(--space-3);
+}
+
+@media (max-width: 480px) {
+  .risk-modal-footer {
+    flex-wrap: wrap;
+  }
+
+  .risk-modal__remember {
+    order: 3;
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================
+   RISK DISCLAIMER MODAL
+   Not dismissible — no Escape/backdrop-close handlers wired in
+   the JSX. Uses --dialog-* tokens (same family Modal.css uses)
+   so it themes identically across navy/olive/charcoal/sand and
+   light/dark without a single hardcoded color.
+   ============================================================ */
+
+.risk-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+
+  background: var(--dialog-overlay);
+  animation: risk-modal-fade-in 0.2s ease;
+}
+
+.risk-modal-box {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  padding: var(--space-7);
+
+  background: var(--dialog-bg);
+  border: 1px solid var(--dialog-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--dialog-shadow);
+
+  animation: risk-modal-pop-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.risk-modal-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-4);
+
+  border-radius: var(--radius-round);
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  font-size: 22px;
+}
+
+.risk-modal-title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--dialog-title);
+  margin: 0 0 var(--space-2);
+}
+
+.risk-modal-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--dialog-text);
+  margin: 0 0 var(--space-5);
+  line-height: var(--line-height-relaxed);
+}
+
+.risk-modal-list {
+  list-style: none;
+  margin: 0 0 var(--space-6);
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.risk-modal-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--dialog-text);
+}
+
+.risk-modal-list-bullet {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: var(--brand-primary);
+}
+
+.risk-modal-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  line-height: var(--line-height-normal);
+
+  cursor: pointer;
+}
+
+.risk-modal-checkbox input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--brand-primary);
+  cursor: pointer;
+}
+
+.risk-modal-continue {
+  width: 100%;
+  height: var(--button-height-lg);
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+
+  cursor: pointer;
+  transition: background var(--transition-fast), opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.risk-modal-continue:hover:not(:disabled) {
+  background: var(--button-primary-hover);
+}
+
+.risk-modal-continue:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.risk-modal-continue:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+@keyframes risk-modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes risk-modal-pop-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .risk-modal-backdrop,
+  .risk-modal-box {
+    animation: none;
+  }
+}

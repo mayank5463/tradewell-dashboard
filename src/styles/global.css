@@ -1,0 +1,107 @@
+@import "./variables.css";
+
+/* Base reset - kept minimal on purpose, we're not fighting a framework here */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+
+  /* Required for any height:100% descendant (like .watchlist-panel) to
+     mean anything. Percentage heights resolve against the parent's
+     computed height, and that chain has to start somewhere concrete —
+     without this, html/body just grow to fit their content, height:100%
+     further down resolves to nothing, and overflow-y:auto scroll
+     regions never get a fixed box to actually scroll within. */
+  height: 100%;
+}
+
+/* React/Vite mount point. If your root div has a different id, change
+   the selector below to match (check index.html / main.jsx). */
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--app-background);
+  color: var(--text-primary);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-md);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Consistent focus ring everywhere, since we override outline on a few custom controls */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+/* Shared green/red price-change color, used across TopBar, Summary, GainersLosers,
+   StockDetail, Watchlist - one definition instead of repeating the pair in every
+   component file. These map to --success-fill / --danger-fill, which are the
+   tokens that actually exist in variables.css and shift correctly per theme
+   and per light/dark mode. */
+.is-up {
+  color: var(--success-fill);
+}
+.is-down {
+  color: var(--danger-fill);
+}
+
+/* Shared digit style — Holdings, Positions, Orders and Funds all read
+   the same --font-family-mono / --text-numeric tokens (see
+   variables.css), so this class is just a convenience for any new
+   numeric value going forward; existing value classes already apply
+   the same three rules directly. Keeping .is-up/.is-down on the same
+   element still wins on color, since those rules come after this in
+   the cascade wherever both classes are combined. */
+.numeric {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-numeric);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* Respect prefers-reduced-motion globally, not just in the marquee */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* Reusable independent-scroll region — used by .app-shell__main and
+   .watchlist-panel__list so either can scroll without affecting the other. */
+.scroll-area {
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-area {
+    scroll-behavior: auto;
+  }
+}

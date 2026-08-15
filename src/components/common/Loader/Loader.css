@@ -1,0 +1,157 @@
+.loader {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.loader__spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border: 2px solid var(--brand-light);
+  border-top-color: var(--brand-primary);
+  animation: loader-spin 0.7s linear infinite;
+}
+
+.loader__spinner--sm {
+  width: 14px;
+  height: 14px;
+}
+.loader__spinner--md {
+  width: 22px;
+  height: 22px;
+}
+.loader__spinner--lg {
+  width: 36px;
+  height: 36px;
+  border-width: 3px;
+}
+
+.loader__label {
+  color: var(--text-secondary);
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.loader {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.loader__spinner {
+  display: inline-block;
+  border-radius: 50%;
+
+  /* Dual-tone: a soft tinted track plus a brand-colored arc, both from
+     tokens that remap correctly across every theme × mode combination. */
+  border: 2px solid var(--brand-light);
+  border-top-color: var(--brand-primary);
+  border-right-color: var(--brand-primary);
+
+  animation: loader-spin 0.65s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.loader__spinner--sm {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+}
+
+.loader__spinner--md {
+  width: 22px;
+  height: 22px;
+  border-width: 2px;
+}
+
+.loader__spinner--lg {
+  width: 36px;
+  height: 36px;
+  border-width: 3px;
+}
+
+.loader__label {
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================================
+   FULL-PAGE OVERLAY VARIANT
+   Usage: <div className="loader loader--overlay">...</div>
+   wrapping the same spinner markup — for route transitions or
+   full-section blocking loads instead of Home.jsx's own
+   .home-loading (which is for the initial auth check only).
+   ============================================================ */
+
+.loader--overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+
+  background: var(--overlay-medium);
+  backdrop-filter: blur(2px);
+}
+
+.loader--overlay .loader__spinner {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+}
+
+@keyframes loader-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader__spinner {
+    animation-duration: 1.4s;
+  }
+}

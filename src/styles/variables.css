@@ -1,0 +1,3788 @@
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 1 / 10
+   ----------------------------------------------------------
+   FOUNDATION
+
+   Contains:
+   • Fonts
+   • Typography
+   • Font Weights
+   • Line Heights
+   • Letter Spacing
+   • Spacing Scale
+   • Radius Scale
+   • Layout
+   • Sidebar Sizes
+   • Navbar Sizes
+   • Topbar Sizes
+   • Z-Index
+   • Transition System
+   • Shadow System
+
+   NO COLORS IN THIS PART.
+   ========================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Inter+Tight:wght@500;600;700;800;900&display=swap");
+
+:root {
+  /* ==========================================================
+   TYPOGRAPHY
+   ========================================================== */
+
+  --font-family-base:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+
+  --font-family-display: "Inter Tight", var(--font-family-base);
+
+  /* UPDATED — digit/price font across the whole app.
+     Was "IBM Plex Mono", a stylised code font that read as a novelty
+     next to the rest of the (Inter) UI. Every numeric value in the app
+     — Holdings, Positions, Orders, Funds, Booked P&L — reads this one
+     token, so swapping it here is the single change that restyles every
+     digit everywhere, per the design system's own "change once, use
+     everywhere" rule.
+     New stack is each OS's own native monospaced numeral face: San
+     Francisco Mono / Menlo on Mac, Cascadia Mono / Consolas on Windows,
+     Roboto Mono on ChromeOS/Android. This is the "simple, standard"
+     look real trading terminals use for ledger figures — evenly spaced
+     digits so amounts stay aligned column to column — with zero extra
+     font download (all ui-monospace fallbacks are pre-installed), so it
+     also renders a beat faster than the old webfont did.
+     Always pair with font-variant-numeric: tabular-nums (already set on
+     every value class below) so digit widths stay fixed-pitch even
+     where this stack falls back to a non-monospace system font. */
+  /* UPDATED — digit/price font, closer to how Kite/Groww actually do it.
+     Real trading apps don't switch to a separate monospace/coding font
+     for numbers — they keep the SAME sans-serif brand font used
+     everywhere else and just turn on tabular figures
+     (font-variant-numeric: tabular-nums, already set on every value
+     class) so digits line up without looking like a different typeface
+     was bolted on. Reusing --font-family-base here means every number
+     in the app visually matches its own labels instead of contrasting
+     against them. */
+  --font-family-mono: var(--font-family-base);
+
+  /* Keep this if you'd rather have a true monospace ledger look instead
+     — uncomment the block below and comment out the line above.
+  --font-family-mono:
+    ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", "Roboto Mono",
+    Menlo, Consolas, "Liberation Mono", monospace;
+  */
+
+  /* Same stack, semantic alias — use this name in new numeric-value CSS
+     going forward; --font-family-mono is kept only so every existing
+     component (which already reads that token name) picks up the new
+     look automatically. */
+  --font-family-numeric: var(--font-family-mono);
+
+  /* ==========================================================
+   FONT SIZE
+   ========================================================== */
+
+  --font-size-3xs: 10px;
+
+  --font-size-2xs: 11px;
+
+  --font-size-xs: 12px;
+
+  --font-size-sm: 13px;
+
+  --font-size-md: 14px;
+
+  --font-size-base: 15px;
+
+  --font-size-lg: 16px;
+
+  --font-size-xl: 18px;
+
+  --font-size-2xl: 20px;
+
+  --font-size-3xl: 24px;
+
+  --font-size-4xl: 30px;
+
+  --font-size-5xl: 36px;
+
+  --font-size-6xl: 48px;
+
+  /* ==========================================================
+   FONT WEIGHT
+   ========================================================== */
+
+  --font-weight-light: 300;
+
+  --font-weight-regular: 400;
+
+  --font-weight-medium: 500;
+
+  --font-weight-semibold: 600;
+
+  --font-weight-bold: 700;
+
+  --font-weight-extrabold: 800;
+
+  --font-weight-black: 900;
+
+  /* ==========================================================
+   LINE HEIGHT
+   ========================================================== */
+
+  --line-height-tight: 1.15;
+
+  --line-height-heading: 1.25;
+
+  --line-height-normal: 1.5;
+
+  --line-height-relaxed: 1.7;
+
+  --line-height-loose: 2;
+
+  /* ==========================================================
+   LETTER SPACING
+   ========================================================== */
+
+  --letter-spacing-tight: -0.02em;
+
+  --letter-spacing-normal: 0;
+
+  --letter-spacing-wide: 0.02em;
+
+  --letter-spacing-wider: 0.06em;
+
+  --letter-spacing-widest: 0.14em;
+
+  /* ==========================================================
+   SPACING SCALE
+   ========================================================== */
+
+  --space-0: 0;
+
+  --space-1: 2px;
+
+  --space-2: 4px;
+
+  --space-3: 8px;
+
+  --space-4: 12px;
+
+  --space-5: 16px;
+
+  --space-6: 20px;
+
+  --space-7: 24px;
+
+  --space-8: 28px;
+
+  --space-9: 32px;
+
+  --space-10: 36px;
+
+  --space-11: 40px;
+
+  --space-12: 48px;
+
+  --space-13: 56px;
+
+  --space-14: 64px;
+
+  --space-15: 72px;
+
+  --space-16: 80px;
+
+  /* ==========================================================
+   BORDER RADIUS
+   ========================================================== */
+
+  --radius-none: 0;
+
+  --radius-xs: 4px;
+
+  --radius-sm: 6px;
+
+  --radius-md: 8px;
+
+  --radius-lg: 12px;
+
+  --radius-xl: 16px;
+
+  --radius-2xl: 20px;
+
+  --radius-3xl: 24px;
+
+  --radius-4xl: 32px;
+
+  --radius-round: 999px;
+
+  /* ==========================================================
+   BORDER WIDTH
+   ========================================================== */
+
+  --border-width-thin: 1px;
+
+  --border-width-medium: 2px;
+
+  --border-width-thick: 3px;
+
+  /* ==========================================================
+   APP LAYOUT
+   ========================================================== */
+
+  --app-max-width: 1920px;
+
+  --page-max-width: 1600px;
+
+  --content-max-width: 1440px;
+
+  --section-gap: var(--space-9);
+
+  /* ==========================================================
+   NAVBAR
+   ========================================================== */
+
+  --navbar-height: 68px;
+
+  --navbar-horizontal-padding: var(--space-8);
+
+  --navbar-item-gap: var(--space-6);
+
+  --navbar-logo-size: 38px;
+
+  /* ==========================================================
+   TOPBAR
+   ========================================================== */
+
+  --topbar-height: 54px;
+
+  --topbar-search-width: 520px;
+
+  --topbar-button-height: 42px;
+
+  /* ==========================================================
+   WATCHLIST SIDEBAR
+   ========================================================== */
+
+  --sidebar-width: 278px;
+
+  --sidebar-width-tablet: 250px;
+
+  --sidebar-width-mobile: 100%;
+
+  --sidebar-width-collapsed: 56px;
+
+  --sidebar-padding: var(--space-5);
+
+  --sidebar-gap: var(--space-4);
+
+  /* ==========================================================
+   CARDS
+   ========================================================== */
+
+  --card-padding-sm: var(--space-4);
+
+  --card-padding-md: var(--space-5);
+
+  --card-padding-lg: var(--space-6);
+
+  --card-gap: var(--space-4);
+
+  /* ==========================================================
+   BUTTONS
+   ========================================================== */
+
+  --button-height-sm: 32px;
+
+  --button-height-md: 40px;
+
+  --button-height-lg: 46px;
+
+  --button-padding-inline: 18px;
+
+  /* ==========================================================
+   INPUTS
+   ========================================================== */
+
+  --input-height: 42px;
+
+  --input-padding-inline: 14px;
+
+  --input-icon-size: 18px;
+
+  /* ==========================================================
+   TABLES
+   ========================================================== */
+
+  --table-row-height: 46px;
+
+  --table-header-height: 44px;
+
+  --table-cell-padding: 14px;
+
+  /* ==========================================================
+   CHARTS
+   ========================================================== */
+
+  --chart-toolbar-height: 46px;
+
+  --chart-legend-gap: 12px;
+
+  /* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+  --scrollbar-size: 10px;
+
+  --scrollbar-radius: 999px;
+
+  /* ==========================================================
+   SHADOWS
+   ========================================================== */
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.1);
+
+  --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.14);
+
+  --shadow-xl: 0 32px 64px rgba(0, 0, 0, 0.2);
+
+  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+
+  /* ==========================================================
+   TRANSITIONS
+   ========================================================== */
+
+  --transition-fast: 150ms ease;
+
+  --transition-normal: 250ms ease;
+
+  --transition-slow: 400ms ease;
+
+  --transition-bounce: 350ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  --transition-sidebar: 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* ==========================================================
+   OPACITY SCALE
+   ========================================================== */
+
+  --opacity-disabled: 0.45;
+
+  --opacity-muted: 0.7;
+
+  --opacity-overlay: 0.82;
+
+  /* ==========================================================
+   BLUR
+   ========================================================== */
+
+  --blur-sm: 4px;
+
+  --blur-md: 8px;
+
+  --blur-lg: 14px;
+
+  --blur-xl: 20px;
+
+  /* ==========================================================
+   Z INDEX
+   ========================================================== */
+
+  --z-base: 1;
+
+  --z-dropdown: 100;
+
+  --z-sticky: 200;
+
+  --z-topbar: 300;
+
+  --z-sidebar: 350;
+
+  --z-navbar: 400;
+
+  --z-overlay: 900;
+
+  --z-modal: 1000;
+
+  --z-toast: 1100;
+
+  --z-tooltip: 1200;
+}
+
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 2 / 10
+   ----------------------------------------------------------
+   PRIMITIVE COLOR PALETTE
+
+   These are RAW COLORS ONLY.
+
+   Components MUST NEVER use these directly.
+
+   Later parts will map these into:
+   Surface
+   Text
+   Border
+   Navbar
+   Watchlist
+   Topbar
+   etc.
+
+   ========================================================== */
+
+/* ==========================================================
+   NAVY PALETTE
+   ========================================================== */
+
+:root {
+  --navy-25: #f8fbff;
+  --navy-50: #eff6ff;
+  --navy-100: #dbeafe;
+  --navy-200: #bfdbfe;
+  --navy-300: #93c5fd;
+  --navy-400: #60a5fa;
+  --navy-500: #3b82f6;
+  --navy-600: #2563eb;
+  --navy-700: #1d4ed8;
+  --navy-800: #1e3a8a;
+  --navy-900: #172554;
+  --navy-950: #081c3b;
+
+  /* ==========================================================
+   OLIVE PALETTE
+   ========================================================== */
+
+  --olive-25: #fbfcf7;
+  --olive-50: #f6f8ef;
+  --olive-100: #eaf0d7;
+  --olive-200: #d8e4b2;
+  --olive-300: #bfd185;
+  --olive-400: #9db155;
+  --olive-500: #728a39;
+  --olive-600: #61742f;
+  --olive-700: #505f28;
+  --olive-800: #404b20;
+  --olive-900: #303818;
+  --olive-950: #202611;
+
+  /* ==========================================================
+   CHARCOAL PALETTE
+   ========================================================== */
+
+  --charcoal-25: #fafafa;
+  --charcoal-50: #f5f5f5;
+  --charcoal-100: #e5e7eb;
+  --charcoal-200: #d1d5db;
+  --charcoal-300: #9ca3af;
+  --charcoal-400: #6b7280;
+  --charcoal-500: #4b5563;
+  --charcoal-600: #374151;
+  --charcoal-700: #2d3748;
+  --charcoal-800: #1f2937;
+  --charcoal-900: #111827;
+  --charcoal-950: #0b1220;
+
+  /* ==========================================================
+   SAND PALETTE
+   ========================================================== */
+
+  --sand-25: #fffdf9;
+  --sand-50: #faf6ef;
+  --sand-100: #f2e7d7;
+  --sand-200: #e5cfb0;
+  --sand-300: #d4b07f;
+  --sand-400: #c49358;
+  --sand-500: #b67942;
+  --sand-600: #986238;
+  --sand-700: #7a4d2d;
+  --sand-800: #5f3d24;
+  --sand-900: #4b301d;
+  --sand-950: #2e1d12;
+
+  /* ==========================================================
+   NEUTRAL GRAYS
+   ========================================================== */
+
+  --gray-0: #ffffff;
+  --gray-25: #fcfcfd;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  --gray-950: #020617;
+
+  /* ==========================================================
+   SUCCESS
+   ========================================================== */
+
+  --green-25: #f8fdf9;
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-300: #86efac;
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-800: #166534;
+  --green-900: #14532d;
+
+  /* ==========================================================
+   DANGER
+   ========================================================== */
+
+  --red-25: #fffafa;
+  --red-50: #fef2f2;
+  --red-100: #fee2e2;
+  --red-200: #fecaca;
+  --red-300: #fca5a5;
+  --red-400: #f87171;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+  --red-800: #991b1b;
+  --red-900: #7f1d1d;
+
+  /* ==========================================================
+   WARNING
+   ========================================================== */
+
+  --amber-25: #fffdf5;
+  --amber-50: #fffbeb;
+  --amber-100: #fef3c7;
+  --amber-200: #fde68a;
+  --amber-300: #fcd34d;
+  --amber-400: #fbbf24;
+  --amber-500: #f59e0b;
+  --amber-600: #d97706;
+  --amber-700: #b45309;
+  --amber-800: #92400e;
+  --amber-900: #78350f;
+
+  /* ==========================================================
+   INFO
+   ========================================================== */
+
+  --sky-25: #f7fcff;
+  --sky-50: #f0f9ff;
+  --sky-100: #e0f2fe;
+  --sky-200: #bae6fd;
+  --sky-300: #7dd3fc;
+  --sky-400: #38bdf8;
+  --sky-500: #0ea5e9;
+  --sky-600: #0284c7;
+  --sky-700: #0369a1;
+  --sky-800: #075985;
+  --sky-900: #0c4a6e;
+
+  /* ==========================================================
+   PURPLE
+   (AI FEATURES)
+   ========================================================== */
+
+  --purple-25: #fcfaff;
+  --purple-50: #faf5ff;
+  --purple-100: #f3e8ff;
+  --purple-200: #e9d5ff;
+  --purple-300: #d8b4fe;
+  --purple-400: #c084fc;
+  --purple-500: #a855f7;
+  --purple-600: #9333ea;
+  --purple-700: #7e22ce;
+  --purple-800: #6b21a8;
+  --purple-900: #581c87;
+
+  /* ==========================================================
+   CYAN
+   ========================================================== */
+
+  --cyan-25: #f5feff;
+  --cyan-50: #ecfeff;
+  --cyan-100: #cffafe;
+  --cyan-200: #a5f3fc;
+  --cyan-300: #67e8f9;
+  --cyan-400: #22d3ee;
+  --cyan-500: #06b6d4;
+  --cyan-600: #0891b2;
+  --cyan-700: #0e7490;
+  --cyan-800: #155e75;
+  --cyan-900: #164e63;
+
+  /* ==========================================================
+   COMMON COLORS
+   ========================================================== */
+
+  --white: #ffffff;
+
+  --black: #000000;
+
+  --transparent: transparent;
+
+  /* ==========================================================
+   COMMON RGBA
+   ========================================================== */
+
+  --black-rgb: 0, 0, 0;
+
+  --white-rgb: 255, 255, 255;
+
+  --overlay-light: rgba(0, 0, 0, 0.08);
+
+  --overlay-medium: rgba(0, 0, 0, 0.18);
+
+  --overlay-dark: rgba(0, 0, 0, 0.42);
+
+  --overlay-heavy: rgba(0, 0, 0, 0.62);
+}
+
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 3 / 10
+   ----------------------------------------------------------
+   SEMANTIC DESIGN TOKENS
+
+   DO NOT USE PRIMITIVE COLORS INSIDE COMPONENTS.
+
+   Components should ONLY consume these semantic tokens.
+
+   Example
+
+   Navbar
+      background:
+      var(--navbar-bg)
+
+   Navbar-bg
+      ↓
+
+   surface-primary
+
+   surface-primary
+      ↓
+
+   navy-950
+
+   ========================================================== */
+
+:root {
+  /* ==========================================================
+   SURFACE
+   ========================================================== */
+
+  --surface-primary: var(--gray-0);
+
+  --surface-secondary: var(--gray-50);
+
+  --surface-tertiary: var(--gray-100);
+
+  --surface-elevated: var(--gray-0);
+
+  --surface-overlay: var(--gray-0);
+
+  --surface-hover: var(--gray-100);
+
+  --surface-active: var(--gray-200);
+
+  --surface-disabled: var(--gray-100);
+
+  --surface-selected: var(--navy-50);
+
+  --surface-inverse: var(--gray-900);
+
+  /* ==========================================================
+   TEXT
+   ========================================================== */
+
+  --text-primary: var(--gray-900);
+
+  --text-secondary: var(--gray-600);
+
+  --text-tertiary: var(--gray-500);
+
+  --text-muted: var(--gray-400);
+
+  --text-placeholder: var(--gray-400);
+
+  --text-disabled: var(--gray-400);
+
+  --text-inverse: var(--white);
+
+  /* NEW — dedicated token for neutral (non P&L-colored) digit values:
+     holdings/positions/funds stat figures, order price/qty/total cells,
+     booked P&L "all time" figure before sign is applied, etc. In light
+     mode this just equals --text-primary (no visible change), but
+     [data-mode="dark"] below repoints it to pure #ffffff instead of the
+     slightly off-white --gray-50 the rest of the UI uses, so ledger
+     figures read crisper on dark surfaces. Values that already carry a
+     profit/loss color (.is-up / .is-down) are untouched — this token is
+     only for the neutral case. */
+  --text-numeric: var(--text-primary);
+
+  --text-link: var(--navy-600);
+
+  --text-link-hover: var(--navy-700);
+
+  /* ==========================================================
+   BORDER
+   ========================================================== */
+
+  --border-primary: var(--gray-200);
+
+  --border-secondary: var(--gray-100);
+
+  --border-tertiary: var(--gray-50);
+
+  --border-hover: var(--gray-300);
+
+  --border-focus: var(--navy-500);
+
+  --border-disabled: var(--gray-200);
+
+  --border-selected: var(--navy-400);
+
+  /* ==========================================================
+   ICON
+   ========================================================== */
+
+  --icon-primary: var(--gray-700);
+
+  --icon-secondary: var(--gray-500);
+
+  --icon-muted: var(--gray-400);
+
+  --icon-disabled: var(--gray-300);
+
+  --icon-inverse: var(--white);
+
+  /* ==========================================================
+   BRAND
+   ========================================================== */
+
+  --brand-primary: var(--navy-600);
+
+  --brand-secondary: var(--navy-700);
+
+  --brand-light: var(--navy-100);
+
+  --brand-dark: var(--navy-900);
+
+  --brand-hover: var(--navy-700);
+
+  --brand-active: var(--navy-800);
+
+  /* ==========================================================
+   INTERACTIVE
+   ========================================================== */
+
+  --interactive-primary: var(--brand-primary);
+
+  --interactive-hover: var(--brand-hover);
+
+  --interactive-active: var(--brand-active);
+
+  --interactive-disabled: var(--gray-300);
+
+  --interactive-focus: var(--navy-500);
+
+  /* ==========================================================
+   STATUS
+   ========================================================== */
+
+  --success-bg: var(--green-50);
+
+  --success-text: var(--green-700);
+
+  --success-border: var(--green-300);
+
+  --success-fill: var(--green-500);
+
+  --danger-bg: var(--red-50);
+
+  --danger-text: var(--red-700);
+
+  --danger-border: var(--red-300);
+
+  --danger-fill: var(--red-500);
+
+  --warning-bg: var(--amber-50);
+
+  --warning-text: var(--amber-700);
+
+  --warning-border: var(--amber-300);
+
+  --warning-fill: var(--amber-500);
+
+  --info-bg: var(--sky-50);
+
+  --info-text: var(--sky-700);
+
+  --info-border: var(--sky-300);
+
+  --info-fill: var(--sky-500);
+
+  /* ==========================================================
+   CHART
+   ========================================================== */
+
+  --chart-grid: var(--gray-200);
+
+  --chart-axis: var(--gray-400);
+
+  --chart-label: var(--gray-600);
+
+  --chart-tooltip: var(--gray-900);
+
+  --chart-positive: var(--green-500);
+
+  --chart-negative: var(--red-500);
+
+  --chart-neutral: var(--navy-500);
+
+  /* ==========================================================
+   SHADOW
+   ========================================================== */
+
+  --shadow-color: rgba(var(--black-rgb), 0.08);
+
+  --shadow-color-lg: rgba(var(--black-rgb), 0.14);
+
+  --shadow-color-xl: rgba(var(--black-rgb), 0.2);
+
+  /* ==========================================================
+   DIVIDER
+   ========================================================== */
+
+  --divider-primary: var(--gray-200);
+
+  --divider-secondary: var(--gray-100);
+
+  /* ==========================================================
+   OVERLAY
+   ========================================================== */
+
+  --overlay-light: rgba(var(--black-rgb), 0.05);
+
+  --overlay-medium: rgba(var(--black-rgb), 0.12);
+
+  --overlay-dark: rgba(var(--black-rgb), 0.24);
+
+  --overlay-heavy: rgba(var(--black-rgb), 0.56);
+
+  /* ==========================================================
+   GLASS EFFECT
+   ========================================================== */
+
+  --glass-bg: rgba(255, 255, 255, 0.75);
+
+  --glass-border: rgba(255, 255, 255, 0.2);
+
+  --glass-backdrop: blur(14px);
+
+  /* ==========================================================
+   FOCUS
+   ========================================================== */
+
+  --focus-ring-color: rgba(37, 99, 235, 0.28);
+
+  --focus-ring: 0 0 0 3px var(--focus-ring-color);
+
+  /* ==========================================================
+   SELECTION
+   ========================================================== */
+
+  --selection-bg: var(--navy-600);
+
+  --selection-text: var(--white);
+
+  /* ==========================================================
+   DISABLED
+   ========================================================== */
+
+  --disabled-bg: var(--gray-100);
+
+  --disabled-text: var(--gray-400);
+
+  --disabled-border: var(--gray-200);
+
+  /* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+  --scrollbar-track: var(--gray-100);
+
+  --scrollbar-thumb: var(--gray-300);
+
+  --scrollbar-thumb-hover: var(--gray-400);
+}
+
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 4 / 10
+   ----------------------------------------------------------
+   COMPONENT TOKENS
+
+   Every component CSS should ONLY use these variables.
+
+   Example
+
+   Navbar.css
+      background: var(--navbar-bg);
+
+   WatchList.css
+      background: var(--watchlist-bg);
+
+   Summary.css
+      background: var(--summary-card-bg);
+
+   Components NEVER reference primitive colors.
+
+   ========================================================== */
+
+:root {
+  /* ==========================================================
+   APP
+   ========================================================== */
+
+  --app-background: var(--surface-secondary);
+
+  --app-content-bg: var(--surface-primary);
+
+  --app-divider: var(--divider-primary);
+
+  --app-shadow: var(--shadow-md);
+
+  /* ==========================================================
+   NAVBAR
+   ========================================================== */
+
+  --navbar-bg: var(--surface-elevated);
+
+  --navbar-border: var(--border-primary);
+
+  --navbar-shadow: var(--shadow-sm);
+
+  --navbar-text: var(--text-primary);
+
+  --navbar-text-muted: var(--text-secondary);
+
+  --navbar-link: var(--text-secondary);
+
+  --navbar-link-hover: var(--brand-primary);
+
+  --navbar-link-active: var(--brand-primary);
+
+  --navbar-link-active-bg: var(--surface-selected);
+
+  --navbar-logo: var(--brand-primary);
+
+  --navbar-profile-bg: var(--surface-secondary);
+
+  --navbar-profile-hover: var(--surface-hover);
+
+  /* ==========================================================
+   TOPBAR
+   ========================================================== */
+
+  --topbar-bg: var(--surface-primary);
+
+  --topbar-border: var(--border-primary);
+
+  --topbar-shadow: var(--shadow-xs);
+
+  --topbar-text: var(--text-primary);
+
+  --topbar-subtitle: var(--text-secondary);
+
+  --topbar-search-bg: var(--surface-secondary);
+
+  --topbar-search-border: var(--border-primary);
+
+  --topbar-search-hover: var(--border-hover);
+
+  --topbar-search-focus: var(--border-focus);
+
+  --topbar-search-text: var(--text-primary);
+
+  --topbar-search-placeholder: var(--text-placeholder);
+
+  --topbar-ai-button-bg: var(--brand-primary);
+
+  --topbar-ai-button-hover: var(--brand-hover);
+
+  --topbar-ai-button-text: var(--text-inverse);
+
+  /* ==========================================================
+   SIDEBAR
+   ========================================================== */
+
+  --sidebar-bg: var(--surface-primary);
+
+  --sidebar-border: var(--border-primary);
+
+  --sidebar-shadow: var(--shadow-sm);
+
+  --sidebar-divider: var(--divider-primary);
+
+  /* ==========================================================
+   WATCHLIST
+   ========================================================== */
+
+  --watchlist-bg: var(--surface-primary);
+
+  --watchlist-header-bg: var(--surface-primary);
+
+  --watchlist-card: var(--surface-elevated);
+
+  --watchlist-card-hover: var(--surface-hover);
+
+  --watchlist-border: var(--border-primary);
+
+  --watchlist-divider: var(--divider-primary);
+
+  --watchlist-title: var(--text-primary);
+
+  --watchlist-subtitle: var(--text-secondary);
+
+  --watchlist-symbol: var(--text-primary);
+
+  --watchlist-company: var(--text-secondary);
+
+  --watchlist-price: var(--text-primary);
+
+  --watchlist-change-positive: var(--success-fill);
+
+  --watchlist-change-negative: var(--danger-fill);
+
+  --watchlist-scroll-track: var(--scrollbar-track);
+
+  --watchlist-scroll-thumb: var(--scrollbar-thumb);
+
+  --watchlist-scroll-hover: var(--scrollbar-thumb-hover);
+
+  /* ==========================================================
+   BUTTONS
+   ========================================================== */
+
+  --button-primary-bg: var(--brand-primary);
+
+  --button-primary-hover: var(--brand-hover);
+
+  --button-primary-text: var(--text-inverse);
+
+  --button-primary-border: transparent;
+
+  --button-secondary-bg: var(--surface-secondary);
+
+  --button-secondary-hover: var(--surface-hover);
+
+  --button-secondary-text: var(--text-primary);
+
+  --button-secondary-border: var(--border-primary);
+
+  --button-success-bg: var(--success-fill);
+
+  --button-success-hover: var(--green-600);
+
+  --button-success-text: var(--text-inverse);
+
+  --button-danger-bg: var(--danger-fill);
+
+  --button-danger-hover: var(--red-600);
+
+  --button-danger-text: var(--text-inverse);
+
+  --button-disabled-bg: var(--disabled-bg);
+
+  --button-disabled-text: var(--disabled-text);
+
+  --button-disabled-border: var(--disabled-border);
+
+  /* ==========================================================
+   INPUT
+   ========================================================== */
+
+  --input-bg: var(--surface-primary);
+
+  --input-border: var(--border-primary);
+
+  --input-border-hover: var(--border-hover);
+
+  --input-border-focus: var(--border-focus);
+
+  --input-text: var(--text-primary);
+
+  --input-placeholder: var(--text-placeholder);
+
+  --input-icon: var(--icon-secondary);
+
+  /* ==========================================================
+   SEARCH
+   ========================================================== */
+
+  --search-bg: var(--surface-secondary);
+
+  --search-border: var(--border-primary);
+
+  --search-hover: var(--border-hover);
+
+  --search-focus: var(--border-focus);
+
+  --search-text: var(--text-primary);
+
+  --search-placeholder: var(--text-placeholder);
+
+  --search-result-hover: var(--surface-hover);
+
+  /* ==========================================================
+   CARD
+   ========================================================== */
+
+  --card-bg: var(--surface-elevated);
+
+  --card-hover: var(--surface-hover);
+
+  --card-border: var(--border-primary);
+
+  --card-shadow: var(--shadow-sm);
+
+  --card-title: var(--text-primary);
+
+  --card-subtitle: var(--text-secondary);
+
+  /* ==========================================================
+   DROPDOWN
+   ========================================================== */
+
+  --dropdown-bg: var(--surface-primary);
+
+  --dropdown-border: var(--border-primary);
+
+  --dropdown-shadow: var(--shadow-lg);
+
+  --dropdown-item-hover: var(--surface-hover);
+
+  --dropdown-item-active: var(--surface-selected);
+
+  --dropdown-text: var(--text-primary);
+
+  /* ==========================================================
+   BADGE
+   ========================================================== */
+
+  --badge-bg: var(--surface-secondary);
+
+  --badge-text: var(--text-secondary);
+
+  --badge-border: var(--border-primary);
+
+  --badge-success-bg: var(--success-bg);
+
+  --badge-success-text: var(--success-text);
+
+  --badge-danger-bg: var(--danger-bg);
+
+  --badge-danger-text: var(--danger-text);
+}
+
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 5 / 10
+   ----------------------------------------------------------
+   ADVANCED COMPONENT TOKENS
+
+   Covers
+
+   • Tables
+   • Holdings
+   • Orders
+   • Positions
+   • Funds
+   • Summary
+   • Apps
+   • Charts
+   • Tooltip
+   • Dialog
+   • Toast
+   • Menu
+   • Tabs
+   • Progress
+   • Skeleton
+   ========================================================== */
+
+:root {
+  /* ==========================================================
+   TABLE
+   ========================================================== */
+
+  --table-bg: var(--surface-primary);
+
+  --table-header-bg: var(--surface-secondary);
+
+  --table-header-text: var(--text-secondary);
+
+  --table-row-bg: var(--surface-primary);
+
+  --table-row-hover: var(--surface-hover);
+
+  --table-row-selected: var(--surface-selected);
+
+  --table-border: var(--border-primary);
+
+  --table-divider: var(--divider-primary);
+
+  --table-text: var(--text-primary);
+
+  --table-text-secondary: var(--text-secondary);
+
+  --table-positive: var(--success-fill);
+
+  --table-negative: var(--danger-fill);
+
+  /* ==========================================================
+   SUMMARY
+   ========================================================== */
+
+  --summary-bg: var(--surface-secondary);
+
+  --summary-card-bg: var(--card-bg);
+
+  --summary-card-hover: var(--card-hover);
+
+  --summary-card-border: var(--card-border);
+
+  --summary-title: var(--text-primary);
+
+  --summary-subtitle: var(--text-secondary);
+
+  --summary-number: var(--text-primary);
+
+  --summary-positive: var(--success-fill);
+
+  --summary-negative: var(--danger-fill);
+
+  --summary-shadow: var(--card-shadow);
+
+  /* ==========================================================
+   HOLDINGS
+   ========================================================== */
+
+  --holdings-bg: var(--surface-secondary);
+
+  --holdings-card: var(--card-bg);
+
+  --holdings-card-hover: var(--card-hover);
+
+  --holdings-border: var(--border-primary);
+
+  --holdings-symbol: var(--text-primary);
+
+  --holdings-company: var(--text-secondary);
+
+  --holdings-profit: var(--success-fill);
+
+  --holdings-loss: var(--danger-fill);
+
+  /* ==========================================================
+   POSITIONS
+   ========================================================== */
+
+  --positions-bg: var(--surface-secondary);
+
+  --positions-card: var(--card-bg);
+
+  --positions-card-hover: var(--card-hover);
+
+  --positions-border: var(--border-primary);
+
+  --positions-open: var(--success-fill);
+
+  --positions-closed: var(--danger-fill);
+
+  /* ==========================================================
+   ORDERS
+   ========================================================== */
+
+  --orders-bg: var(--surface-secondary);
+
+  --orders-card: var(--card-bg);
+
+  --orders-card-hover: var(--card-hover);
+
+  --orders-border: var(--border-primary);
+
+  --orders-buy: var(--success-fill);
+
+  --orders-sell: var(--danger-fill);
+
+  --orders-pending: var(--warning-fill);
+
+  --orders-completed: var(--info-fill);
+
+  /* ==========================================================
+   FUNDS
+   ========================================================== */
+
+  --funds-bg: var(--surface-secondary);
+
+  --funds-card: var(--card-bg);
+
+  --funds-card-hover: var(--card-hover);
+
+  --funds-border: var(--border-primary);
+
+  --funds-balance: var(--text-primary);
+
+  --funds-profit: var(--success-fill);
+
+  --funds-loss: var(--danger-fill);
+
+  /* ==========================================================
+   APPS PAGE
+   ========================================================== */
+
+  --apps-bg: var(--surface-secondary);
+
+  --apps-card: var(--card-bg);
+
+  --apps-card-hover: var(--card-hover);
+
+  --apps-card-border: var(--card-border);
+
+  --apps-title: var(--text-primary);
+
+  --apps-description: var(--text-secondary);
+
+  /* ==========================================================
+   CHART
+   ========================================================== */
+
+  --chart-bg: var(--surface-primary);
+
+  --chart-border: var(--border-primary);
+
+  --chart-grid: var(--chart-grid);
+
+  --chart-axis: var(--chart-axis);
+
+  --chart-label: var(--chart-label);
+
+  --chart-tooltip-bg: var(--surface-elevated);
+
+  --chart-tooltip-border: var(--border-primary);
+
+  --chart-tooltip-text: var(--text-primary);
+
+  --chart-candle-up: var(--success-fill);
+
+  --chart-candle-down: var(--danger-fill);
+
+  --chart-volume: var(--brand-primary);
+
+  /* ==========================================================
+   TOOLTIP
+   ========================================================== */
+
+  --tooltip-bg: var(--surface-inverse);
+
+  --tooltip-text: var(--text-inverse);
+
+  --tooltip-border: transparent;
+
+  --tooltip-shadow: var(--shadow-lg);
+
+  /* ==========================================================
+   DIALOG
+   ========================================================== */
+
+  --dialog-bg: var(--surface-elevated);
+
+  --dialog-border: var(--border-primary);
+
+  --dialog-shadow: var(--shadow-xl);
+
+  --dialog-title: var(--text-primary);
+
+  --dialog-text: var(--text-secondary);
+
+  --dialog-overlay: var(--overlay-heavy);
+
+  /* ==========================================================
+   MENU
+   ========================================================== */
+
+  --menu-bg: var(--surface-primary);
+
+  --menu-border: var(--border-primary);
+
+  --menu-shadow: var(--shadow-lg);
+
+  --menu-item: var(--text-primary);
+
+  --menu-item-hover: var(--surface-hover);
+
+  --menu-item-active: var(--surface-selected);
+
+  /* ==========================================================
+   TOAST
+   ========================================================== */
+
+  --toast-bg: var(--surface-elevated);
+
+  --toast-border: var(--border-primary);
+
+  --toast-shadow: var(--shadow-lg);
+
+  --toast-title: var(--text-primary);
+
+  --toast-text: var(--text-secondary);
+
+  --toast-success: var(--success-fill);
+
+  --toast-danger: var(--danger-fill);
+
+  --toast-warning: var(--warning-fill);
+
+  --toast-info: var(--info-fill);
+
+  /* ==========================================================
+   TABS
+   ========================================================== */
+
+  --tab-bg: transparent;
+
+  --tab-hover: var(--surface-hover);
+
+  --tab-active: var(--surface-selected);
+
+  --tab-text: var(--text-secondary);
+
+  --tab-text-active: var(--brand-primary);
+
+  --tab-border: var(--border-primary);
+
+  /* ==========================================================
+   PROGRESS
+   ========================================================== */
+
+  --progress-track: var(--surface-secondary);
+
+  --progress-fill: var(--brand-primary);
+
+  --progress-success: var(--success-fill);
+
+  --progress-danger: var(--danger-fill);
+
+  /* ==========================================================
+   SKELETON
+   ========================================================== */
+
+  --skeleton-base: var(--gray-100);
+
+  --skeleton-highlight: var(--gray-50);
+
+  /* ==========================================================
+   CHIP / TAG
+   ========================================================== */
+
+  --chip-bg: var(--surface-secondary);
+
+  --chip-border: var(--border-primary);
+
+  --chip-text: var(--text-secondary);
+
+  --chip-hover: var(--surface-hover);
+
+  --chip-active: var(--surface-selected);
+
+  /* ==========================================================
+   AI COMPONENTS
+   ========================================================== */
+
+  --ai-bg: var(--purple-50);
+
+  --ai-border: var(--purple-200);
+
+  --ai-text: var(--purple-700);
+
+  --ai-icon: var(--purple-500);
+
+  --ai-hover: var(--purple-100);
+
+  /* ==========================================================
+   NOTIFICATIONS
+   ========================================================== */
+
+  --notification-bg: var(--surface-elevated);
+
+  --notification-border: var(--border-primary);
+
+  --notification-title: var(--text-primary);
+
+  --notification-text: var(--text-secondary);
+
+  --notification-unread: var(--surface-selected);
+}
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 6 / 10
+   ----------------------------------------------------------
+   THEME
+   NAVY (DEFAULT)
+
+   This theme maps ALL semantic/component tokens.
+
+   Change only this block to completely restyle
+   the dashboard.
+
+   ========================================================== */
+
+[data-theme="navy"] {
+  /* ==========================================================
+   APP
+   ========================================================== */
+
+  --app-background: var(--gray-50);
+
+  --app-content-bg: var(--gray-0);
+
+  --app-divider: var(--navy-100);
+
+  --app-shadow: var(--shadow-md);
+
+  /* ==========================================================
+   SURFACE
+   ========================================================== */
+
+  --surface-primary: var(--gray-0);
+
+  --surface-secondary: var(--gray-50);
+
+  --surface-tertiary: var(--gray-100);
+
+  --surface-elevated: var(--gray-0);
+
+  --surface-overlay: var(--gray-0);
+
+  --surface-hover: var(--navy-50);
+
+  --surface-active: var(--navy-100);
+
+  --surface-selected: var(--navy-100);
+
+  --surface-disabled: var(--gray-100);
+
+  --surface-inverse: var(--navy-950);
+
+  /* ==========================================================
+   TEXT
+   ========================================================== */
+
+  --text-primary: var(--gray-900);
+
+  --text-secondary: var(--gray-600);
+
+  --text-tertiary: var(--gray-500);
+
+  --text-muted: var(--gray-400);
+
+  --text-placeholder: var(--gray-400);
+
+  --text-disabled: var(--gray-300);
+
+  --text-inverse: var(--white);
+
+  --text-link: var(--navy-600);
+
+  --text-link-hover: var(--navy-700);
+
+  /* ==========================================================
+   BORDER
+   ========================================================== */
+
+  --border-primary: var(--gray-200);
+
+  --border-secondary: var(--gray-100);
+
+  --border-tertiary: var(--gray-50);
+
+  --border-hover: var(--navy-200);
+
+  --border-focus: var(--navy-500);
+
+  --border-selected: var(--navy-400);
+
+  --border-disabled: var(--gray-200);
+
+  /* ==========================================================
+   ICON
+   ========================================================== */
+
+  --icon-primary: var(--gray-700);
+
+  --icon-secondary: var(--gray-500);
+
+  --icon-muted: var(--gray-400);
+
+  --icon-disabled: var(--gray-300);
+
+  --icon-inverse: var(--white);
+
+  /* ==========================================================
+   BRAND
+   ========================================================== */
+
+  --brand-primary: var(--navy-600);
+
+  --brand-secondary: var(--navy-700);
+
+  --brand-light: var(--navy-100);
+
+  --brand-dark: var(--navy-950);
+
+  --brand-hover: var(--navy-700);
+
+  --brand-active: var(--navy-800);
+
+  /* ==========================================================
+   NAVBAR
+   ========================================================== */
+
+  --navbar-bg: var(--navy-950);
+
+  --navbar-border: var(--navy-900);
+
+  --navbar-shadow: var(--shadow-md);
+
+  --navbar-text: var(--white);
+
+  --navbar-text-muted: var(--navy-200);
+
+  --navbar-link: var(--navy-200);
+
+  --navbar-link-hover: var(--white);
+
+  --navbar-link-active: var(--white);
+
+  --navbar-link-active-bg: rgba(255, 255, 255, 0.1);
+
+  --navbar-logo: var(--white);
+
+  --navbar-profile-bg: rgba(255, 255, 255, 0.08);
+
+  --navbar-profile-hover: rgba(255, 255, 255, 0.14);
+
+  /* ==========================================================
+   TOPBAR
+   ========================================================== */
+
+  --topbar-bg: var(--gray-0);
+
+  --topbar-border: var(--gray-200);
+
+  --topbar-shadow: var(--shadow-xs);
+
+  --topbar-text: var(--gray-900);
+
+  --topbar-subtitle: var(--gray-500);
+
+  --topbar-search-bg: var(--gray-50);
+
+  --topbar-search-border: var(--gray-200);
+
+  --topbar-search-hover: var(--navy-200);
+
+  --topbar-search-focus: var(--navy-500);
+
+  --topbar-search-text: var(--gray-900);
+
+  --topbar-search-placeholder: var(--gray-400);
+
+  --topbar-ai-button-bg: var(--navy-600);
+
+  --topbar-ai-button-hover: var(--navy-700);
+
+  --topbar-ai-button-text: var(--white);
+
+  /* ==========================================================
+   SIDEBAR
+   ========================================================== */
+
+  --sidebar-bg: var(--gray-0);
+
+  --sidebar-border: var(--gray-200);
+
+  --sidebar-shadow: var(--shadow-sm);
+
+  --sidebar-divider: var(--gray-200);
+
+  /* ==========================================================
+   WATCHLIST
+   ========================================================== */
+
+  --watchlist-bg: var(--gray-0);
+
+  --watchlist-header-bg: var(--gray-0);
+
+  --watchlist-card: var(--gray-0);
+
+  --watchlist-card-hover: var(--navy-50);
+
+  --watchlist-border: var(--gray-200);
+
+  --watchlist-divider: var(--gray-200);
+
+  --watchlist-title: var(--gray-900);
+
+  --watchlist-subtitle: var(--gray-500);
+
+  --watchlist-symbol: var(--gray-900);
+
+  --watchlist-company: var(--gray-500);
+
+  --watchlist-price: var(--gray-900);
+
+  --watchlist-change-positive: var(--green-600);
+
+  --watchlist-change-negative: var(--red-600);
+
+  --watchlist-scroll-track: var(--gray-100);
+
+  --watchlist-scroll-thumb: var(--gray-300);
+
+  --watchlist-scroll-hover: var(--gray-400);
+
+  /* ==========================================================
+   BUTTONS
+   ========================================================== */
+
+  --button-primary-bg: var(--navy-600);
+
+  --button-primary-hover: var(--navy-700);
+
+  --button-primary-text: var(--white);
+
+  --button-primary-border: transparent;
+
+  --button-secondary-bg: var(--gray-100);
+
+  --button-secondary-hover: var(--navy-50);
+
+  --button-secondary-text: var(--gray-800);
+
+  --button-secondary-border: var(--gray-200);
+
+  --button-success-bg: var(--green-500);
+
+  --button-success-hover: var(--green-600);
+
+  --button-success-text: var(--white);
+
+  --button-danger-bg: var(--red-500);
+
+  --button-danger-hover: var(--red-600);
+
+  --button-danger-text: var(--white);
+
+  /* ==========================================================
+   INPUT
+   ========================================================== */
+
+  --input-bg: var(--gray-0);
+
+  --input-border: var(--gray-200);
+
+  --input-border-hover: var(--navy-200);
+
+  --input-border-focus: var(--navy-500);
+
+  --input-text: var(--gray-900);
+
+  --input-placeholder: var(--gray-400);
+
+  --input-icon: var(--gray-500);
+
+  /* ==========================================================
+   SEARCH
+   ========================================================== */
+
+  --search-bg: var(--gray-50);
+
+  --search-border: var(--gray-200);
+
+  --search-hover: var(--navy-200);
+
+  --search-focus: var(--navy-500);
+
+  --search-text: var(--gray-900);
+
+  --search-placeholder: var(--gray-400);
+
+  --search-result-hover: var(--navy-50);
+
+  /* ==========================================================
+   CARD
+   ========================================================== */
+
+  --card-bg: var(--gray-0);
+
+  --card-hover: var(--navy-50);
+
+  --card-border: var(--gray-200);
+
+  --card-shadow: var(--shadow-sm);
+
+  --card-title: var(--gray-900);
+
+  --card-subtitle: var(--gray-500);
+
+  /* ==========================================================
+   TABLE
+   ========================================================== */
+
+  --table-bg: var(--gray-0);
+
+  --table-header-bg: var(--gray-50);
+
+  --table-header-text: var(--gray-600);
+
+  --table-row-bg: var(--gray-0);
+
+  --table-row-hover: var(--navy-50);
+
+  --table-row-selected: var(--navy-100);
+
+  --table-border: var(--gray-200);
+
+  --table-divider: var(--gray-200);
+
+  --table-text: var(--gray-900);
+
+  --table-text-secondary: var(--gray-500);
+
+  --table-positive: var(--green-600);
+
+  --table-negative: var(--red-600);
+
+  /* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+  --scrollbar-track: var(--gray-100);
+
+  --scrollbar-thumb: var(--gray-300);
+
+  --scrollbar-thumb-hover: var(--gray-400);
+
+  /* ==========================================================
+   STATUS
+   ========================================================== */
+
+  --success-bg: var(--green-50);
+
+  --success-text: var(--green-700);
+
+  --success-border: var(--green-200);
+
+  --success-fill: var(--green-500);
+
+  --danger-bg: var(--red-50);
+
+  --danger-text: var(--red-700);
+
+  --danger-border: var(--red-200);
+
+  --danger-fill: var(--red-500);
+
+  --warning-bg: var(--amber-50);
+
+  --warning-text: var(--amber-700);
+
+  --warning-border: var(--amber-200);
+
+  --warning-fill: var(--amber-500);
+
+  --info-bg: var(--sky-50);
+
+  --info-text: var(--sky-700);
+
+  --info-border: var(--sky-200);
+
+  --info-fill: var(--sky-500);
+}
+
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 7 / 10
+   ----------------------------------------------------------
+   THEME
+   OLIVE
+
+   Premium Professional Green Trading Theme
+
+   ========================================================== */
+
+[data-theme="olive"] {
+  /* ==========================================================
+   APP
+   ========================================================== */
+
+  --app-background: var(--olive-50);
+
+  --app-content-bg: var(--white);
+
+  --app-divider: var(--olive-100);
+
+  --app-shadow: var(--shadow-md);
+
+  /* ==========================================================
+   SURFACE
+   ========================================================== */
+
+  --surface-primary: var(--white);
+
+  --surface-secondary: var(--olive-50);
+
+  --surface-tertiary: var(--olive-100);
+
+  --surface-elevated: var(--white);
+
+  --surface-overlay: var(--white);
+
+  --surface-hover: var(--olive-50);
+
+  --surface-active: var(--olive-100);
+
+  --surface-selected: var(--olive-100);
+
+  --surface-disabled: var(--gray-100);
+
+  --surface-inverse: var(--olive-950);
+
+  /* ==========================================================
+   TEXT
+   ========================================================== */
+
+  --text-primary: var(--olive-900);
+
+  --text-secondary: var(--olive-700);
+
+  --text-tertiary: var(--olive-600);
+
+  --text-muted: var(--olive-400);
+
+  --text-placeholder: var(--olive-400);
+
+  --text-disabled: var(--gray-400);
+
+  --text-inverse: var(--white);
+
+  --text-link: var(--olive-600);
+
+  --text-link-hover: var(--olive-700);
+
+  /* ==========================================================
+   BORDER
+   ========================================================== */
+
+  --border-primary: var(--olive-100);
+
+  --border-secondary: var(--olive-50);
+
+  --border-tertiary: var(--gray-50);
+
+  --border-hover: var(--olive-300);
+
+  --border-focus: var(--olive-500);
+
+  --border-selected: var(--olive-400);
+
+  --border-disabled: var(--gray-200);
+
+  /* ==========================================================
+   ICON
+   ========================================================== */
+
+  --icon-primary: var(--olive-800);
+
+  --icon-secondary: var(--olive-600);
+
+  --icon-muted: var(--olive-400);
+
+  --icon-disabled: var(--gray-300);
+
+  --icon-inverse: var(--white);
+
+  /* ==========================================================
+   BRAND
+   ========================================================== */
+
+  --brand-primary: var(--olive-500);
+
+  --brand-secondary: var(--olive-600);
+
+  --brand-light: var(--olive-100);
+
+  --brand-dark: var(--olive-900);
+
+  --brand-hover: var(--olive-600);
+
+  --brand-active: var(--olive-700);
+
+  /* ==========================================================
+   NAVBAR
+   ========================================================== */
+
+  --navbar-bg: var(--olive-900);
+
+  --navbar-border: var(--olive-800);
+
+  --navbar-shadow: var(--shadow-md);
+
+  --navbar-text: var(--white);
+
+  --navbar-text-muted: var(--olive-200);
+
+  --navbar-link: var(--olive-200);
+
+  --navbar-link-hover: var(--white);
+
+  --navbar-link-active: var(--white);
+
+  --navbar-link-active-bg: rgba(255, 255, 255, 0.1);
+
+  --navbar-logo: var(--white);
+
+  --navbar-profile-bg: rgba(255, 255, 255, 0.08);
+
+  --navbar-profile-hover: rgba(255, 255, 255, 0.14);
+
+  /* ==========================================================
+   TOPBAR
+   ========================================================== */
+
+  --topbar-bg: var(--white);
+
+  --topbar-border: var(--olive-100);
+
+  --topbar-shadow: var(--shadow-xs);
+
+  --topbar-text: var(--olive-900);
+
+  --topbar-subtitle: var(--olive-600);
+
+  --topbar-search-bg: var(--olive-50);
+
+  --topbar-search-border: var(--olive-100);
+
+  --topbar-search-hover: var(--olive-300);
+
+  --topbar-search-focus: var(--olive-500);
+
+  --topbar-search-text: var(--olive-900);
+
+  --topbar-search-placeholder: var(--olive-400);
+
+  --topbar-ai-button-bg: var(--olive-500);
+
+  --topbar-ai-button-hover: var(--olive-600);
+
+  --topbar-ai-button-text: var(--white);
+
+  /* ==========================================================
+   SIDEBAR
+   ========================================================== */
+
+  --sidebar-bg: var(--white);
+
+  --sidebar-border: var(--olive-100);
+
+  --sidebar-shadow: var(--shadow-sm);
+
+  --sidebar-divider: var(--olive-100);
+
+  /* ==========================================================
+   WATCHLIST
+   ========================================================== */
+
+  --watchlist-bg: var(--white);
+
+  --watchlist-header-bg: var(--white);
+
+  --watchlist-card: var(--white);
+
+  --watchlist-card-hover: var(--olive-50);
+
+  --watchlist-border: var(--olive-100);
+
+  --watchlist-divider: var(--olive-100);
+
+  --watchlist-title: var(--olive-900);
+
+  --watchlist-subtitle: var(--olive-600);
+
+  --watchlist-symbol: var(--olive-900);
+
+  --watchlist-company: var(--olive-600);
+
+  --watchlist-price: var(--olive-900);
+
+  --watchlist-change-positive: var(--green-600);
+
+  --watchlist-change-negative: var(--red-600);
+
+  --watchlist-scroll-track: var(--olive-50);
+
+  --watchlist-scroll-thumb: var(--olive-300);
+
+  --watchlist-scroll-hover: var(--olive-400);
+
+  /* ==========================================================
+   BUTTONS
+   ========================================================== */
+
+  --button-primary-bg: var(--olive-500);
+
+  --button-primary-hover: var(--olive-600);
+
+  --button-primary-text: var(--white);
+
+  --button-primary-border: transparent;
+
+  --button-secondary-bg: var(--olive-50);
+
+  --button-secondary-hover: var(--olive-100);
+
+  --button-secondary-text: var(--olive-800);
+
+  --button-secondary-border: var(--olive-100);
+
+  --button-success-bg: var(--green-500);
+
+  --button-success-hover: var(--green-600);
+
+  --button-success-text: var(--white);
+
+  --button-danger-bg: var(--red-500);
+
+  --button-danger-hover: var(--red-600);
+
+  --button-danger-text: var(--white);
+
+  /* ==========================================================
+   INPUT
+   ========================================================== */
+
+  --input-bg: var(--white);
+
+  --input-border: var(--olive-100);
+
+  --input-border-hover: var(--olive-300);
+
+  --input-border-focus: var(--olive-500);
+
+  --input-text: var(--olive-900);
+
+  --input-placeholder: var(--olive-400);
+
+  --input-icon: var(--olive-500);
+
+  /* ==========================================================
+   SEARCH
+   ========================================================== */
+
+  --search-bg: var(--olive-50);
+
+  --search-border: var(--olive-100);
+
+  --search-hover: var(--olive-300);
+
+  --search-focus: var(--olive-500);
+
+  --search-text: var(--olive-900);
+
+  --search-placeholder: var(--olive-400);
+
+  --search-result-hover: var(--olive-50);
+
+  /* ==========================================================
+   CARD
+   ========================================================== */
+
+  --card-bg: var(--white);
+
+  --card-hover: var(--olive-50);
+
+  --card-border: var(--olive-100);
+
+  --card-shadow: var(--shadow-sm);
+
+  --card-title: var(--olive-900);
+
+  --card-subtitle: var(--olive-600);
+
+  /* ==========================================================
+   TABLE
+   ========================================================== */
+
+  --table-bg: var(--white);
+
+  --table-header-bg: var(--olive-50);
+
+  --table-header-text: var(--olive-700);
+
+  --table-row-bg: var(--white);
+
+  --table-row-hover: var(--olive-50);
+
+  --table-row-selected: var(--olive-100);
+
+  --table-border: var(--olive-100);
+
+  --table-divider: var(--olive-100);
+
+  --table-text: var(--olive-900);
+
+  --table-text-secondary: var(--olive-600);
+
+  --table-positive: var(--green-600);
+
+  --table-negative: var(--red-600);
+
+  /* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+  --scrollbar-track: var(--olive-50);
+
+  --scrollbar-thumb: var(--olive-300);
+
+  --scrollbar-thumb-hover: var(--olive-400);
+
+  /* ==========================================================
+   STATUS
+   ========================================================== */
+
+  --success-bg: var(--green-50);
+
+  --success-text: var(--green-700);
+
+  --success-border: var(--green-200);
+
+  --success-fill: var(--green-500);
+
+  --danger-bg: var(--red-50);
+
+  --danger-text: var(--red-700);
+
+  --danger-border: var(--red-200);
+
+  --danger-fill: var(--red-500);
+
+  --warning-bg: var(--amber-50);
+
+  --warning-text: var(--amber-700);
+
+  --warning-border: var(--amber-200);
+
+  --warning-fill: var(--amber-500);
+
+  --info-bg: var(--sky-50);
+
+  --info-text: var(--sky-700);
+
+  --info-border: var(--sky-200);
+
+  --info-fill: var(--sky-500);
+}
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 8 / 10
+   ----------------------------------------------------------
+   THEME
+   CHARCOAL
+
+   Professional Enterprise Theme
+   Inspired by Bloomberg • GitHub • Linear
+
+   ========================================================== */
+
+[data-theme="charcoal"] {
+  /* ==========================================================
+   APP
+   ========================================================== */
+
+  --app-background: var(--charcoal-50);
+
+  --app-content-bg: var(--white);
+
+  --app-divider: var(--charcoal-100);
+
+  --app-shadow: var(--shadow-md);
+
+  /* ==========================================================
+   SURFACE
+   ========================================================== */
+
+  --surface-primary: var(--white);
+
+  --surface-secondary: var(--charcoal-50);
+
+  --surface-tertiary: var(--charcoal-100);
+
+  --surface-elevated: var(--white);
+
+  --surface-overlay: var(--white);
+
+  --surface-hover: var(--charcoal-50);
+
+  --surface-active: var(--charcoal-100);
+
+  --surface-selected: var(--charcoal-100);
+
+  --surface-disabled: var(--gray-100);
+
+  --surface-inverse: var(--charcoal-950);
+
+  /* ==========================================================
+   TEXT
+   ========================================================== */
+
+  --text-primary: var(--charcoal-900);
+
+  --text-secondary: var(--charcoal-700);
+
+  --text-tertiary: var(--charcoal-600);
+
+  --text-muted: var(--charcoal-400);
+
+  --text-placeholder: var(--charcoal-400);
+
+  --text-disabled: var(--gray-400);
+
+  --text-inverse: var(--white);
+
+  --text-link: var(--charcoal-700);
+
+  --text-link-hover: var(--charcoal-800);
+
+  /* ==========================================================
+   BORDER
+   ========================================================== */
+
+  --border-primary: var(--charcoal-200);
+
+  --border-secondary: var(--charcoal-100);
+
+  --border-tertiary: var(--gray-50);
+
+  --border-hover: var(--charcoal-300);
+
+  --border-focus: var(--charcoal-500);
+
+  --border-selected: var(--charcoal-400);
+
+  --border-disabled: var(--gray-200);
+
+  /* ==========================================================
+   ICON
+   ========================================================== */
+
+  --icon-primary: var(--charcoal-800);
+
+  --icon-secondary: var(--charcoal-600);
+
+  --icon-muted: var(--charcoal-400);
+
+  --icon-disabled: var(--gray-300);
+
+  --icon-inverse: var(--white);
+
+  /* ==========================================================
+   BRAND
+   ========================================================== */
+
+  --brand-primary: var(--charcoal-700);
+
+  --brand-secondary: var(--charcoal-800);
+
+  --brand-light: var(--charcoal-100);
+
+  --brand-dark: var(--charcoal-950);
+
+  --brand-hover: var(--charcoal-800);
+
+  --brand-active: var(--charcoal-900);
+
+  /* ==========================================================
+   NAVBAR
+   ========================================================== */
+
+  --navbar-bg: var(--charcoal-950);
+
+  --navbar-border: var(--charcoal-900);
+
+  --navbar-shadow: var(--shadow-md);
+
+  --navbar-text: var(--white);
+
+  --navbar-text-muted: var(--charcoal-200);
+
+  --navbar-link: var(--charcoal-200);
+
+  --navbar-link-hover: var(--white);
+
+  --navbar-link-active: var(--white);
+
+  --navbar-link-active-bg: rgba(255, 255, 255, 0.08);
+
+  --navbar-logo: var(--white);
+
+  --navbar-profile-bg: rgba(255, 255, 255, 0.08);
+
+  --navbar-profile-hover: rgba(255, 255, 255, 0.14);
+
+  /* ==========================================================
+   TOPBAR
+   ========================================================== */
+
+  --topbar-bg: var(--white);
+
+  --topbar-border: var(--charcoal-100);
+
+  --topbar-shadow: var(--shadow-xs);
+
+  --topbar-text: var(--charcoal-900);
+
+  --topbar-subtitle: var(--charcoal-600);
+
+  --topbar-search-bg: var(--charcoal-50);
+
+  --topbar-search-border: var(--charcoal-100);
+
+  --topbar-search-hover: var(--charcoal-300);
+
+  --topbar-search-focus: var(--charcoal-500);
+
+  --topbar-search-text: var(--charcoal-900);
+
+  --topbar-search-placeholder: var(--charcoal-400);
+
+  --topbar-ai-button-bg: var(--charcoal-700);
+
+  --topbar-ai-button-hover: var(--charcoal-800);
+
+  --topbar-ai-button-text: var(--white);
+
+  /* ==========================================================
+   SIDEBAR
+   ========================================================== */
+
+  --sidebar-bg: var(--white);
+
+  --sidebar-border: var(--charcoal-100);
+
+  --sidebar-shadow: var(--shadow-sm);
+
+  --sidebar-divider: var(--charcoal-100);
+
+  /* ==========================================================
+   WATCHLIST
+   ========================================================== */
+
+  --watchlist-bg: var(--white);
+
+  --watchlist-header-bg: var(--white);
+
+  --watchlist-card: var(--white);
+
+  --watchlist-card-hover: var(--charcoal-50);
+
+  --watchlist-border: var(--charcoal-100);
+
+  --watchlist-divider: var(--charcoal-100);
+
+  --watchlist-title: var(--charcoal-900);
+
+  --watchlist-subtitle: var(--charcoal-600);
+
+  --watchlist-symbol: var(--charcoal-900);
+
+  --watchlist-company: var(--charcoal-600);
+
+  --watchlist-price: var(--charcoal-900);
+
+  --watchlist-change-positive: var(--green-600);
+
+  --watchlist-change-negative: var(--red-600);
+
+  --watchlist-scroll-track: var(--charcoal-50);
+
+  --watchlist-scroll-thumb: var(--charcoal-300);
+
+  --watchlist-scroll-hover: var(--charcoal-400);
+
+  /* ==========================================================
+   BUTTONS
+   ========================================================== */
+
+  --button-primary-bg: var(--charcoal-700);
+
+  --button-primary-hover: var(--charcoal-800);
+
+  --button-primary-text: var(--white);
+
+  --button-primary-border: transparent;
+
+  --button-secondary-bg: var(--charcoal-50);
+
+  --button-secondary-hover: var(--charcoal-100);
+
+  --button-secondary-text: var(--charcoal-800);
+
+  --button-secondary-border: var(--charcoal-100);
+
+  --button-success-bg: var(--green-500);
+
+  --button-success-hover: var(--green-600);
+
+  --button-success-text: var(--white);
+
+  --button-danger-bg: var(--red-500);
+
+  --button-danger-hover: var(--red-600);
+
+  --button-danger-text: var(--white);
+
+  /* ==========================================================
+   INPUT
+   ========================================================== */
+
+  --input-bg: var(--white);
+
+  --input-border: var(--charcoal-100);
+
+  --input-border-hover: var(--charcoal-300);
+
+  --input-border-focus: var(--charcoal-500);
+
+  --input-text: var(--charcoal-900);
+
+  --input-placeholder: var(--charcoal-400);
+
+  --input-icon: var(--charcoal-500);
+
+  /* ==========================================================
+   SEARCH
+   ========================================================== */
+
+  --search-bg: var(--charcoal-50);
+
+  --search-border: var(--charcoal-100);
+
+  --search-hover: var(--charcoal-300);
+
+  --search-focus: var(--charcoal-500);
+
+  --search-text: var(--charcoal-900);
+
+  --search-placeholder: var(--charcoal-400);
+
+  --search-result-hover: var(--charcoal-50);
+
+  /* ==========================================================
+   CARD
+   ========================================================== */
+
+  --card-bg: var(--white);
+
+  --card-hover: var(--charcoal-50);
+
+  --card-border: var(--charcoal-100);
+
+  --card-shadow: var(--shadow-sm);
+
+  --card-title: var(--charcoal-900);
+
+  --card-subtitle: var(--charcoal-600);
+
+  /* ==========================================================
+   TABLE
+   ========================================================== */
+
+  --table-bg: var(--white);
+
+  --table-header-bg: var(--charcoal-50);
+
+  --table-header-text: var(--charcoal-700);
+
+  --table-row-bg: var(--white);
+
+  --table-row-hover: var(--charcoal-50);
+
+  --table-row-selected: var(--charcoal-100);
+
+  --table-border: var(--charcoal-100);
+
+  --table-divider: var(--charcoal-100);
+
+  --table-text: var(--charcoal-900);
+
+  --table-text-secondary: var(--charcoal-600);
+
+  --table-positive: var(--green-600);
+
+  --table-negative: var(--red-600);
+
+  /* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+  --scrollbar-track: var(--charcoal-50);
+
+  --scrollbar-thumb: var(--charcoal-300);
+
+  --scrollbar-thumb-hover: var(--charcoal-400);
+
+  /* ==========================================================
+   STATUS
+   ========================================================== */
+
+  --success-bg: var(--green-50);
+
+  --success-text: var(--green-700);
+
+  --success-border: var(--green-200);
+
+  --success-fill: var(--green-500);
+
+  --danger-bg: var(--red-50);
+
+  --danger-text: var(--red-700);
+
+  --danger-border: var(--red-200);
+
+  --danger-fill: var(--red-500);
+
+  --warning-bg: var(--amber-50);
+
+  --warning-text: var(--amber-700);
+
+  --warning-border: var(--amber-200);
+
+  --warning-fill: var(--amber-500);
+
+  --info-bg: var(--sky-50);
+
+  --info-text: var(--sky-700);
+
+  --info-border: var(--sky-200);
+
+  --info-fill: var(--sky-500);
+}
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 9 / 10
+   ----------------------------------------------------------
+   THEME
+   SAND
+
+   Premium Warm Professional Theme
+   Inspired by Financial Reports • Luxury Brands • Beige UI
+
+   ========================================================== */
+
+[data-theme="sand"] {
+  /* ==========================================================
+   APP
+   ========================================================== */
+
+  --app-background: var(--sand-50);
+
+  --app-content-bg: var(--white);
+
+  --app-divider: var(--sand-100);
+
+  --app-shadow: var(--shadow-md);
+
+  /* ==========================================================
+   SURFACE
+   ========================================================== */
+
+  --surface-primary: var(--white);
+
+  --surface-secondary: var(--sand-50);
+
+  --surface-tertiary: var(--sand-100);
+
+  --surface-elevated: var(--white);
+
+  --surface-overlay: var(--white);
+
+  --surface-hover: var(--sand-50);
+
+  --surface-active: var(--sand-100);
+
+  --surface-selected: var(--sand-100);
+
+  --surface-disabled: var(--gray-100);
+
+  --surface-inverse: var(--sand-950);
+
+  /* ==========================================================
+   TEXT
+   ========================================================== */
+
+  --text-primary: var(--sand-900);
+
+  --text-secondary: var(--sand-700);
+
+  --text-tertiary: var(--sand-600);
+
+  --text-muted: var(--sand-400);
+
+  --text-placeholder: var(--sand-400);
+
+  --text-disabled: var(--gray-400);
+
+  --text-inverse: var(--white);
+
+  --text-link: var(--sand-600);
+
+  --text-link-hover: var(--sand-700);
+
+  /* ==========================================================
+   BORDER
+   ========================================================== */
+
+  --border-primary: var(--sand-100);
+
+  --border-secondary: var(--sand-50);
+
+  --border-tertiary: var(--gray-50);
+
+  --border-hover: var(--sand-300);
+
+  --border-focus: var(--sand-500);
+
+  --border-selected: var(--sand-400);
+
+  --border-disabled: var(--gray-200);
+
+  /* ==========================================================
+   ICON
+   ========================================================== */
+
+  --icon-primary: var(--sand-800);
+
+  --icon-secondary: var(--sand-600);
+
+  --icon-muted: var(--sand-400);
+
+  --icon-disabled: var(--gray-300);
+
+  --icon-inverse: var(--white);
+
+  /* ==========================================================
+   BRAND
+   ========================================================== */
+
+  --brand-primary: var(--sand-500);
+
+  --brand-secondary: var(--sand-600);
+
+  --brand-light: var(--sand-100);
+
+  --brand-dark: var(--sand-900);
+
+  --brand-hover: var(--sand-600);
+
+  --brand-active: var(--sand-700);
+
+  /* ==========================================================
+   NAVBAR
+   ========================================================== */
+
+  --navbar-bg: var(--sand-950);
+
+  --navbar-border: var(--sand-900);
+
+  --navbar-shadow: var(--shadow-md);
+
+  --navbar-text: var(--white);
+
+  --navbar-text-muted: var(--sand-200);
+
+  --navbar-link: var(--sand-200);
+
+  --navbar-link-hover: var(--white);
+
+  --navbar-link-active: var(--white);
+
+  --navbar-link-active-bg: rgba(255, 255, 255, 0.1);
+
+  --navbar-logo: var(--white);
+
+  --navbar-profile-bg: rgba(255, 255, 255, 0.08);
+
+  --navbar-profile-hover: rgba(255, 255, 255, 0.14);
+
+  /* ==========================================================
+   TOPBAR
+   ========================================================== */
+
+  --topbar-bg: var(--white);
+
+  --topbar-border: var(--sand-100);
+
+  --topbar-shadow: var(--shadow-xs);
+
+  --topbar-text: var(--sand-900);
+
+  --topbar-subtitle: var(--sand-600);
+
+  --topbar-search-bg: var(--sand-50);
+
+  --topbar-search-border: var(--sand-100);
+
+  --topbar-search-hover: var(--sand-300);
+
+  --topbar-search-focus: var(--sand-500);
+
+  --topbar-search-text: var(--sand-900);
+
+  --topbar-search-placeholder: var(--sand-400);
+
+  --topbar-ai-button-bg: var(--sand-500);
+
+  --topbar-ai-button-hover: var(--sand-600);
+
+  --topbar-ai-button-text: var(--white);
+
+  /* ==========================================================
+   SIDEBAR
+   ========================================================== */
+
+  --sidebar-bg: var(--white);
+
+  --sidebar-border: var(--sand-100);
+
+  --sidebar-shadow: var(--shadow-sm);
+
+  --sidebar-divider: var(--sand-100);
+
+  /* ==========================================================
+   WATCHLIST
+   ========================================================== */
+
+  --watchlist-bg: var(--white);
+
+  --watchlist-header-bg: var(--white);
+
+  --watchlist-card: var(--white);
+
+  --watchlist-card-hover: var(--sand-50);
+
+  --watchlist-border: var(--sand-100);
+
+  --watchlist-divider: var(--sand-100);
+
+  --watchlist-title: var(--sand-900);
+
+  --watchlist-subtitle: var(--sand-600);
+
+  --watchlist-symbol: var(--sand-900);
+
+  --watchlist-company: var(--sand-600);
+
+  --watchlist-price: var(--sand-900);
+
+  --watchlist-change-positive: var(--green-600);
+
+  --watchlist-change-negative: var(--red-600);
+
+  --watchlist-scroll-track: var(--sand-50);
+
+  --watchlist-scroll-thumb: var(--sand-300);
+
+  --watchlist-scroll-hover: var(--sand-400);
+
+  /* ==========================================================
+   BUTTONS
+   ========================================================== */
+
+  --button-primary-bg: var(--sand-500);
+
+  --button-primary-hover: var(--sand-600);
+
+  --button-primary-text: var(--white);
+
+  --button-primary-border: transparent;
+
+  --button-secondary-bg: var(--sand-50);
+
+  --button-secondary-hover: var(--sand-100);
+
+  --button-secondary-text: var(--sand-800);
+
+  --button-secondary-border: var(--sand-100);
+
+  --button-success-bg: var(--green-500);
+
+  --button-success-hover: var(--green-600);
+
+  --button-success-text: var(--white);
+
+  --button-danger-bg: var(--red-500);
+
+  --button-danger-hover: var(--red-600);
+
+  --button-danger-text: var(--white);
+
+  /* ==========================================================
+   INPUT
+   ========================================================== */
+
+  --input-bg: var(--white);
+
+  --input-border: var(--sand-100);
+
+  --input-border-hover: var(--sand-300);
+
+  --input-border-focus: var(--sand-500);
+
+  --input-text: var(--sand-900);
+
+  --input-placeholder: var(--sand-400);
+
+  --input-icon: var(--sand-500);
+
+  /* ==========================================================
+   SEARCH
+   ========================================================== */
+
+  --search-bg: var(--sand-50);
+
+  --search-border: var(--sand-100);
+
+  --search-hover: var(--sand-300);
+
+  --search-focus: var(--sand-500);
+
+  --search-text: var(--sand-900);
+
+  --search-placeholder: var(--sand-400);
+
+  --search-result-hover: var(--sand-50);
+
+  /* ==========================================================
+   CARD
+   ========================================================== */
+
+  --card-bg: var(--white);
+
+  --card-hover: var(--sand-50);
+
+  --card-border: var(--sand-100);
+
+  --card-shadow: var(--shadow-sm);
+
+  --card-title: var(--sand-900);
+
+  --card-subtitle: var(--sand-600);
+
+  /* ==========================================================
+   TABLE
+   ========================================================== */
+
+  --table-bg: var(--white);
+
+  --table-header-bg: var(--sand-50);
+
+  --table-header-text: var(--sand-700);
+
+  --table-row-bg: var(--white);
+
+  --table-row-hover: var(--sand-50);
+
+  --table-row-selected: var(--sand-100);
+
+  --table-border: var(--sand-100);
+
+  --table-divider: var(--sand-100);
+
+  --table-text: var(--sand-900);
+
+  --table-text-secondary: var(--sand-600);
+
+  --table-positive: var(--green-600);
+
+  --table-negative: var(--red-600);
+
+  /* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+  --scrollbar-track: var(--sand-50);
+
+  --scrollbar-thumb: var(--sand-300);
+
+  --scrollbar-thumb-hover: var(--sand-400);
+
+  /* ==========================================================
+   STATUS
+   ========================================================== */
+
+  --success-bg: var(--green-50);
+
+  --success-text: var(--green-700);
+
+  --success-border: var(--green-200);
+
+  --success-fill: var(--green-500);
+
+  --danger-bg: var(--red-50);
+
+  --danger-text: var(--red-700);
+
+  --danger-border: var(--red-200);
+
+  --danger-fill: var(--red-500);
+
+  --warning-bg: var(--amber-50);
+
+  --warning-text: var(--amber-700);
+
+  --warning-border: var(--amber-200);
+
+  --warning-fill: var(--amber-500);
+
+  --info-bg: var(--sky-50);
+
+  --info-text: var(--sky-700);
+
+  --info-border: var(--sky-200);
+
+  --info-fill: var(--sky-500);
+}
+
+/* ==========================================================
+   NiveshAI Design System
+   variables.css
+   PART 10 / 10
+   ----------------------------------------------------------
+   DARK MODE
+   RESPONSIVE
+   ACCESSIBILITY
+   UTILITIES
+   FINAL PRODUCTION TOKENS
+
+   This is the final section of variables.css
+
+   ========================================================== */
+
+/* ==========================================================
+   DARK MODE
+   ========================================================== */
+
+[data-mode="dark"] {
+  /* ==========================================================
+   SURFACE
+   ========================================================== */
+
+  --surface-primary: var(--gray-900);
+
+  --surface-secondary: var(--gray-950);
+
+  --surface-tertiary: var(--charcoal-900);
+
+  --surface-elevated: var(--charcoal-800);
+
+  --surface-overlay: var(--charcoal-800);
+
+  --surface-hover: var(--charcoal-700);
+
+  --surface-active: var(--charcoal-600);
+
+  --surface-selected: rgba(255, 255, 255, 0.06);
+
+  --surface-disabled: var(--charcoal-900);
+
+  --surface-inverse: var(--white);
+
+  /* ==========================================================
+   TEXT
+   ========================================================== */
+
+  --text-primary: var(--gray-50);
+
+  --text-secondary: var(--gray-300);
+
+  --text-tertiary: var(--gray-400);
+
+  /* Pure white (not --gray-50) specifically for neutral digit values —
+     Holdings/Positions/Funds figures, Orders table price/qty/total,
+     Booked P&L "all time" figure — so numbers read as the brightest,
+     highest-contrast thing on a dark card, which is what a trading
+     ledger wants. Labels and body text stay on --gray-50 above; this
+     only affects things that opt into --text-numeric. */
+  --text-numeric: var(--white);
+
+  /* FIXED — was var(--gray-500), which measures 3.08:1 contrast against
+     --card-bg here (fails WCAG AA's 4.5:1 floor for normal text). Every
+     caption/sublabel/disclaimer using --text-muted was too dim to read
+     comfortably in dark mode. gray-400 measures 5.72:1. */
+  --text-muted: var(--gray-400);
+
+  --text-placeholder: var(--gray-500);
+
+  --text-disabled: var(--gray-600);
+
+  --text-inverse: var(--gray-950);
+
+  --text-link: var(--brand-primary);
+
+  --text-link-hover: var(--brand-hover);
+
+  /* ==========================================================
+   BORDER
+   ========================================================== */
+
+  --border-primary: var(--charcoal-700);
+
+  --border-secondary: var(--charcoal-800);
+
+  --border-tertiary: var(--charcoal-900);
+
+  --border-hover: var(--charcoal-600);
+
+  /* ==========================================================
+   INPUT
+   ========================================================== */
+
+  --input-bg: var(--charcoal-900);
+
+  --input-border: var(--charcoal-700);
+
+  --input-border-hover: var(--charcoal-500);
+
+  --input-text: var(--gray-50);
+
+  --input-placeholder: var(--gray-500);
+
+  /* ==========================================================
+   SEARCH
+   NEW — dark mode never overrode these, so --search-bg stayed the
+   LIGHT theme's near-white value while --search-text correctly
+   flipped to near-white text (inherited from --text-primary above).
+   Result: light text on a light box — invisible typing in the search
+   bar. This mirrors the pattern already used for --input-bg and
+   --topbar-search-bg right above, so the search field now matches
+   every other dark-mode surface, in all 4 themes (navy/olive/
+   charcoal/sand), since [data-mode="dark"] applies independently of
+   [data-theme="x"].
+   ========================================================== */
+
+  --search-bg: var(--charcoal-900);
+
+  --search-border: var(--charcoal-700);
+
+  --search-hover: var(--charcoal-500);
+
+  --search-focus: var(--brand-primary);
+
+  --search-text: var(--gray-50);
+
+  --search-placeholder: var(--gray-500);
+
+  --search-result-hover: var(--charcoal-700);
+
+  /* ==========================================================
+   CARD
+   ========================================================== */
+
+  --card-bg: var(--charcoal-800);
+
+  --card-hover: var(--charcoal-700);
+
+  --card-border: var(--charcoal-700);
+
+  /* ==========================================================
+   WATCHLIST
+   ========================================================== */
+
+  --watchlist-bg: var(--charcoal-900);
+
+  --watchlist-header-bg: var(--charcoal-900);
+
+  --watchlist-card: var(--charcoal-800);
+
+  --watchlist-card-hover: var(--charcoal-700);
+
+  --watchlist-border: var(--charcoal-700);
+
+  /* ==========================================================
+   SIDEBAR
+   ========================================================== */
+
+  --sidebar-bg: var(--charcoal-900);
+
+  --sidebar-border: var(--charcoal-700);
+
+  /* ==========================================================
+   TOPBAR
+   ========================================================== */
+
+  --topbar-bg: var(--charcoal-900);
+
+  --topbar-border: var(--charcoal-700);
+
+  --topbar-search-bg: var(--charcoal-800);
+
+  --topbar-search-border: var(--charcoal-700);
+
+  /* ==========================================================
+   TABLE
+   ========================================================== */
+
+  --table-bg: var(--charcoal-900);
+
+  --table-header-bg: var(--charcoal-800);
+
+  --table-row-bg: var(--charcoal-900);
+
+  --table-row-hover: var(--charcoal-800);
+
+  --table-border: var(--charcoal-700);
+
+  /* ==========================================================
+   SUCCESS / DANGER — dark mode
+   FIXED — every [data-theme="x"] block above defines these as pale
+   green-50/red-50 backgrounds with dark green-700/red-700 text, correct
+   only for a LIGHT surface. [data-mode="dark"] never overrode them, so
+   on a dark card --danger-text measured 2.27:1 contrast and
+   --success-text measured 2.93:1 — both fail WCAG AA's 4.5:1 floor.
+   Every status pill (order status, BUY/SELL tags, toasts, booked P&L
+   accents) was rendering as a washed-out pale patch with barely-legible
+   text. This single override fixes it for all 4 themes at once, since
+   dark mode is applied independently of data-theme.
+   ========================================================== */
+
+  --success-bg: color-mix(in srgb, var(--green-500) 16%, var(--charcoal-800));
+  --success-text: var(--green-400);
+  --success-border: color-mix(
+    in srgb,
+    var(--green-500) 40%,
+    var(--charcoal-800)
+  );
+
+  --danger-bg: color-mix(in srgb, var(--red-500) 16%, var(--charcoal-800));
+  --danger-text: var(--red-300);
+  --danger-border: color-mix(in srgb, var(--red-500) 40%, var(--charcoal-800));
+
+  /* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+  --scrollbar-track: var(--charcoal-900);
+
+  --scrollbar-thumb: var(--charcoal-600);
+
+  --scrollbar-thumb-hover: var(--charcoal-500);
+
+  /* ==========================================================
+   SHADOWS
+   ========================================================== */
+
+  --shadow-xs: 0 2px 4px rgba(0, 0, 0, 0.35);
+
+  --shadow-sm: 0 6px 14px rgba(0, 0, 0, 0.45);
+
+  --shadow-md: 0 14px 28px rgba(0, 0, 0, 0.55);
+
+  --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.65);
+
+  --shadow-xl: 0 40px 80px rgba(0, 0, 0, 0.75);
+
+  /* ==========================================================
+   GLASS
+   ========================================================== */
+
+  --glass-bg: rgba(20, 20, 22, 0.7);
+
+  --glass-border: rgba(255, 255, 255, 0.05);
+
+  /* ==========================================================
+   GREETING BANNER
+   ========================================================== */
+
+  /* Banner */
+
+  --greeting-bg: #ffffff;
+  --greeting-border: #e5e7eb;
+  --greeting-shadow:
+    0 2px 6px rgba(15, 23, 42, 0.04), 0 10px 24px rgba(15, 23, 42, 0.05);
+
+  /* ==========================================================
+   GREETING CARDS
+   ========================================================== */
+
+  --greeting-card-bg: #f8fafc;
+
+  --greeting-card-hover: #f1f5f9;
+
+  --greeting-card-border: #e2e8f0;
+
+  /* ==========================================================
+   META CHIPS
+   ========================================================== */
+
+  --greeting-chip-bg: #f5f7fa;
+
+  --greeting-chip-hover: #eef2f7;
+
+  --greeting-chip-border: #d8e0ea;
+
+  --greeting-chip-text: var(--text-primary);
+
+  /* ==========================================================
+   MARKET OPEN
+   ========================================================== */
+
+  --market-open-bg: #edf9f2;
+
+  --market-open-hover: #e2f6ea;
+
+  --market-open-border: #b8dfc8;
+
+  --market-open-text: #138a4b;
+
+  /* ==========================================================
+   MARKET CLOSED
+   ========================================================== */
+
+  --market-closed-bg: #fff1f1;
+
+  --market-closed-hover: #ffe6e6;
+
+  --market-closed-border: #f2c2c2;
+
+  --market-closed-text: #d14343;
+
+  /* ==========================================================
+   GREETING ELEVATION
+   ========================================================== */
+
+  --greeting-elevation-1: 0 2px 6px rgba(15, 23, 42, 0.04);
+
+  --greeting-elevation-2: 0 8px 18px rgba(15, 23, 42, 0.06);
+
+  --greeting-elevation-3: 0 18px 38px rgba(15, 23, 42, 0.08);
+
+  /* ==========================================================
+   GREETING BANNER
+   DARK MODE
+   ========================================================== */
+
+  --greeting-bg: #171b22;
+
+  --greeting-border: #2c3441;
+
+  --greeting-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+
+  /* ==========================================================
+   GREETING CARDS
+   ========================================================== */
+
+  --greeting-card-bg: #1d232d;
+
+  --greeting-card-hover: #232b37;
+
+  --greeting-card-border: #313b49;
+
+  /* ==========================================================
+   META CHIPS
+   ========================================================== */
+
+  --greeting-chip-bg: #242c37;
+
+  --greeting-chip-hover: #2b3442;
+
+  --greeting-chip-border: #394556;
+
+  --greeting-chip-text: #f3f4f6;
+
+  /* ==========================================================
+   MARKET OPEN
+   ========================================================== */
+
+  --market-open-bg: #163827;
+
+  --market-open-hover: #1b4631;
+
+  --market-open-border: #2f6d4a;
+
+  --market-open-text: #8ef0b4;
+
+  /* ==========================================================
+   MARKET CLOSED
+   ========================================================== */
+
+  --market-closed-bg: #402123;
+
+  --market-closed-hover: #4d2729;
+
+  --market-closed-border: #6c393d;
+
+  --market-closed-text: #ffb0b0;
+
+  /* ==========================================================
+   GREETING ELEVATION
+   ========================================================== */
+
+  --greeting-elevation-1: 0 4px 12px rgba(0, 0, 0, 0.18);
+
+  --greeting-elevation-2: 0 12px 28px rgba(0, 0, 0, 0.28);
+
+  --greeting-elevation-3: 0 24px 48px rgba(0, 0, 0, 0.36);
+
+  /* ==========================================================
+   ANALYTICS TOKENS
+   ========================================================== */
+
+  /* ---------- Top Traded ---------- */
+
+  --analytics-profit: var(--success-fill);
+  --analytics-loss: var(--danger-fill);
+
+  --analytics-neutral: var(--surface-tertiary);
+
+  --analytics-selected: var(--brand-primary);
+
+  --analytics-hover: var(--surface-hover);
+
+  --analytics-panel-bg: var(--surface-secondary);
+  --analytics-panel-border: var(--border-primary);
+  --analytics-panel-hover: var(--surface-hover);
+
+  /* ---------- P&L Heatmap ---------- */
+
+  --heatmap-empty: var(--surface-tertiary);
+
+  --heatmap-profit-1: color-mix(
+    in srgb,
+    var(--success-fill) 18%,
+    var(--surface-tertiary)
+  );
+
+  --heatmap-profit-2: color-mix(
+    in srgb,
+    var(--success-fill) 36%,
+    var(--surface-tertiary)
+  );
+
+  --heatmap-profit-3: color-mix(
+    in srgb,
+    var(--success-fill) 58%,
+    var(--surface-tertiary)
+  );
+
+  --heatmap-profit-4: color-mix(
+    in srgb,
+    var(--success-fill) 82%,
+    var(--surface-tertiary)
+  );
+
+  --heatmap-loss-1: color-mix(
+    in srgb,
+    var(--danger-fill) 18%,
+    var(--surface-tertiary)
+  );
+
+  --heatmap-loss-2: color-mix(
+    in srgb,
+    var(--danger-fill) 36%,
+    var(--surface-tertiary)
+  );
+
+  --heatmap-loss-3: color-mix(
+    in srgb,
+    var(--danger-fill) 58%,
+    var(--surface-tertiary)
+  );
+
+  --heatmap-loss-4: color-mix(
+    in srgb,
+    var(--danger-fill) 82%,
+    var(--surface-tertiary)
+  );
+
+  /* ---------- Select Dropdown ---------- */
+
+  --analytics-select-bg: var(--surface-primary);
+  --analytics-select-hover: var(--surface-hover);
+  --analytics-select-border: var(--border-primary);
+  --analytics-select-text: var(--text-primary);
+
+  /* ---------- Detail Drawer ---------- */
+
+  --analytics-detail-bg: var(--surface-secondary);
+  --analytics-detail-border: var(--border-primary);
+  --analytics-detail-title: var(--text-primary);
+  --analytics-detail-text: var(--text-secondary);
+
+  /* ---------- Calendar ---------- */
+
+  --calendar-header: var(--text-primary);
+  --calendar-subtitle: var(--text-secondary);
+  --calendar-month: var(--text-secondary);
+  --calendar-weekday: var(--text-tertiary);
+
+  --calendar-tooltip-bg: var(--chart-tooltip-bg);
+  --calendar-tooltip-border: var(--chart-tooltip-border);
+  --calendar-tooltip-text: var(--chart-tooltip-text);
+
+  /* ---------- States ---------- */
+
+  --calendar-today-border: var(--brand-primary);
+  --calendar-selected-border: var(--brand-primary);
+  --calendar-selected-shadow: var(--focus-ring);
+
+  /* ---------- Ranking ---------- */
+
+  --ranking-bar: var(--brand-primary);
+  --ranking-bar-hover: var(--brand-secondary);
+  --ranking-axis: var(--chart-axis);
+  --ranking-label: var(--chart-label);
+}
+
+/* ==========================================================
+   GLOBAL FOCUS
+   ========================================================== */
+
+:root {
+  --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.22);
+}
+
+/* ==========================================================
+   TEXT SELECTION
+   ========================================================== */
+
+::selection {
+  background: var(--brand-primary);
+
+  color: var(--white);
+}
+
+/* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+* {
+  scrollbar-width: thin;
+
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+
+  height: var(--scrollbar-size);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+
+  border-radius: var(--scrollbar-radius);
+
+  border: 2px solid var(--scrollbar-track);
+
+  transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ==========================================================
+   GLOBAL FOCUS
+   ========================================================== */
+
+*:focus-visible {
+  outline: none;
+
+  box-shadow: var(--focus-ring);
+}
+
+/* ==========================================================
+   GLOBAL TRANSITIONS
+   ========================================================== */
+
+body {
+  transition:
+    background var(--transition-normal),
+    color var(--transition-normal);
+}
+
+/* ==========================================================
+   IMAGE
+   ========================================================== */
+
+img {
+  display: block;
+
+  max-width: 100%;
+
+  height: auto;
+}
+
+/* ==========================================================
+   BUTTON
+   ========================================================== */
+
+button {
+  font-family: inherit;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+/* ==========================================================
+   INPUT
+   ========================================================== */
+
+input,
+textarea,
+select {
+  font-family: inherit;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    color var(--transition-fast);
+}
+
+/* ==========================================================
+   DISABLED
+   ========================================================== */
+
+:disabled {
+  cursor: not-allowed;
+
+  opacity: var(--opacity-disabled);
+}
+
+/* ==========================================================
+   REDUCED MOTION
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+
+    transition: none !important;
+
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1400px) {
+  :root {
+    --topbar-search-width: 440px;
+  }
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-width: 250px;
+
+    --navbar-horizontal-padding: 24px;
+  }
+}
+
+@media (max-width: 992px) {
+  :root {
+    --sidebar-width: 220px;
+
+    --topbar-search-width: 340px;
+
+    --navbar-height: 64px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 100%;
+
+    --topbar-search-width: 100%;
+
+    --navbar-height: 60px;
+
+    --topbar-height: auto;
+  }
+}
+
+@media (max-width: 576px) {
+  :root {
+    --space-8: 24px;
+
+    --space-9: 28px;
+
+    --space-10: 32px;
+  }
+}
+
+/* ==========================================================
+   PRINT
+   ========================================================== */
+
+@media print {
+  :root {
+    --shadow-xs: none;
+
+    --shadow-sm: none;
+
+    --shadow-md: none;
+
+    --shadow-lg: none;
+
+    --shadow-xl: none;
+  }
+}
+
+/* ==========================================================
+   END
+   ========================================================== */

@@ -1,0 +1,208 @@
+/* No max-width/margin here on purpose — Home.css's .app-shell__main > *
+   already caps every routed page at var(--content-max-width) and centers
+   it. Setting a second, tighter max-width here was the actual cause of
+   Orders looking narrower/misaligned versus Holdings (which never set
+   one). */
+.orders-page {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.orders-page__count {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--surface-tertiary);
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+}
+
+.orders-page__charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-5);
+}
+
+.orders-page__table-wrap {
+  overflow-x: auto;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.orders-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  color: var(--table-header-text);
+  background: var(--table-header-bg);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  border-bottom: 1px solid var(--table-border);
+  white-space: nowrap;
+}
+
+.orders-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--table-border);
+  color: var(--table-text);
+  white-space: nowrap;
+}
+
+.orders-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* UPDATED — zebra striping now keys off --table-row-bg (falls back to
+   --card-bg if a page hasn't set it) instead of always assuming
+   --card-bg. In dark mode --table-row-bg is charcoal-900 while --card-bg
+   is charcoal-800 — visually close, but mixing against the *wrong* base
+   was producing a stripe color that occasionally landed lighter than the
+   header row above it, which read as "off" specifically in dark mode.
+   Mixing against the correct base keeps the stripe reliably one notch
+   off the row color in every theme + mode combination. */
+.orders-table tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--table-row-bg, var(--card-bg)) 96%, var(--text-primary) 4%);
+}
+
+.orders-table tr:hover td {
+  background: var(--table-row-hover);
+}
+
+/* Symbol — now a real button so it's keyboard-focusable and the click
+   target isn't just styled text. */
+.orders-table__symbol-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.orders-table__symbol {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  transition: color 0.12s ease;
+}
+
+.orders-table__symbol-btn:hover .orders-table__symbol {
+  color: var(--brand-primary, var(--text-primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.orders-table__symbol-btn:focus-visible {
+  outline: 2px solid var(--brand-primary, var(--text-primary));
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* NEW — Time, Qty., Price and Total are all figures; give them the same
+   digit font (--font-family-mono) and neutral value color
+   (--text-numeric, white in dark mode) that Holdings/Positions/Funds
+   already use, instead of inheriting the table's default body text.
+   Targeted by column position since the <td> markup doesn't carry a
+   per-column class — Time=1st, Qty.=5th, Price=6th, Total=7th. */
+.orders-table td:first-child,
+.orders-table td:nth-child(5),
+.orders-table td:nth-child(6),
+.orders-table td:nth-child(7) {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--text-numeric);
+}
+
+/* Type — BUY/SELL, colored to match the buy/sell language used
+   everywhere else (order-split legend dots, chart bars). */
+.orders-table__mode {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  border: 1px solid transparent;
+}
+
+.orders-table__mode--buy {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.orders-table__mode--sell {
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+
+/* Product — friendly Delivery/Intraday label instead of the raw
+   CNC/MIS code, derived from order.product in Orders.jsx. */
+.orders-table__product {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  background: var(--surface-tertiary);
+  border: 1px solid var(--table-border);
+}
+
+/* UPDATED — status pills now carry the same explicit border treatment
+   as .orders-table__mode above (border-color from the matching
+   --success-border/--danger-border token) instead of relying on
+   background alone for definition. In dark mode the success/danger
+   backgrounds are a subtle color-mix tint over --charcoal-800 — with no
+   border, the pill nearly disappeared into the row on some themes.
+   The border makes every status pill legible against every theme +
+   mode combination. */
+.orders-table__status {
+  display: inline-flex;
+  align-items: center;
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.orders-table__status--rejected {
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+
+.orders-table__status--pending {
+  color: var(--text-secondary);
+  background: var(--surface-tertiary);
+  border-color: var(--border-primary);
+}
+
+@media (max-width: 900px) {
+  .orders-page__charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .orders-page {
+    padding: var(--space-4);
+  }
+}

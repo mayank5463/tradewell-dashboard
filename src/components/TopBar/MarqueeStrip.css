@@ -1,0 +1,87 @@
+.marquee-strip {
+  position: relative;
+  overflow: hidden;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  background: var(--navbar-bg);
+  border-bottom: 1px solid var(--navbar-border);
+  /* fade the edges so items don't look like they're getting cut off mid-price */
+  mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+}
+
+.marquee-strip__track {
+  display: flex;
+  width: max-content;
+
+  /* --marquee-duration is set from JS (MarqueeStrip.jsx) based on the
+     REAL measured width of the stock list, targeting a constant crawl
+     speed (px/second) no matter how many symbols are watched — that's
+     the actual fix for "runs very fast". The fixed fallback (90s) only
+     matters for the one frame before JS measures and sets the real
+     value; it never runs at 90s for more than an instant in practice. */
+  animation: marquee-scroll var(--marquee-duration, 90s) linear infinite;
+}
+
+/* No :hover pause rule here on purpose - the strip keeps moving regardless
+   of mouse position or clicks. */
+
+.marquee-strip__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-6);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--navbar-text-muted);
+  border-right: 1px solid var(--navbar-border);
+  white-space: nowrap;
+}
+
+.marquee-strip__symbol {
+  font-weight: var(--font-weight-bold);
+  color: var(--navbar-text);
+}
+
+.marquee-strip__price {
+  color: var(--navbar-text-muted);
+}
+
+.marquee-strip__change.is-up {
+  color: var(--success-fill);
+}
+.marquee-strip__change.is-down {
+  color: var(--danger-fill);
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* -50% because the track is exactly two copies of the same list */
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Accessibility floor still respected - reduced motion gets a static,
+     scrollable strip instead of the animation. */
+  .marquee-strip__track {
+    animation: none;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .marquee-strip {
+    height: 26px;
+  }
+
+  .marquee-strip__item {
+    padding: 0 var(--space-4);
+    font-size: var(--font-size-2xs);
+  }
+}

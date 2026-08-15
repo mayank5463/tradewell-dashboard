@@ -1,0 +1,1034 @@
+.buy-window {
+  position: fixed;
+  inset: 0;
+  /* Bumped alongside the new createPortal render in BuyActionWindow.js —
+     the portal already guarantees this sits outside any ancestor's
+     stacking context, this is just extra headroom in case something else
+     in the app also uses a very high z-index. */
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.buy-window__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 15, 30, 0.5);
+  animation: buy-window-fade-in 0.15s ease;
+}
+
+.buy-window__panel {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-surface-raised);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-modal);
+  padding: var(--space-5);
+  animation: buy-window-slide-up 0.2s ease;
+  border-top: 3px solid var(--color-primary-500);
+  box-sizing: border-box;
+}
+
+.buy-window__panel.is-sell {
+  border-top-color: var(--color-danger-600);
+}
+
+/* On wide screens this reads better as a centered modal than a bottom sheet */
+@media (min-width: 640px) {
+  .buy-window {
+    align-items: center;
+  }
+  .buy-window__panel {
+    border-radius: var(--radius-lg);
+  }
+}
+
+.buy-window__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.buy-window__header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+}
+
+.buy-window__close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: var(--space-1);
+}
+.buy-window__close:hover {
+  color: var(--text-primary);
+}
+
+.buy-window__name {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--space-4);
+}
+
+.buy-window__row {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.buy-window__field {
+  flex: 1;
+  /* FIXED — this is the actual root of the layout problem. A flex item
+     defaults to min-width:auto, which means it refuses to shrink below
+     its content's intrinsic width no matter what `flex: 1` says. A native
+     <input type="number"> has its own intrinsic width unrelated to this
+     column's width, so at narrower panel sizes the two fields fought each
+     other for space — overflow, squishing, or one field pushing past the
+     panel edge, depending on the browser. min-width: 0 lets the flex item
+     actually shrink to the row's real available space; width:100% +
+     box-sizing:border-box on the input (below) then makes the input fill
+     exactly that space, border included. */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.buy-window__field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.buy-window__field input:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+.buy-window__field input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Native number-input spinner arrows render inconsistently across
+   browsers (different width, sometimes pushing the digits themselves
+   off-center) — removed in favor of the explicit +/- stepper below, so
+   the field's usable width is fully predictable. */
+.buy-window__field input[type="number"]::-webkit-outer-spin-button,
+.buy-window__field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.buy-window__field input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ── Qty stepper ── */
+.buy-window__qty-control {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.buy-window__qty-control:focus-within {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+.buy-window__qty-control input {
+  min-width: 0;
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  text-align: center;
+  background: transparent;
+}
+.buy-window__qty-control input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.buy-window__step-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  border: none;
+  background: var(--color-gray-100);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.buy-window__step-btn:hover:not(:disabled) {
+  background: var(--color-primary-100);
+  color: var(--color-primary-500);
+}
+.buy-window__step-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Price field with a ₹ prefix, same bordered control treatment as Qty ── */
+.buy-window__price-control {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.buy-window__price-control input {
+  padding-left: 26px;
+}
+
+.buy-window__currency-prefix {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.buy-window__price-control:focus-within .buy-window__currency-prefix {
+  color: var(--color-primary-500);
+}
+
+.buy-window__product-toggle {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.buy-window__product-toggle button {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.buy-window__product-toggle button.is-active {
+  border-color: var(--color-primary-500);
+  color: var(--color-primary-500);
+  background: var(--color-primary-100);
+}
+
+.buy-window__product-toggle button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buy-window__summary {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
+  font-variant-numeric: tabular-nums;
+}
+
+.buy-window__funds {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.buy-window__error {
+  margin-top: var(--space-3);
+  color: var(--color-danger-600);
+  font-size: var(--font-size-xs);
+}
+
+.buy-window__success {
+  color: var(--color-success-600);
+  font-weight: 600;
+  text-align: center;
+  padding: var(--space-3) 0;
+}
+
+.buy-window__submit {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.buy-window__submit.is-buy {
+  background: var(--color-success-600);
+}
+.buy-window__submit.is-buy:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.buy-window__submit.is-sell {
+  background: var(--color-danger-600);
+}
+.buy-window__submit.is-sell:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.buy-window__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Very narrow panels (small phones): stack Qty/Price instead of forcing
+   them into a squeezed row — the fields stay fully usable rather than
+   just getting smaller and smaller. */
+@media (max-width: 360px) {
+  .buy-window__row {
+    flex-direction: column;
+  }
+}
+
+@keyframes buy-window-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes buy-window-slide-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================
+   BuyActionWindow.css
+   ------------------------------------------------------------
+   Order ticket bottom sheet / modal. Same design language as
+   StockDetailPanel: flat surfaces, one brand accent, semantic
+   green/rose for buy/sell — no gradients, no glow.
+
+   Every color here is a real semantic token from variables.css,
+   several of them purpose-built for this exact component:
+     --dialog-bg / --dialog-border / --dialog-shadow / --dialog-overlay
+     --button-success-bg / --button-danger-bg (+ -hover variants)
+     --tab-active / --tab-text-active   (used for the product toggle)
+   so this sheet automatically follows both the active brand theme
+   ([data-theme="navy"|"olive"|"charcoal"|"sand"]) and dark mode
+   ([data-mode="dark"]) with no local overrides needed.
+
+   One deliberate exception: button text on the buy/sell submit and
+   the Buy/Sell panel accent uses var(--white) directly rather than
+   --button-success-text/--button-danger-text. Those tokens resolve
+   through --text-inverse, which flips to near-black in dark mode —
+   correct for light interactive surfaces, wrong here since the
+   green/red fill stays a mid-tone saturated color in both modes and
+   needs white text regardless of mode.
+   ============================================================ */
+
+.buy-window {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.buy-window__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--dialog-overlay);
+  animation: buy-window-fade-in 0.15s ease;
+}
+
+.buy-window__panel {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--dialog-bg);
+  border: 1px solid var(--dialog-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--dialog-shadow);
+  padding: var(--space-5);
+  animation: buy-window-slide-up 0.2s ease;
+  border-top: 3px solid var(--success-fill);
+  box-sizing: border-box;
+}
+
+.buy-window__panel.is-sell {
+  border-top-color: var(--danger-fill);
+}
+
+/* On wide screens this reads better as a centered modal than a bottom sheet */
+@media (min-width: 640px) {
+  .buy-window {
+    align-items: center;
+  }
+  .buy-window__panel {
+    border-radius: var(--radius-lg);
+  }
+}
+
+.buy-window__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.buy-window__header h3 {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: var(--dialog-title);
+}
+
+.buy-window__close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--icon-secondary);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+.buy-window__close:hover {
+  color: var(--text-primary);
+  background: var(--surface-hover);
+}
+
+.buy-window__name {
+  color: var(--dialog-text);
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--space-4);
+}
+
+.buy-window__row {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.buy-window__field {
+  flex: 1;
+  /* A flex item's default min-width:auto stops it shrinking below its
+     content's intrinsic width, and a native <input type="number"> has
+     its own intrinsic width unrelated to this column — so at narrow
+     panel sizes Qty/Price would fight each other for space. min-width:0
+     lets the field actually shrink to the row's real available width;
+     width:100% + box-sizing:border-box on the input then fills exactly
+     that space, border included. */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.buy-window__field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  color: var(--input-text);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.buy-window__field input:focus {
+  outline: none;
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+.buy-window__field input:disabled {
+  cursor: not-allowed;
+}
+
+/* Native number-input spinner arrows render inconsistently across
+   browsers (different width, sometimes pushing the digits off-center)
+   — removed in favor of the explicit +/- stepper below, so the field's
+   usable width stays fully predictable. */
+.buy-window__field input[type="number"]::-webkit-outer-spin-button,
+.buy-window__field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.buy-window__field input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ── Qty stepper ── */
+.buy-window__qty-control {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.buy-window__qty-control:focus-within {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.buy-window__qty-control input {
+  min-width: 0;
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  text-align: center;
+  background: transparent;
+}
+.buy-window__qty-control input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.buy-window__step-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  border: none;
+  background: var(--surface-tertiary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.buy-window__step-btn:hover:not(:disabled) {
+  background: var(--tab-active);
+  color: var(--tab-text-active);
+}
+.buy-window__step-btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+/* ── Price field with a ₹ prefix, same bordered control treatment as Qty ── */
+.buy-window__price-control {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.buy-window__price-control input {
+  padding-left: 26px;
+}
+
+.buy-window__currency-prefix {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.buy-window__price-control:focus-within .buy-window__currency-prefix {
+  color: var(--brand-primary);
+}
+
+.buy-window__product-toggle {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.buy-window__product-toggle button {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--tab-border);
+  border-radius: var(--radius-sm);
+  background: var(--tab-bg);
+  color: var(--tab-text);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.buy-window__product-toggle button.is-active {
+  border-color: var(--brand-primary);
+  color: var(--tab-text-active);
+  background: var(--tab-active);
+}
+
+.buy-window__product-toggle button:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+.buy-window__summary {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-family: var(--font-family-display);
+  font-weight: 800;
+  color: var(--text-primary);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--divider-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.buy-window__funds {
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.buy-window__error {
+  margin-top: var(--space-3);
+  color: var(--danger-fill);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.buy-window__success {
+  color: var(--success-fill);
+  font-weight: 700;
+  text-align: center;
+  padding: var(--space-3) 0;
+}
+
+.buy-window__submit {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  /* var(--white) on purpose, not --button-success-text/-danger-text —
+     see file header note. */
+  color: var(--white);
+  cursor: pointer;
+  transition: filter var(--transition-fast);
+}
+
+.buy-window__submit.is-buy {
+  background: var(--button-success-bg);
+}
+.buy-window__submit.is-buy:hover:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+.buy-window__submit.is-sell {
+  background: var(--button-danger-bg);
+}
+.buy-window__submit.is-sell:hover:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+.buy-window__submit:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+/* Very narrow panels (small phones): stack Qty/Price instead of forcing
+   them into a squeezed row — the fields stay fully usable rather than
+   just getting smaller and smaller. */
+@media (max-width: 360px) {
+  .buy-window__row {
+    flex-direction: column;
+  }
+}
+
+@keyframes buy-window-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes buy-window-slide-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buy-window__backdrop,
+  .buy-window__panel,
+  .buy-window__close,
+  .buy-window__submit {
+    animation: none;
+    transition: none;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

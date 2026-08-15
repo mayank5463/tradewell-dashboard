@@ -1,0 +1,148 @@
+/* ============================================================
+   BOOKED P&L BOXES
+   Same visual family as .order-split/.order-volume (card padding,
+   section spacing) so it reads as one system, not a bolted-on widget.
+   ============================================================ */
+
+.booked-pnl-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: var(--space-5);
+}
+
+@media (max-width: 720px) {
+  .booked-pnl-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.booked-pnl-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  overflow: hidden;
+}
+
+/* Thin colored edge as a secondary signal alongside the text color —
+   keeps profit/loss legible even for colorblind users, since the label
+   and sign prefix ("+"/"−") carry the meaning independently. */
+.booked-pnl-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--border-primary);
+}
+
+.booked-pnl-card--profit::before {
+  background: var(--success-fill);
+}
+
+.booked-pnl-card--loss::before {
+  background: var(--danger-fill);
+}
+
+.booked-pnl-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.booked-pnl-card__label-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.booked-pnl-card__label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--text-secondary);
+}
+
+.booked-pnl-card__sublabel {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+/* Same digit font as Holdings/Positions/Orders (--font-family-mono) and
+   defaults to --text-numeric instead of --text-primary, so a flat (₹0)
+   booked P&L still renders crisp white in dark mode instead of off-white.
+   Profit/loss variants below still win on color. */
+.booked-pnl-card__value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-2xl, 1.75rem);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--text-numeric);
+  line-height: 1.15;
+}
+
+.booked-pnl-card--profit .booked-pnl-card__value {
+  color: var(--success-text);
+}
+
+.booked-pnl-card--loss .booked-pnl-card__value {
+  color: var(--danger-text);
+}
+
+/* ADDED flex: 1 — now that both cards can genuinely hit the empty state
+   (the all-time card previously never could, since isEmpty was hardcoded
+   false), the empty text needs to grow and fill the same vertical space
+   the value line would have taken. Without this, an empty all-time card
+   is visibly shorter than a populated one, and the two boxes no longer
+   line up edge-to-edge in the grid. */
+.booked-pnl-card__empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  padding: var(--space-2) 0;
+}
+
+.booked-pnl-card__selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+/* Pill labels (1D / 1W / 1M / …) are figures too; same digit font as the
+   value above so the whole card reads as one consistent ledger, not two
+   different typefaces stacked on top of each other. */
+.booked-pnl-card__pill {
+  appearance: none;
+  border: 1px solid var(--border-primary);
+  background: var(--surface-tertiary);
+  color: var(--text-secondary);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums lining-nums;
+  padding: 4px var(--space-3);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.booked-pnl-card__pill:hover {
+  background: var(--table-row-hover);
+  color: var(--text-primary);
+}
+
+.booked-pnl-card__pill:focus-visible {
+  outline: 2px solid var(--brand-primary, var(--text-primary));
+  outline-offset: 1px;
+}
+
+.booked-pnl-card__pill[aria-pressed="true"] {
+  background: var(--brand-primary, var(--text-primary));
+  border-color: var(--brand-primary, var(--text-primary));
+  color: var(--card-bg, #fff);
+}

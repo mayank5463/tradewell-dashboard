@@ -1,0 +1,355 @@
+/* ==========================================================
+   Holdings.css
+   Styles for src/components/.../Holdings/Holdings.jsx
+
+   FIXED — .holdings previously had no page-level padding at all, unlike
+   every sibling page (Funds/.funds-page, Orders/.orders-page,
+   Positions/.positions-page each set `padding: var(--space-5)`). That
+   missing padding is what made Holdings read as "stuck to the top-left"
+   of the routed content area — its header and cards started flush
+   against the edge of .app-shell__main instead of sitting inside the
+   same breathing room every other page has. Padding added below,
+   matching the exact pattern (and the 640px responsive step-down) used
+   everywhere else, so all four pages now line up.
+
+   UPDATED — digit values (Invested / Current Value) now read
+   --text-numeric instead of --text-primary, so they render pure white
+   in dark mode instead of the slightly off-white --gray-50 the rest of
+   the UI uses — same token every other page's figures use. Day's P&L /
+   Overall P&L keep their is-up/is-down colors untouched, since those
+   already carry the sign clearly.
+
+   Everything else below is unchanged from the original file — same
+   institutional-terminal design direction:
+
+   - No tinted "chip" backgrounds behind icons/numbers. Color is
+     reserved for one thing only — P&L sign — and nothing else
+     borrows it.
+   - Hairline 1px dividers instead of shadows/elevation.
+   - Numbers are the typography, not the labels.
+   - Sharper corners (radius-sm, not xl).
+   - No decorative motion — a single flat color wash on update,
+     the way an exchange ticker flashes.
+
+   Still 100% variables.css tokens, so every theme + data-mode
+   combination stays correct automatically.
+   ========================================================== */
+
+.holdings {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+@media (max-width: 640px) {
+  .holdings {
+    padding: var(--space-4);
+  }
+}
+
+/* Page header sits flush with the rest of the ledger-style
+   layout below it — no card, no border, just breathing room. */
+.holdings .page-header {
+  padding-bottom: var(--space-2);
+}
+
+/* ==========================================================
+   EMPTY STATE
+   Now driven by the shared .empty-state block in icons.css
+   (large muted PageIcon + title + subtitle) instead of a
+   bespoke dashed box, so Holdings/Positions/Orders read as one
+   consistent empty-state pattern app-wide.
+   ========================================================== */
+
+.holdings .empty-state {
+  border: 1px dashed var(--border-primary);
+  border-radius: var(--radius-sm);
+  background: var(--holdings-card, var(--card-bg));
+}
+
+/* ==========================================================
+   SUMMARY STRIP
+   One ruled row, divided by hairlines instead of four separate
+   floating cards — reads as a single ledger, not four widgets.
+   ========================================================== */
+
+.holdings__summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--holdings-border, var(--card-border));
+  border-radius: var(--radius-sm);
+  background: var(--holdings-card, var(--card-bg));
+  overflow: hidden;
+}
+
+@media (max-width: 992px) {
+  .holdings__summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .holdings__summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+.holdings-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--card-padding-md);
+  border-right: 1px solid var(--holdings-border, var(--card-border));
+  transition: background var(--transition-fast);
+}
+
+.holdings__summary > .holdings-stat:last-child {
+  border-right: none;
+}
+
+@media (max-width: 992px) {
+  .holdings-stat:nth-child(2n) {
+    border-right: none;
+  }
+  .holdings-stat:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--holdings-border, var(--card-border));
+  }
+}
+
+@media (max-width: 480px) {
+  .holdings-stat {
+    border-right: none;
+    border-bottom: 1px solid var(--holdings-border, var(--card-border));
+  }
+  .holdings__summary > .holdings-stat:last-child {
+    border-bottom: none;
+  }
+}
+
+.holdings-stat:hover {
+  background: var(--holdings-card-hover, var(--card-hover));
+}
+
+/* The icon in the JSX is dropped — a colored icon badge next to
+   every number is the single biggest tell of a templated finance
+   UI. The label + figure carry all the meaning on their own. */
+.holdings-stat__icon {
+  display: none;
+}
+
+.holdings-stat__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.holdings-stat__label {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+}
+
+/* UPDATED — font-family already read --font-family-mono (now the new
+   simple/standard numeral stack from variables.css); color switched
+   from --text-primary to --text-numeric so this figure goes pure white
+   in dark mode instead of off-white. */
+.holdings-stat__value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-numeric);
+  letter-spacing: var(--letter-spacing-tight);
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: var(--line-height-tight);
+}
+
+.holdings-stat__value.is-up {
+  color: var(--success-fill);
+}
+
+.holdings-stat__value.is-down {
+  color: var(--danger-fill);
+}
+
+.holdings-stat__pct {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums lining-nums;
+  opacity: var(--opacity-muted);
+}
+
+.holdings-stat__pct.is-up {
+  color: var(--success-fill);
+}
+
+.holdings-stat__pct.is-down {
+  color: var(--danger-fill);
+}
+
+@keyframes holdings-flash-up {
+  0% {
+    background: color-mix(in srgb, var(--success-fill) 14%, transparent);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+@keyframes holdings-flash-down {
+  0% {
+    background: color-mix(in srgb, var(--danger-fill) 14%, transparent);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+.holdings-stat--flash-up {
+  animation: holdings-flash-up 600ms ease-out;
+}
+
+.holdings-stat--flash-down {
+  animation: holdings-flash-down 600ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .holdings-stat--flash-up,
+  .holdings-stat--flash-down {
+    animation: none;
+  }
+}
+
+/* ==========================================================
+   CHART CARD
+   ========================================================== */
+
+.holdings__chart {
+  padding: var(--card-padding-lg);
+  background: var(--holdings-card, var(--card-bg));
+  border: 1px solid var(--holdings-border, var(--card-border));
+  border-radius: var(--radius-sm);
+}
+
+.holdings__chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--holdings-border, var(--card-border));
+}
+
+.holdings__chart-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.holdings__chart-title svg {
+  color: var(--text-muted);
+}
+
+.holdings__chart-count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.holdings__live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-round);
+  background: var(--success-fill);
+}
+
+.holdings__chart .recharts-cartesian-axis-tick-value {
+  fill: var(--chart-label);
+  font-family: var(--font-family-mono);
+}
+
+.holdings__chart .recharts-cartesian-axis-tick-value tspan {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.holdings__chart .recharts-surface {
+  overflow: visible;
+}
+
+/* ==========================================================
+   TOOLTIP
+   ========================================================== */
+
+.holdings-tooltip {
+  min-width: 176px;
+  padding: var(--space-4);
+  background: var(--chart-tooltip-bg);
+  border: 1px solid var(--chart-tooltip-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.holdings-tooltip__symbol {
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--chart-tooltip-border);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--chart-tooltip-text);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.holdings-tooltip__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: 3px 0;
+  font-size: var(--font-size-2xs);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.holdings-tooltip__row strong {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
+  color: var(--chart-tooltip-text);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: var(--letter-spacing-normal);
+  text-transform: none;
+}
+
+.holdings-tooltip__row.is-up strong {
+  color: var(--success-fill);
+}
+
+.holdings-tooltip__row.is-down strong {
+  color: var(--danger-fill);
+}
+
+
+
+.page-header__subtitle {
+  color: var(--text-muted);
+}

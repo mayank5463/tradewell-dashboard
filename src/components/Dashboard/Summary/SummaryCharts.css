@@ -1,0 +1,15 @@
+/* ============================================================
+   NEW — .summary__section
+   Wraps Trade Performance / Trading Analytics with a
+   .section-heading (icon + title, from styles/icons.css) so
+   both blocks are labeled instead of appearing as unlabeled
+   floating content, matching the header pattern used on
+   Holdings/Positions/Orders/Funds.
+   ============================================================ */
+
+.summary__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}

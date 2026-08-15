@@ -1,0 +1,201 @@
+/* ==========================================================
+   TopBar.css
+   Layout shell for the three stacked rows: NavBar, MarqueeStrip,
+   and this file's own search row (tagline + search + AI CTA).
+   ========================================================== */
+
+.topbar-shell {
+  /* flex-shrink: 0 is the important addition here - this sits as the
+     first child inside .app-shell (display:flex; flex-direction:column;
+     height:100vh). Without this, if the combined height of NavBar +
+     MarqueeStrip + the search row ever exceeds available space, flexbox
+     is allowed to shrink this element to make room for .app-shell__body's
+     flex:1 - silently squashing your header. flex-shrink:0 guarantees
+     TopBar always renders at its full natural height, and
+     .app-shell__body (see Home.css) takes whatever's left instead. */
+  flex-shrink: 0;
+
+  /* position:sticky no longer needed for scroll-pinning purposes - Home.css
+     now makes .app-shell a fixed-height, non-scrolling viewport box, so
+     TopBar is always visible without needing to "stick" to anything.
+     Left in place as a harmless no-op in case that changes later. */
+  position: sticky;
+  top: 0;
+  z-index: var(--z-topbar);
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--topbar-bg);
+  box-shadow: var(--topbar-shadow);
+  font-family: var(--font-family-base);
+}
+
+/* ==========================================================
+   SEARCH ROW
+========================================================== */
+
+.topbar-shell__search-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--topbar-height);
+  padding: var(--space-3) var(--navbar-horizontal-padding);
+  border-bottom: 1px solid var(--topbar-border);
+}
+
+.topbar-shell__tagline {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--topbar-subtitle);
+  letter-spacing: var(--letter-spacing-wide);
+  white-space: nowrap;
+}
+
+.topbar-shell__search-slot {
+  flex: 1;
+  min-width: 0;
+  max-width: var(--topbar-search-width);
+  margin: 0 auto;
+}
+
+/* ==========================================================
+   AI CTA
+========================================================== */
+
+.topbar-shell__ai-cta.MuiButton-root {
+  flex-shrink: 0;
+  height: var(--topbar-button-height);
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-round);
+  text-transform: none;
+
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-normal);
+  white-space: nowrap;
+
+  color: var(--topbar-ai-button-text);
+  background: linear-gradient(
+    135deg,
+    var(--ai-icon, var(--brand-primary)) 0%,
+    var(--topbar-ai-button-bg) 100%
+  );
+  box-shadow: 0 8px 20px -8px rgba(124, 108, 240, 0.55);
+
+  transition:
+    box-shadow var(--transition-normal),
+    transform var(--transition-fast);
+}
+
+.topbar-shell__ai-cta.MuiButton-root:hover {
+  box-shadow: 0 12px 28px -8px rgba(124, 108, 240, 0.7);
+  transform: translateY(-1px);
+}
+
+.topbar-shell__ai-cta.MuiButton-root:active {
+  transform: translateY(0);
+}
+
+.topbar-shell__ai-cta .MuiButton-startIcon svg {
+  font-size: 16px;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 1200px) {
+  .topbar-shell__tagline {
+    display: none;
+  }
+}
+
+@media (max-width: 992px) {
+  .topbar-shell__search-row {
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-5);
+  }
+
+  .topbar-shell__ai-cta.MuiButton-root {
+    padding: 0 var(--space-4);
+  }
+
+  .topbar-shell__ai-cta.MuiButton-root .MuiButton-startIcon + span,
+  .topbar-shell__ai-cta.MuiButton-root {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 768px) {
+  .topbar-shell__search-row {
+    flex-wrap: wrap;
+  }
+
+  .topbar-shell__search-slot {
+    order: 3;
+    max-width: none;
+    flex-basis: 100%;
+  }
+
+  .topbar-shell__ai-cta.MuiButton-root {
+    order: 2;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar-shell__ai-cta.MuiButton-root {
+    max-width: 44px;
+    padding: 0 var(--space-3);
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+  }
+}
+
+/* ==========================================================
+   ACCESSIBILITY / PRINT
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar-shell__ai-cta.MuiButton-root {
+    transition: none !important;
+  }
+}
+
+@media print {
+  .topbar-shell__ai-cta,
+  .topbar-shell__search-slot {
+    display: none;
+  }
+}
+
+
+.topbar-shell__hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--icon-primary);
+  font-size: 18px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.topbar-shell__hamburger:hover {
+  background: var(--surface-hover);
+}
+
+@media (max-width: 1024px) {
+  .topbar-shell__hamburger {
+    display: inline-flex;
+  }
+}

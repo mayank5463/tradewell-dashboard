@@ -1,0 +1,97 @@
+/* ==========================================================
+   STOCK LOGO - Consistent Display
+   ========================================================== */
+
+/* Ensure logos are properly centered and sized */
+.stock-logo-container {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.stock-logo-image {
+  border-radius: 50%;
+  object-fit: contain;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-primary);
+  transition: all var(--transition-fast);
+}
+
+.stock-logo-image:hover {
+  border-color: var(--border-hover);
+  transform: scale(1.05);
+}
+
+.stock-logo-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--surface-tertiary);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  flex-shrink: 0;
+  user-select: none;
+  pointer-events: none;
+  transition: all var(--transition-fast);
+}
+
+/* Dark mode adjustments */
+[data-mode="dark"] .stock-logo-image {
+  background: var(--surface-secondary);
+  border-color: var(--border-primary);
+}
+
+[data-mode="dark"] .stock-logo-initials {
+  background: var(--surface-secondary);
+  color: var(--text-tertiary);
+  border-color: var(--border-primary);
+}
+
+[data-mode="dark"] .stock-logo-image:hover {
+  border-color: var(--border-hover);
+}
+
+/* Theme variations */
+[data-theme="navy"] .stock-logo-initials {
+  background: var(--navy-100);
+  color: var(--navy-700);
+}
+
+[data-theme="olive"] .stock-logo-initials {
+  background: var(--olive-100);
+  color: var(--olive-700);
+}
+
+[data-theme="charcoal"] .stock-logo-initials {
+  background: var(--charcoal-100);
+  color: var(--charcoal-700);
+}
+
+[data-theme="sand"] .stock-logo-initials {
+  background: var(--sand-100);
+  color: var(--sand-700);
+}
+
+[data-mode="dark"][data-theme="navy"] .stock-logo-initials {
+  background: var(--navy-900);
+  color: var(--navy-300);
+}
+
+[data-mode="dark"][data-theme="olive"] .stock-logo-initials {
+  background: var(--olive-900);
+  color: var(--olive-300);
+}
+
+[data-mode="dark"][data-theme="charcoal"] .stock-logo-initials {
+  background: var(--charcoal-900);
+  color: var(--charcoal-300);
+}
+
+[data-mode="dark"][data-theme="sand"] .stock-logo-initials {
+  background: var(--sand-900);
+  color: var(--sand-300);
+}

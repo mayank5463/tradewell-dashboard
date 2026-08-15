@@ -1,0 +1,1847 @@
+/* ============================================================
+   StockDetailPanel.css — premium edition
+   ------------------------------------------------------------
+   Design direction: quiet, confident fintech. A near-navy ink
+   for text and headers, a single indigo brand accent used
+   sparingly, and semantic green/rose for gains & losses that
+   stay out of the brand's way. Cards are white on a soft cool-
+   grey canvas with restrained shadows — depth from elevation,
+   not from color noise.
+
+   Still reads from the app's shared design tokens first
+   (--text-primary, --border-default, --color-primary-500,
+   --space-*, etc). Local --sd-* tokens below fill in anything
+   this page needs that the shared system doesn't define, and
+   also set the premium fallback values so the page looks
+   intentional even if the shared tokens aren't present yet.
+   ============================================================ */
+
+.stock-detail {
+  --sd-ink: var(--text-primary, #0b1220);
+  --sd-ink-soft: var(--text-secondary, #5b6472);
+  --sd-canvas: var(--bg-page, #f4f6fb);
+  --sd-surface: var(--bg-surface, #ffffff);
+  --sd-border: var(--border-default, #e7e9f3);
+  --sd-border-soft: var(--color-gray-100, #eef0f7);
+
+  --sd-brand: var(--color-primary-500, #3d4fe0);
+  --sd-brand-ink: #232f8f;
+  --sd-brand-tint: var(--color-blue-50, #eef0fe);
+  --sd-brand-tint-border: var(--color-blue-100, #dfe3fb);
+
+  --sd-up: #0f9d58;
+  --sd-up-tint: #eafbf2;
+  --sd-up-border: #cdf2df;
+  --sd-down: #e11d48;
+  --sd-down-tint: #fdeef1;
+  --sd-down-border: #fad3dd;
+
+  --sd-gold: #b8892b;
+  --sd-gold-tint: #fbf3e2;
+
+  --sd-radius-lg: 18px;
+  --sd-radius-md: var(--radius-md, 12px);
+  --sd-radius-sm: 8px;
+  --sd-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.10);
+  --sd-shadow-card-hover: 0 4px 10px rgba(15, 23, 42, 0.06), 0 16px 32px -14px rgba(15, 23, 42, 0.16);
+
+  max-width: 920px;
+  margin: 0 auto;
+  padding: var(--space-5, 28px) var(--space-4, 18px) 72px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  color: var(--sd-ink);
+  background: var(--sd-canvas);
+}
+
+/* ── Loading / error message state ── */
+.stock-detail--message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 320px;
+  text-align: center;
+  color: var(--sd-ink-soft);
+  font-size: var(--font-size-sm, 13.5px);
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.stock-detail__spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--sd-brand-tint);
+  border-top-color: var(--sd-brand);
+  border-right-color: var(--sd-brand);
+  border-radius: 50%;
+  animation: stock-detail-spin 0.7s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+}
+
+@keyframes stock-detail-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Header: logo + identity (left) / price (right) ── */
+.stock-detail__header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 26px;
+  margin-bottom: 22px;
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  box-shadow: var(--sd-shadow-card);
+  overflow: hidden;
+  flex-wrap: wrap;
+}
+
+/* faint brand wash in the corner — the one place color gets to be generous */
+.stock-detail__header::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sd-brand-tint) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.stock-detail__identity {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* ── Logo — real image if available, otherwise a clean initials badge ── */
+.stock-detail__logo-img,
+.stock-detail__logo-fallback {
+  width: 58px;
+  height: 58px;
+  border-radius: 15px;
+  flex-shrink: 0;
+}
+
+.stock-detail__logo-img {
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid var(--sd-border);
+  padding: 7px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.stock-detail__logo-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(150deg, var(--sd-brand) 0%, var(--sd-brand-ink) 100%);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 6px 16px -6px rgba(61, 79, 224, 0.55);
+}
+
+.stock-detail__title-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.stock-detail__title-row h2 {
+  font-size: 23px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.1px;
+  color: var(--sd-ink);
+}
+
+.stock-detail__watch-toggle {
+  border: none;
+  background: none;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  color: #c7cbdb;
+  transition: color 0.15s ease, transform 0.12s ease;
+  padding: 2px;
+  margin-top: -1px;
+}
+
+.stock-detail__watch-toggle:hover {
+  color: var(--sd-gold);
+}
+
+.stock-detail__watch-toggle.is-active {
+  color: var(--sd-gold);
+}
+
+.stock-detail__watch-toggle:active {
+  transform: scale(0.85);
+}
+
+.stock-detail__name {
+  margin: 4px 0 8px;
+  font-size: 14px;
+  color: var(--sd-ink-soft);
+  font-weight: 500;
+}
+
+.stock-detail__industry-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--sd-brand-ink);
+  background: var(--sd-brand-tint);
+  border: 1px solid var(--sd-brand-tint-border);
+  border-radius: 999px;
+  padding: 4px 11px;
+}
+
+/* ── Price block ── */
+.stock-detail__price {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.stock-detail__ltp {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  font-variant-numeric: tabular-nums;
+  color: var(--sd-ink);
+  transition: color 0.3s ease;
+}
+
+/* usePriceFlash toggles a class like .flash-up/.flash-down on tick */
+.stock-detail__ltp.flash-up { color: var(--sd-up); }
+.stock-detail__ltp.flash-down { color: var(--sd-down); }
+
+.stock-detail__change-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-detail__change-pill.is-up {
+  color: var(--sd-up);
+  background: var(--sd-up-tint);
+  border: 1px solid var(--sd-up-border);
+}
+
+.stock-detail__change-pill.is-down {
+  color: var(--sd-down);
+  background: var(--sd-down-tint);
+  border: 1px solid var(--sd-down-border);
+}
+
+/* ── Buy / Sell actions ── */
+.stock-detail__actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stock-detail__btn {
+  flex: 1;
+  max-width: 220px;
+  padding: 13px 20px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.stock-detail__btn:hover {
+  filter: brightness(1.05);
+}
+
+.stock-detail__btn:active {
+  transform: scale(0.98);
+}
+
+.stock-detail__btn--buy {
+  background: linear-gradient(155deg, #12b56e 0%, var(--sd-up) 100%);
+  color: #fff;
+  box-shadow: 0 10px 20px -10px rgba(15, 157, 88, 0.6);
+}
+
+.stock-detail__btn--sell {
+  background: linear-gradient(155deg, #f0355e 0%, var(--sd-down) 100%);
+  color: #fff;
+  box-shadow: 0 10px 20px -10px rgba(225, 29, 72, 0.55);
+}
+
+/* ── Holding banner ── */
+.stock-detail__holding-row {
+  display: flex;
+  justify-content: space-between;
+  background: var(--sd-brand-tint);
+  border: 1px solid var(--sd-brand-tint-border);
+  border-radius: var(--sd-radius-md);
+  padding: 12px 18px;
+  font-size: 13.5px;
+  color: var(--sd-brand-ink);
+  margin-bottom: 26px;
+}
+
+.stock-detail__holding-row strong {
+  color: var(--sd-ink);
+}
+
+/* ── Chart card ── */
+.stock-detail__chart-card {
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  padding: 22px;
+  margin-bottom: 34px;
+  box-shadow: var(--sd-shadow-card);
+}
+
+/* ── Section titles ── */
+.stock-detail__section-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-size: 15.5px;
+  font-weight: 800;
+  letter-spacing: 0.1px;
+  margin: 0 0 16px;
+  padding-left: 12px;
+  color: var(--sd-ink);
+}
+
+.stock-detail__section-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1px;
+  bottom: 1px;
+  width: 4px;
+  border-radius: 4px;
+  background: var(--sd-brand);
+}
+
+/* ── Today's stats / Fundamentals — blue-shaded cards ── */
+.stock-detail__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 34px;
+}
+
+.stock-detail__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: linear-gradient(165deg, var(--sd-brand-tint) 0%, var(--sd-surface) 100%);
+  border: 1px solid var(--sd-brand-tint-border);
+  border-radius: 13px;
+  padding: 14px 16px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.stock-detail__stat:hover {
+  box-shadow: 0 10px 22px -12px rgba(61, 79, 224, 0.35);
+  transform: translateY(-2px);
+  border-color: var(--sd-brand-tint-border);
+}
+
+.stock-detail__stat span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7bb8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stock-detail__stat strong {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--sd-brand-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-detail__stat strong.stock-detail__stat--small,
+.stock-detail__stat strong .stock-detail__stat--small {
+  font-size: 12.5px;
+  letter-spacing: 0.2px;
+  font-variant-numeric: normal;
+}
+
+/* ── Company overview grid ── */
+.stock-detail__overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 32px;
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  padding: 8px 22px;
+  margin-bottom: 30px;
+  background: var(--sd-surface);
+  box-shadow: var(--sd-shadow-card);
+}
+
+.stock-detail__overview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--sd-border-soft);
+  font-size: 13.5px;
+}
+
+.stock-detail__overview-row:nth-last-child(-n+1) {
+  border-bottom: none;
+}
+
+.stock-detail__overview-label {
+  color: var(--sd-ink-soft);
+  font-weight: 500;
+}
+
+.stock-detail__overview-value {
+  font-weight: 700;
+  color: var(--sd-ink);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.stock-detail__overview-link {
+  color: var(--sd-brand);
+  text-decoration: none;
+}
+
+.stock-detail__overview-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Analyst recommendation ── */
+.stock-detail__reco-card {
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  padding: 22px 24px;
+  margin-bottom: 30px;
+  box-shadow: var(--sd-shadow-card);
+}
+
+.stock-detail__reco-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--sd-border-soft);
+}
+
+.stock-detail__reco-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  box-shadow: 0 6px 14px -6px rgba(15, 23, 42, 0.35);
+}
+
+.stock-detail__reco-count {
+  font-size: 13px;
+  color: var(--sd-ink-soft);
+  font-weight: 500;
+}
+
+.stock-detail__reco-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stock-detail__reco-row {
+  display: grid;
+  grid-template-columns: 96px 1fr 30px;
+  align-items: center;
+  gap: 12px;
+}
+
+.stock-detail__reco-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--sd-ink-soft);
+}
+
+.stock-detail__reco-bar {
+  height: 9px;
+  border-radius: 999px;
+  background: var(--sd-border-soft);
+  overflow: hidden;
+}
+
+.stock-detail__reco-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.stock-detail__reco-value {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--sd-ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Shareholding pattern ── */
+.stock-detail__shareholding {
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  padding: 22px 24px;
+  margin-bottom: 30px;
+  box-shadow: var(--sd-shadow-card);
+}
+
+.stock-detail__shareholding-bar {
+  display: flex;
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--sd-border-soft);
+  margin-bottom: 16px;
+}
+
+.stock-detail__shareholding-segment {
+  height: 100%;
+  transition: filter 0.15s ease;
+}
+
+.stock-detail__shareholding-segment:hover {
+  filter: brightness(1.08);
+}
+
+.stock-detail__shareholding-segment + .stock-detail__shareholding-segment {
+  border-left: 2px solid var(--sd-surface);
+}
+
+.stock-detail__shareholding-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+}
+
+.stock-detail__shareholding-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sd-ink-soft);
+}
+
+.stock-detail__shareholding-legend-item i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ── Risk meter ── */
+.stock-detail__risk-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--sd-gold-tint);
+  border: 1px solid #f0dfb4;
+  border-radius: var(--sd-radius-md);
+  padding: 13px 18px;
+  font-size: 13.5px;
+  color: #7a5a15;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+
+.stock-detail__risk-badge strong {
+  color: #5c4310;
+  font-weight: 800;
+}
+
+.stock-detail__risk-stddev {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: #9a7a2e;
+  font-variant-numeric: tabular-nums;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+/* ── Management ── */
+.stock-detail__officers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 30px;
+  counter-reset: officer-rank;
+}
+
+.stock-detail__officer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-md);
+  padding: 14px 16px 14px 46px;
+  counter-increment: officer-rank;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.stock-detail__officer:hover {
+  box-shadow: var(--sd-shadow-card-hover);
+  transform: translateY(-1px);
+}
+
+.stock-detail__officer::before {
+  content: counter(officer-rank);
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--sd-brand-tint);
+  color: var(--sd-brand-ink);
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stock-detail__officer-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--sd-ink);
+}
+
+.stock-detail__officer-title {
+  font-size: 12px;
+  color: var(--sd-ink-soft);
+}
+
+/* ── About section ── */
+.stock-detail__about {
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-lg);
+  padding: 22px 24px;
+  margin-bottom: 30px;
+  box-shadow: var(--sd-shadow-card);
+}
+
+.stock-detail__about h4 {
+  margin: 0 0 10px;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--sd-ink);
+}
+
+.stock-detail__about p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--sd-ink-soft);
+}
+
+.stock-detail__about--muted {
+  border: 1px dashed var(--sd-border);
+  color: #9aa1b2;
+  text-align: center;
+  font-size: 13px;
+  padding: 26px;
+  box-shadow: none;
+}
+
+/* ── Recent news ── */
+.stock-detail__news {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.stock-detail__news-item {
+  display: flex;
+  gap: 12px;
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-border);
+  border-radius: var(--sd-radius-md);
+  padding: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.stock-detail__news-item:hover {
+  box-shadow: var(--sd-shadow-card-hover);
+  transform: translateY(-1px);
+  border-color: var(--sd-brand-tint-border);
+}
+
+.stock-detail__news-item img {
+  width: 68px;
+  height: 68px;
+  border-radius: 9px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--sd-border-soft);
+}
+
+.stock-detail__news-headline {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--sd-ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.stock-detail__news-date {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--sd-ink-soft);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 720px) {
+  .stock-detail__stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stock-detail__overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stock-detail__officers,
+  .stock-detail__news {
+    grid-template-columns: 1fr;
+  }
+
+  .stock-detail__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stock-detail__price {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .stock-detail__reco-row {
+    grid-template-columns: 80px 1fr 26px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stock-detail {
+    padding: var(--space-4, 16px) var(--space-3, 12px) 48px;
+  }
+
+  .stock-detail__header {
+    padding: 18px;
+  }
+
+  .stock-detail__stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .stock-detail__logo-img,
+  .stock-detail__logo-fallback {
+    width: 46px;
+    height: 46px;
+    border-radius: 11px;
+  }
+
+  .stock-detail__ltp {
+    font-size: 26px;
+  }
+
+  .stock-detail__actions {
+    flex-direction: column;
+  }
+
+  .stock-detail__btn {
+    max-width: 100%;
+  }
+
+  .stock-detail__risk-stddev {
+    margin-left: 0;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+jsxxx
+
+
+
+
+
+
+
+
+// import { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useGeneralContext } from "../Trade/GeneralContext";
+// import { fetchCompany, selectCompanyProfile, selectCompanyProfileStatus } from "../../redux/slices/companyProfileSlice";
+// import { addStockToList, removeStockFromList } from "../../redux/slices/watchlistSlice";
+// import { usePriceFlash } from "../../hooks/usePriceFlash";
+// import { useStockQuote } from "../../hooks/useStockQuote";
+// import StockChart from "./StockChart";
+// import "./StockDetailPanel.css";
+
+// function formatCurrency(n) {
+//   if (n == null) return "—";
+//   return `₹${Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+// }
+
+// function formatLargeNumber(n) {
+//   if (n == null) return "—";
+//   const num = Number(n);
+//   if (num >= 1e7) return `₹${(num / 1e7).toFixed(2)} Cr`;
+//   if (num >= 1e5) return `₹${(num / 1e5).toFixed(2)} L`;
+//   return formatCurrency(num);
+// }
+
+// function formatNumber(n, suffix = "") {
+//   if (n == null) return "—";
+//   return `${Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 })}${suffix}`;
+// }
+
+// // Company logo — tries a real image if the profile has one (field name is
+// // a guess: IndianAPI's exact key hasn't been confirmed yet, same caveat as
+// // keyMetrics below), and falls back to a clean initials avatar if there's
+// // no logo URL or the image fails to load. This guarantees something
+// // professional-looking renders either way, never a broken image icon.
+// function CompanyLogo({ symbol, name }) {
+//   const [imgFailed, setImgFailed] = useState(false);
+//   const profile = useSelector((state) => selectCompanyProfile(state, symbol));
+//   const logoUrl = profile?.logoUrl || profile?.logo || profile?.icon || null;
+//   const initials = (name || symbol || "?").replace(/[^A-Za-z]/g, "").slice(0, 2).toUpperCase() || "?";
+
+//   if (logoUrl && !imgFailed) {
+//     return (
+//       <img
+//         src={logoUrl}
+//         alt={`${name || symbol} logo`}
+//         className="stock-detail__logo-img"
+//         onError={() => setImgFailed(true)}
+//       />
+//     );
+//   }
+
+//   return (
+//     <div className="stock-detail__logo-fallback" aria-hidden="true">
+//       {initials}
+//     </div>
+//   );
+// }
+
+// // FIXED — this component was declared as StockDetailPanel({ symbol }), but
+// // the route in index.js is <Route path="stock/:symbol" element={<StockDetailPanel />} />
+// // with no prop passed. React Router doesn't hand URL params to a component
+// // as props automatically — `symbol` was always undefined, so `stock` never
+// // matched anything and the component sat on "Loading…" forever. Pull it
+// // from the URL directly with useParams() instead.
+// export default function StockDetailPanel() {
+//   const { symbol } = useParams();
+//   const dispatch = useDispatch();
+//   const { openBuyWindow, openSellWindow } = useGeneralContext();
+
+//   // FIXED — previously read from state.market.stocks, which only stays
+//   // warm while Summary.jsx's useMarketPolling() is mounted. Since this is
+//   // a sibling route (not nested under /dashboard), that polling stops the
+//   // moment you navigate here, and a direct link/refresh finds it empty.
+//   // useStockQuote is self-contained: it fetches + polls GET
+//   // /market/quote/:symbol on its own regardless of dashboard state.
+//   const { quote: stock, status: quoteStatus } = useStockQuote(symbol);
+//   const flashClass = usePriceFlash(stock?.ltp);
+
+//   // Company fundamentals — IndianAPI, cached 24h server-side, fetched once
+//   // per symbol per session client-side (companyProfileSlice's byKey cache).
+//   const profile = useSelector((state) => selectCompanyProfile(state, symbol));
+//   const profileStatus = useSelector((state) => selectCompanyProfileStatus(state, symbol));
+
+//   const holding = useSelector((state) => state.holdings.list.find((h) => h.symbol === symbol));
+
+//   const watchlist = useSelector((state) => state.watchlist);
+//   const activeList = watchlist.lists.find((l) => l.id === watchlist.activeListId);
+//   const isWatched = activeList?.stocks.includes(symbol) ?? false;
+
+//   useEffect(() => {
+//     if (symbol && profileStatus === "idle") {
+//       dispatch(fetchCompany({ symbol }));
+//     }
+//   }, [symbol, profileStatus, dispatch]);
+
+//   if (!symbol) {
+//     return <div className="stock-detail">No stock selected.</div>;
+//   }
+
+//   if (!stock) {
+//     if (quoteStatus === "failed") {
+//       return (
+//         <div className="stock-detail stock-detail--message">
+//           <p>Couldn't load live data for {symbol} right now — market may be closed, or the symbol isn't watched.</p>
+//         </div>
+//       );
+//     }
+//     return (
+//       <div className="stock-detail stock-detail--message">
+//         <div className="stock-detail__spinner" />
+//         <p>Loading {symbol}…</p>
+//       </div>
+//     );
+//   }
+
+//   const toggleWatch = () => {
+//     if (!activeList) return;
+//     dispatch(
+//       isWatched
+//         ? removeStockFromList({ listId: activeList.id, symbol })
+//         : addStockToList({ listId: activeList.id, symbol }),
+//     );
+//   };
+
+//   const isUp = (stock.dayChangePercent ?? 0) >= 0;
+
+//   // SPECULATIVE field names below (peRatio/pbRatio/dividendYield/bookValue/
+//   // faceValue/sector/website/listingDate/isin) — same caveat as the
+//   // existing keyMetrics comment: IndianAPI's exact response shape hasn't
+//   // been confirmed against a logged sample yet. Everything here degrades
+//   // gracefully to "—" if the field doesn't exist, so nothing breaks; swap
+//   // in the real paths once you've inspected an actual profile payload.
+//   const overviewFields = [
+//     { label: "Sector", value: profile?.sector ?? "—" },
+//     { label: "P/E Ratio", value: formatNumber(profile?.peRatio ?? profile?.keyMetrics?.pe) },
+//     { label: "P/B Ratio", value: formatNumber(profile?.pbRatio) },
+//     { label: "Dividend Yield", value: profile?.dividendYield != null ? `${profile.dividendYield}%` : "—" },
+//     { label: "Book Value", value: formatCurrency(profile?.bookValue) },
+//     { label: "Face Value", value: formatCurrency(profile?.faceValue) },
+//     { label: "ISIN", value: profile?.isin ?? "—" },
+//     { label: "Listed Since", value: profile?.listingDate ?? "—" },
+//   ];
+
+//   return (
+//     <div className="stock-detail">
+//       {/* ── Header: logo + name + industry + watch toggle, price on the right ── */}
+//       <div className="stock-detail__header">
+//         <div className="stock-detail__identity">
+//           <CompanyLogo symbol={symbol} name={stock.name || profile?.name} />
+
+//           <div>
+//             <div className="stock-detail__title-row">
+//               <h2>{symbol}</h2>
+//               <button
+//                 type="button"
+//                 className={`stock-detail__watch-toggle ${isWatched ? "is-active" : ""}`}
+//                 onClick={toggleWatch}
+//                 aria-label={isWatched ? "Remove from watchlist" : "Add to watchlist"}
+//               >
+//                 {isWatched ? "★" : "☆"}
+//               </button>
+//             </div>
+//             <p className="stock-detail__name">{stock.name || profile?.name || symbol}</p>
+//             {profile?.industry && <span className="stock-detail__industry-badge">{profile.industry}</span>}
+//           </div>
+//         </div>
+
+//         <div className="stock-detail__price">
+//           <span className={`stock-detail__ltp ${flashClass}`}>{formatCurrency(stock.ltp)}</span>
+//           <span className={`stock-detail__change-pill ${isUp ? "is-up" : "is-down"}`}>
+//             {isUp ? "▲" : "▼"} {isUp ? "+" : ""}
+//             {stock.dayChangePercent?.toFixed(2)}%
+//           </span>
+//         </div>
+//       </div>
+
+//       {/* ── Buy / Sell ── */}
+//       <div className="stock-detail__actions">
+//         <button className="stock-detail__btn stock-detail__btn--buy" onClick={() => openBuyWindow(stock)}>
+//           Buy
+//         </button>
+//         <button className="stock-detail__btn stock-detail__btn--sell" onClick={() => openSellWindow(stock)}>
+//           Sell
+//         </button>
+//       </div>
+
+//       {holding && (
+//         <div className="stock-detail__holding-row">
+//           <span>You hold <strong>{holding.qty}</strong> shares</span>
+//           <span>Avg. <strong>{formatCurrency(holding.avgPrice)}</strong></span>
+//         </div>
+//       )}
+
+//       {/* ── Chart ── */}
+//       <div className="stock-detail__chart-card">
+//         <StockChart symbol={symbol} />
+//       </div>
+
+//       {/* ── Today's stats — blue-accented cards ── */}
+//       <h3 className="stock-detail__section-title">Today's Trading</h3>
+//       <div className="stock-detail__stats-grid">
+//         <div className="stock-detail__stat">
+//           <span>Open</span>
+//           <strong>{formatCurrency(stock.open)}</strong>
+//         </div>
+//         <div className="stock-detail__stat">
+//           <span>Prev. Close</span>
+//           <strong>{formatCurrency(stock.prevClose)}</strong>
+//         </div>
+//         <div className="stock-detail__stat">
+//           <span>Day High</span>
+//           <strong>{formatCurrency(stock.high)}</strong>
+//         </div>
+//         <div className="stock-detail__stat">
+//           <span>Day Low</span>
+//           <strong>{formatCurrency(stock.low)}</strong>
+//         </div>
+//         <div className="stock-detail__stat">
+//           <span>52W High</span>
+//           <strong>{formatCurrency(profile?.high52w)}</strong>
+//         </div>
+//         <div className="stock-detail__stat">
+//           <span>52W Low</span>
+//           <strong>{formatCurrency(profile?.low52w)}</strong>
+//         </div>
+//         <div className="stock-detail__stat">
+//           <span>Volume</span>
+//           <strong>{stock.volume?.toLocaleString("en-IN") ?? "—"}</strong>
+//         </div>
+//         <div className="stock-detail__stat">
+//           <span>Market Cap</span>
+//           <strong>{profile?.marketCap ? formatLargeNumber(profile.marketCap) : "—"}</strong>
+//         </div>
+//       </div>
+
+//       {/* ── Company overview — expanded fundamentals ── */}
+//       <h3 className="stock-detail__section-title">Company Overview</h3>
+//       <div className="stock-detail__overview-grid">
+//         {overviewFields.map((f) => (
+//           <div className="stock-detail__overview-row" key={f.label}>
+//             <span className="stock-detail__overview-label">{f.label}</span>
+//             <span className="stock-detail__overview-value">{f.value}</span>
+//           </div>
+//         ))}
+//         {profile?.website && (
+//           <div className="stock-detail__overview-row">
+//             <span className="stock-detail__overview-label">Website</span>
+//             <a
+//               className="stock-detail__overview-value stock-detail__overview-link"
+//               href={profile.website}
+//               target="_blank"
+//               rel="noreferrer"
+//             >
+//               {profile.website.replace(/^https?:\/\//, "")}
+//             </a>
+//           </div>
+//         )}
+//       </div>
+
+//       {profileStatus === "loading" && !profile && (
+//         <p className="stock-detail__about stock-detail__about--muted">Loading company details…</p>
+//       )}
+
+//       {profileStatus === "failed" && !profile && (
+//         <p className="stock-detail__about stock-detail__about--muted">
+//           Couldn't load company details for {symbol} right now.
+//         </p>
+//       )}
+
+//       {profile?.about && (
+//         <div className="stock-detail__about">
+//           <h4>About {profile.name || symbol}</h4>
+//           <p>{profile.about}</p>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+
+
+
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useGeneralContext } from "../Trade/GeneralContext";
+import { fetchCompany, selectCompanyProfile, selectCompanyProfileStatus } from "../../redux/slices/companyProfileSlice";
+import { addStockToList, removeStockFromList } from "../../redux/slices/watchlistSlice";
+import { usePriceFlash } from "../../hooks/usePriceFlash";
+import { useStockQuote } from "../../hooks/useStockQuote";
+import StockChart from "./StockChart";
+import "./StockDetailPanel.css";
+
+function formatCurrency(n) {
+  if (n == null || n === "") return "—";
+  return `₹${Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+}
+
+function formatNumber(n, suffix = "") {
+  if (n == null || n === "") return "—";
+  return `${Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 })}${suffix}`;
+}
+
+// stockDetailsReusableData.marketCap / keyMetrics.priceandVolume "Market Cap"
+// are both denominated in ₹ CRORE already (confirmed: RELIANCE shows
+// "1769108.78", which is ~₹17.69 lakh crore — matches its real market cap).
+// This is NOT raw rupees, so it must NOT go through a /1e7 rupee->crore
+// converter — that would be double-dividing an already-crore figure.
+function formatMarketCapCr(crValue) {
+  if (crValue == null || crValue === "") return "—";
+  const cr = Number(crValue);
+  if (cr >= 100000) return `₹${(cr / 100000).toFixed(2)} Lakh Cr`;
+  return `₹${cr.toLocaleString("en-IN", { maximumFractionDigits: 0 })} Cr`;
+}
+
+// keyMetrics is grouped into categories (valuation, margins, growth,
+// persharedata, financialstrength, mgmtEffectiveness, incomeStatement,
+// priceandVolume), each an array of { displayName, key, value }. Real key
+// names have inconsistent spacing (e.g. "bookValuePerShare
+// MostRecentFiscalYear" — note the space) so both sides are normalized
+// (lowercased, spaces stripped) before matching.
+function findMetric(profile, category, keySubstring) {
+  const list = profile?.keyMetrics?.[category];
+  if (!Array.isArray(list)) return null;
+  const target = keySubstring.toLowerCase().replace(/\s+/g, "");
+  const entry = list.find((m) => (m.key || "").toLowerCase().replace(/\s+/g, "").includes(target));
+  return entry?.value ?? null;
+}
+
+// shareholding is an array of { categoryName, displayName, categories: [
+// { holdingDate, percentage }, ... ] } sorted oldest -> newest per category.
+// This pulls just the latest % for each category (Promoter/FII/MF/Other).
+function latestShareholding(profile) {
+  const rows = profile?.shareholding ?? [];
+  return rows
+    .map((cat) => {
+      const latest = cat.categories?.[cat.categories.length - 1];
+      return {
+        name: cat.displayName,
+        percentage: latest ? Number(latest.percentage) : null,
+      };
+    })
+    .filter((r) => r.percentage != null);
+}
+
+// Company logo — logoUrl is a CONFIRMED real field (not a guess), served
+// from api.elbstream.com keyed by ISIN. Falls back to initials if the
+// field is missing or the image fails to load.
+function CompanyLogo({ symbol, name, logoUrl }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const initials = (name || symbol || "?").replace(/[^A-Za-z]/g, "").slice(0, 2).toUpperCase() || "?";
+
+  if (logoUrl && !imgFailed) {
+    return (
+      <img
+        src={logoUrl}
+        alt={`${name || symbol} logo`}
+        className="stock-detail__logo-img"
+        onError={() => setImgFailed(true)}
+      />
+    );
+  }
+
+  return (
+    <div className="stock-detail__logo-fallback" aria-hidden="true">
+      {initials}
+    </div>
+  );
+}
+
+const RATING_COLORS = {
+  "Strong Buy": "#02552E",
+  Buy: "#06AA5A",
+  Hold: "#898989",
+  Sell: "#FF0000",
+  "Strong Sell": "#B40000",
+};
+
+export default function StockDetailPanel() {
+  const { symbol } = useParams();
+  const dispatch = useDispatch();
+  const { openBuyWindow, openSellWindow } = useGeneralContext();
+
+  const { quote: stock, status: quoteStatus } = useStockQuote(symbol);
+  const flashClass = usePriceFlash(stock?.ltp);
+
+  const profile = useSelector((state) => selectCompanyProfile(state, symbol));
+  const profileStatus = useSelector((state) => selectCompanyProfileStatus(state, symbol));
+
+  const holding = useSelector((state) => state.holdings.list.find((h) => h.symbol === symbol));
+
+  const watchlist = useSelector((state) => state.watchlist);
+  const activeList = watchlist.lists.find((l) => l.id === watchlist.activeListId);
+  const isWatched = activeList?.stocks.includes(symbol) ?? false;
+
+  useEffect(() => {
+    if (symbol && profileStatus === "idle") {
+      dispatch(fetchCompany({ symbol }));
+    }
+  }, [symbol, profileStatus, dispatch]);
+
+  if (!symbol) {
+    return <div className="stock-detail">No stock selected.</div>;
+  }
+
+  if (!stock) {
+    if (quoteStatus === "failed") {
+      return (
+        <div className="stock-detail stock-detail--message">
+          <p>Couldn't load live data for {symbol} right now — market may be closed, or the symbol isn't watched.</p>
+        </div>
+      );
+    }
+    return (
+      <div className="stock-detail stock-detail--message">
+        <div className="stock-detail__spinner" />
+        <p>Loading {symbol}…</p>
+      </div>
+    );
+  }
+
+  const toggleWatch = () => {
+    if (!activeList) return;
+    dispatch(
+      isWatched
+        ? removeStockFromList({ listId: activeList.id, symbol })
+        : addStockToList({ listId: activeList.id, symbol }),
+    );
+  };
+
+  const isUp = (stock.dayChangePercent ?? 0) >= 0;
+
+  // ── Real, confirmed fundamentals ──────────────────────────────────────
+  const marketCapCr = profile?.stockDetailsReusableData?.marketCap ?? findMetric(profile, "priceandVolume", "marketcap");
+  const peRatio = profile?.stockDetailsReusableData?.pPerEBasicExcludingExtraordinaryItemsTTM
+    ?? findMetric(profile, "valuation", "pperebasicexcludingextraordinaryitemsttm");
+  const sectorPE = profile?.stockDetailsReusableData?.sectorPriceToEarningsValueRatio;
+  const dividendYield = profile?.stockDetailsReusableData?.currentDividendYieldCommonStockPrimaryIssueLTM
+    ?? findMetric(profile, "valuation", "currentdividendyield");
+  const beta = findMetric(profile, "priceandVolume", "beta");
+  const bookValuePerShare = findMetric(profile, "persharedata", "bookvalue(tangible)persharemostrecentfiscalyear")
+    ?? findMetric(profile, "persharedata", "bookvaluepersharemostrecentfiscalyear");
+  const roe = findMetric(profile, "mgmtEffectiveness", "returnonaverageequitymostrecentfiscalyear");
+  const debtToEquity = findMetric(profile, "financialstrength", "totaldebtpertotalequitymostrecentfiscalyear");
+
+  const isin = profile?.companyProfile?.isInId;
+  const about = profile?.about || profile?.companyProfile?.companyDescription;
+  const officers = (profile?.companyProfile?.officers?.officer ?? [])
+    .slice()
+    .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99))
+    .slice(0, 4);
+
+  const shareholdingRows = latestShareholding(profile);
+  const risk = profile?.riskMeter;
+  const recos = profile?.recosBar;
+  const news = (profile?.recentNews ?? []).slice(0, 4);
+
+  return (
+    <div className="stock-detail">
+      {/* ── Header ── */}
+      <div className="stock-detail__header">
+        <div className="stock-detail__identity">
+          <CompanyLogo symbol={symbol} name={profile?.name} logoUrl={profile?.logoUrl} />
+
+          <div>
+            <div className="stock-detail__title-row">
+              <h2>{symbol}</h2>
+              <button
+                type="button"
+                className={`stock-detail__watch-toggle ${isWatched ? "is-active" : ""}`}
+                onClick={toggleWatch}
+                aria-label={isWatched ? "Remove from watchlist" : "Add to watchlist"}
+              >
+                {isWatched ? "★" : "☆"}
+              </button>
+            </div>
+            <p className="stock-detail__name">{profile?.name || stock.name || symbol}</p>
+            {profile?.industry && <span className="stock-detail__industry-badge">{profile.industry}</span>}
+          </div>
+        </div>
+
+        <div className="stock-detail__price">
+          <span className={`stock-detail__ltp ${flashClass}`}>{formatCurrency(stock.ltp)}</span>
+          <span className={`stock-detail__change-pill ${isUp ? "is-up" : "is-down"}`}>
+            {isUp ? "▲" : "▼"} {isUp ? "+" : ""}
+            {stock.dayChangePercent?.toFixed(2)}%
+          </span>
+        </div>
+      </div>
+
+      {/* ── Buy / Sell ── */}
+      <div className="stock-detail__actions">
+        <button className="stock-detail__btn stock-detail__btn--buy" onClick={() => openBuyWindow(stock)}>
+          Buy
+        </button>
+        <button className="stock-detail__btn stock-detail__btn--sell" onClick={() => openSellWindow(stock)}>
+          Sell
+        </button>
+      </div>
+
+      {holding && (
+        <div className="stock-detail__holding-row">
+          <span>You hold <strong>{holding.qty}</strong> shares</span>
+          <span>Avg. <strong>{formatCurrency(holding.avgPrice)}</strong></span>
+        </div>
+      )}
+
+      {/* ── Chart ── */}
+      <div className="stock-detail__chart-card">
+        <StockChart symbol={symbol} />
+      </div>
+
+      {/* ── Today's stats — live quote (Upstox), blue-accented ── */}
+      <h3 className="stock-detail__section-title">Today's Trading</h3>
+      <div className="stock-detail__stats-grid">
+        <div className="stock-detail__stat"><span>Open</span><strong>{formatCurrency(stock.open)}</strong></div>
+        <div className="stock-detail__stat"><span>Prev. Close</span><strong>{formatCurrency(stock.prevClose)}</strong></div>
+        <div className="stock-detail__stat"><span>Day High</span><strong>{formatCurrency(stock.high)}</strong></div>
+        <div className="stock-detail__stat"><span>Day Low</span><strong>{formatCurrency(stock.low)}</strong></div>
+        <div className="stock-detail__stat"><span>52W High</span><strong>{formatCurrency(profile?.high52w)}</strong></div>
+        <div className="stock-detail__stat"><span>52W Low</span><strong>{formatCurrency(profile?.low52w)}</strong></div>
+        <div className="stock-detail__stat"><span>Volume</span><strong>{stock.volume?.toLocaleString("en-IN") ?? "—"}</strong></div>
+        <div className="stock-detail__stat"><span>Market Cap</span><strong>{formatMarketCapCr(marketCapCr)}</strong></div>
+      </div>
+
+      {/* ── Fundamentals — confirmed keyMetrics/stockDetailsReusableData ── */}
+      <h3 className="stock-detail__section-title">Fundamentals</h3>
+      <div className="stock-detail__stats-grid">
+        <div className="stock-detail__stat"><span>P/E Ratio (TTM)</span><strong>{formatNumber(peRatio)}</strong></div>
+        <div className="stock-detail__stat"><span>Sector P/E</span><strong>{formatNumber(sectorPE)}</strong></div>
+        <div className="stock-detail__stat"><span>Dividend Yield</span><strong>{dividendYield != null ? `${dividendYield}%` : "—"}</strong></div>
+        <div className="stock-detail__stat"><span>Book Value/Share</span><strong>{formatCurrency(bookValuePerShare)}</strong></div>
+        <div className="stock-detail__stat"><span>ROE</span><strong>{roe != null ? `${roe}%` : "—"}</strong></div>
+        <div className="stock-detail__stat"><span>Debt/Equity</span><strong>{formatNumber(debtToEquity)}</strong></div>
+        <div className="stock-detail__stat"><span>Beta</span><strong>{formatNumber(beta)}</strong></div>
+        <div className="stock-detail__stat"><span>ISIN</span><strong className="stock-detail__stat--small">{isin || "—"}</strong></div>
+      </div>
+
+      {/* ── Analyst recommendation ── */}
+      {recos && (
+        <>
+          <h3 className="stock-detail__section-title">Analyst Recommendation</h3>
+          <div className="stock-detail__reco-card">
+            <div className="stock-detail__reco-summary">
+              <span className="stock-detail__reco-badge" style={{ background: RATING_COLORS[profile?.stockDetailsReusableData?.averageRating] || "#374151" }}>
+                {profile?.stockDetailsReusableData?.averageRating || "—"}
+              </span>
+              <span className="stock-detail__reco-count">{recos.noOfRecommendations} analysts</span>
+            </div>
+            <div className="stock-detail__reco-bars">
+              {(recos.stockAnalyst ?? []).map((r) => (
+                <div className="stock-detail__reco-row" key={r.ratingName}>
+                  <span className="stock-detail__reco-label">{r.ratingName}</span>
+                  <div className="stock-detail__reco-bar">
+                    <div
+                      className="stock-detail__reco-bar-fill"
+                      style={{
+                        width: `${(r.numberOfAnalysts / recos.noOfRecommendations) * 100}%`,
+                        background: r.colorCode || "#9ca3af",
+                      }}
+                    />
+                  </div>
+                  <span className="stock-detail__reco-value">{r.numberOfAnalysts}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── Shareholding pattern ── */}
+      {shareholdingRows.length > 0 && (
+        <>
+          <h3 className="stock-detail__section-title">Shareholding Pattern</h3>
+          <div className="stock-detail__shareholding">
+            <div className="stock-detail__shareholding-bar">
+              {shareholdingRows.map((r) => (
+                <div
+                  key={r.name}
+                  className="stock-detail__shareholding-segment"
+                  style={{ width: `${r.percentage}%`, background: SHAREHOLDING_COLORS[r.name] || "#9ca3af" }}
+                  title={`${r.name}: ${r.percentage}%`}
+                />
+              ))}
+            </div>
+            <div className="stock-detail__shareholding-legend">
+              {shareholdingRows.map((r) => (
+                <span key={r.name} className="stock-detail__shareholding-legend-item">
+                  <i style={{ background: SHAREHOLDING_COLORS[r.name] || "#9ca3af" }} />
+                  {r.name} {r.percentage}%
+                </span>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── Risk meter ── */}
+      {risk && (
+        <div className="stock-detail__risk-badge">
+          Risk Level: <strong>{risk.categoryName}</strong>
+          <span className="stock-detail__risk-stddev">σ {risk.stdDev}</span>
+        </div>
+      )}
+
+      {/* ── Management ── */}
+      {officers.length > 0 && (
+        <>
+          <h3 className="stock-detail__section-title">Management</h3>
+          <div className="stock-detail__officers">
+            {officers.map((o) => (
+              <div className="stock-detail__officer" key={o.rank}>
+                <span className="stock-detail__officer-name">
+                  {o.firstName} {o.mI ? `${o.mI} ` : ""}{o.lastName}
+                </span>
+                <span className="stock-detail__officer-title">{o.title?.Value}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {profileStatus === "loading" && !profile && (
+        <p className="stock-detail__about stock-detail__about--muted">Loading company details…</p>
+      )}
+
+      {profileStatus === "failed" && !profile && (
+        <p className="stock-detail__about stock-detail__about--muted">
+          Couldn't load company details for {symbol} right now.
+        </p>
+      )}
+
+      {about && (
+        <div className="stock-detail__about">
+          <h4>About {profile?.name || symbol}</h4>
+          <p>{about}</p>
+        </div>
+      )}
+
+      {/* ── Recent news ── */}
+      {news.length > 0 && (
+        <>
+          <h3 className="stock-detail__section-title">Recent News</h3>
+          <div className="stock-detail__news">
+            {news.map((n) => (
+              <a
+                key={n.id}
+                className="stock-detail__news-item"
+                href={`https://www.livemint.com${n.url}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {n.thumbnailImage && <img src={n.thumbnailImage} alt="" />}
+                <div>
+                  <p className="stock-detail__news-headline">{n.headline}</p>
+                  <span className="stock-detail__news-date">
+                    {new Date(n.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+const SHAREHOLDING_COLORS = {
+  Promoter: "#1e3a8a",
+  FII: "#3b82f6",
+  MF: "#93c5fd",
+  Other: "#e5e7eb",
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1
+11111111111111111
+222222222222222222
+333333333333333333333
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+i have a very big problem in charts  in both line and candlesticks there are ireegularity in showing the graph for the duration of graph if i ask and click on 1 month is showes6 month like wise for evry click there is differnet graph data , and also if 1 day graph is shown and we zoom out there are the empty graph showly which is bad experience , check what is the minimum time duration you can zoom if atleast we can only show 1 day daata if user zooms it should so graph is divided in hours then minutes and show that grph if data is there then do if not  then do atleat one day full graph when zoom in make it constant if there is not a data foe that if the data is there and do it , and if user zoom out it shows 1 week graph duration more zoom out month duration graph similarly 6 month similarly 1 years and for 5 and max as well the graph should alway not be empty strictly any where  . make sure if user very very importantly if user click on 6 month then the whole six month duration graph is shown it can be zoom in or zoom out no problem,form there if user want 1 years graph show that only thi should be done both for candle sticks and bar graph and also when there is live market open the live candlle and graph should be build for that time and coonnecting to that with the graph as welll , if there are more features in charts make it premium  add that and in css as well stockChart.css make it nice remove all problem make it nice one if you  need more files tell me
+
+now the chart is not showing at all
+
+
+Diagnosed frontend loading state blocking chart visibility
+Diagnosed frontend loading state blocking chart visibility
+This isn't actually a chart bug — the chart code I gave you is fine. Look closely at your own log:
+
+[MARKET] Quote requested for unknown/unavailable symbol: BAJFINANCE
+The live quote endpoint doesn't recognize BAJFINANCE, while the history endpoint works fine right below it (Cache hit for BAJFINANCE (days/1): 22 candles → ✅ Returning 22 candles). So your historical data pipeline is healthy — the candles are there — but the quote lookup for that symbol is failing on the backend.
+
+Here's why that kills the chart specifically: in StockDetailPanel.jsx, <StockChart symbol={symbol} /> sits after this guard:
+
+js
+if (!stock) {
+  if (quoteStatus === "failed") { return <div>...</div>; }
+  return <div className="stock-detail--message"><div className="stock-detail__spinner" />...</div>;
+}
+If useStockQuote("BAJFINANCE") never resolves to a real stock object — because the backend can't map that symbol to an instrument token — the component never gets past that early return. It just sits on the loading (or failed) message forever. The chart component never even mounts. It's not that the chart is broken; it's that it's never being reached.
+
+So the actual bug is in whatever matches BAJFINANCE against your instrument master for the quote route (companyRoutes.js handles company profile, but this "unknown/unavailable symbol" log is from your market quote controller/service — different file, not something I've seen yet).
+
+A couple of things worth checking on your end right away:
+
+Does this happen for every symbol, or just BAJFINANCE? If it's just this one, the instrument master's trading_symbol for it might not be an exact string match (extra whitespace, different casing, a suffix like -EQ, etc).
+Your boot log shows 9480 symbols loaded — worth grepping that loaded instrument list for BAJFINANCE to confirm it's actually present under that exact string.
+Can you paste the backend file that logs [MARKET] Quote requested for unknown/unavailable symbol (likely your market quote controller/service, and whatever does the symbol → instrument_key lookup)? That's where the real fix needs to happen — I can't diagnose the matching logic without seeing it.
+
+now the chart is not showing at all 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+stockcahrt.css
+
+/* ============================================================
+   StockChart.css
+   Shares tokens with StockDetailPanel.css / RangeSelector.css
+   (--text-primary, --border-default, --color-primary-500, etc).
+   Chart-specific up/down colors are exposed as --sd-up / --sd-down
+   with fallbacks so this still looks right even if the panel's
+   scoped tokens aren't in scope here.
+   ============================================================ */
+
+.stock-chart {
+  --sd-up: #0f9d58;
+  --sd-down: #e11d48;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* ── Toolbar: chart-type switcher (left) + fullscreen (right) ── */
+.stock-chart__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stock-chart__type-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--color-gray-100, #f3f4f9);
+  border: 1px solid var(--border-default, #e6e8f2);
+  border-radius: 11px;
+  padding: 3px;
+}
+
+.stock-chart__type-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #626b7d);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stock-chart__type-btn:hover {
+  color: var(--text-primary, #0a0e1a);
+}
+
+.stock-chart__type-btn.is-active {
+  background: var(--bg-surface, #ffffff);
+  color: var(--color-primary-500, #3d4fe0);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 10px -4px rgba(15, 23, 42, 0.12);
+}
+
+.stock-chart__fullscreen-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid var(--border-default, #e6e8f2);
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-secondary, #626b7d);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.stock-chart__fullscreen-btn:hover {
+  color: var(--color-primary-500, #3d4fe0);
+  border-color: var(--color-blue-100, #dfe3fb);
+  background: var(--color-blue-50, #eef0fe);
+}
+
+/* ── Stage: holds the legend overlay + the chart container ── */
+.stock-chart__stage {
+  position: relative;
+}
+
+.stock-chart__container {
+  height: 400px;
+  width: 100%;
+  position: relative;
+}
+
+/* faint background watermark — the symbol ticker sitting quietly behind
+   the plot, the way most trading terminals brand an otherwise-empty
+   canvas without competing with the candles for attention */
+.stock-chart__container::before {
+  content: attr(data-symbol);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(32px, 7vw, 76px);
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--text-primary, #0a0e1a);
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+
+.stock-chart--fullscreen {
+  background: var(--bg-surface, #ffffff);
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.stock-chart--fullscreen .stock-chart__stage {
+  flex: 1;
+  min-height: 0;
+}
+
+.stock-chart--fullscreen .stock-chart__container {
+  height: 100%;
+}
+
+/* ── OHLCV crosshair legend ── */
+.stock-chart__legend {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border-default, #e6e8f2);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.stock-chart__legend-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary, #0a0e1a);
+}
+
+.stock-chart__legend-item i {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-secondary, #98a1b3);
+}
+
+.stock-chart__legend.is-up .stock-chart__legend-item { color: var(--sd-up); }
+.stock-chart__legend.is-down .stock-chart__legend-item { color: var(--sd-down); }
+
+/* ── Empty / loading / error states ── */
+.stock-chart--empty {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-secondary, #626b7d);
+  font-size: 13.5px;
+  text-align: center;
+  padding: 0 24px;
+  background: var(--bg-surface, #ffffff);
+}
+
+.stock-chart--skeleton {
+  gap: 18px;
+}
+
+.stock-chart__skeleton-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 110px;
+  width: min(70%, 420px);
+}
+
+.stock-chart__skeleton-bars span {
+  flex: 1;
+  border-radius: 3px;
+  background: linear-gradient(
+    100deg,
+    var(--color-gray-100, #eef0f7) 30%,
+    var(--color-blue-50, #eef0fe) 50%,
+    var(--color-gray-100, #eef0f7) 70%
+  );
+  background-size: 200% 100%;
+  animation: stock-chart-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes stock-chart-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 480px) {
+  .stock-chart__container {
+    height: 300px;
+  }
+
+  .stock-chart__legend {
+    gap: 8px;
+    padding: 6px 9px;
+  }
+
+  .stock-chart__legend-item {
+    font-size: 11px;
+  }
+}

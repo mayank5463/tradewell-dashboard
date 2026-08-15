@@ -1,0 +1,718 @@
+
+
+.watchlist-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+
+
+  height: 100%;
+
+  /* Safety net: if this panel is ever dropped somewhere its parent
+     doesn't provide a resolvable height (height:100% -> 0), it still
+     won't visually collapse into a useless strip. */
+  min-height: 480px;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+
+  padding: var(--sidebar-padding);
+
+  background: var(--watchlist-bg);
+  border-right: 1px solid var(--watchlist-border);
+
+  color: var(--text-primary);
+
+  font-family: var(--font-family-base);
+
+  transition:
+    width var(--transition-sidebar),
+    min-width var(--transition-sidebar),
+    max-width var(--transition-sidebar),
+    padding var(--transition-sidebar),
+    background var(--transition-normal),
+    border-color var(--transition-normal);
+
+  overscroll-behavior: contain;
+
+  /* Rendering isolation via `isolation: isolate` only — this gives the
+     panel its own stacking context (fixes paint-order bleed into
+     sibling elements like the topbar/marquee) WITHOUT touching layout.
+     `contain: layout` / `contain: paint` were tried here first but had
+     to be removed: `contain: paint` forces an element to clip its own
+     box regardless of its overflow setting, and `contain: layout`
+     isolates the box from the flex parent's sizing math — together
+     they fought the flex:1 + min-height:0 + overflow-y:auto setup this
+     panel needs to scroll at all, which is why scrolling stopped
+     working entirely. */
+  isolation: isolate;
+  z-index: 0;
+}
+
+/* ============================================================
+   COLLAPSED
+   ============================================================ */
+
+.watchlist-panel--collapsed {
+  width: var(--sidebar-width-collapsed);
+  min-width: var(--sidebar-width-collapsed);
+  max-width: var(--sidebar-width-collapsed);
+
+  padding: var(--sidebar-padding) var(--space-2);
+
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Hide everything but the header/arrow when collapsed. These
+   selectors reach into the switcher/item subtrees purely to toggle
+   *panel-level visibility* — the components' own visual styling
+   stays fully owned by their own CSS files. */
+.watchlist-panel--collapsed .watchlist-switcher,
+.watchlist-panel--collapsed .watchlist-panel__list,
+.watchlist-panel--collapsed .watchlist-panel__footer,
+.watchlist-panel--collapsed .watchlist-panel__heading {
+  display: none;
+}
+
+.watchlist-panel--collapsed .watchlist-panel__header {
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.watchlist-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-3);
+
+  margin-bottom: var(--space-5);
+
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   TITLE
+   ============================================================ */
+
+.watchlist-panel__heading {
+  margin: 0;
+
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+
+  color: var(--watchlist-subtitle);
+
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   COLLAPSE / EXPAND (ARROW) BUTTON
+   Sized to sit comfortably in a 24px space — not a tiny dot,
+   not an oversized block. 30px hit area, 13px glyph.
+   ============================================================ */
+
+.watchlist-panel__collapse {
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+
+  padding: 0;
+
+  border: 1px solid var(--button-secondary-border);
+  border-radius: var(--radius-md);
+
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+
+  font-size: 13px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-panel__collapse:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-focus);
+  color: var(--brand-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+.watchlist-panel__collapse:active {
+  transform: scale(0.94);
+}
+
+/* ============================================================
+   COLLAPSED-STATE BUTTON
+   ============================================================ */
+
+.watchlist-panel--collapsed .watchlist-panel__collapse {
+  margin: 0 auto;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.watchlist-panel__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 1;
+
+  min-height: 180px;
+
+  padding: var(--space-8) var(--space-3);
+
+  text-align: center;
+
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   LIST CONTAINER
+   The ONLY part that scrolls — header/switcher/footer stay put.
+   ============================================================ */
+
+.watchlist-panel__list {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  padding-right: 4px;
+
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.watchlist-panel__list .watchlist-item {
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   SCROLL AREA (shared utility — reused by other panels too,
+   kept here since WatchList.jsx is the panel that owns scrolling)
+   ============================================================ */
+
+.scroll-area {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+.watchlist-panel__list::-webkit-scrollbar,
+.scroll-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.watchlist-panel__list::-webkit-scrollbar-track,
+.scroll-area::-webkit-scrollbar-track {
+  background: var(--watchlist-scroll-track);
+  border-radius: var(--scrollbar-radius);
+}
+
+.watchlist-panel__list::-webkit-scrollbar-thumb,
+.scroll-area::-webkit-scrollbar-thumb {
+  background: var(--watchlist-scroll-thumb);
+  border-radius: var(--scrollbar-radius);
+  border: 2px solid var(--watchlist-scroll-track);
+  transition: background var(--transition-fast);
+}
+
+.watchlist-panel__list::-webkit-scrollbar-thumb:hover,
+.scroll-area::-webkit-scrollbar-thumb:hover {
+  background: var(--watchlist-scroll-hover);
+}
+
+/* ============================================================
+   PANEL FOOTER — Rename / Delete active list
+   Pinned to the very bottom of the panel (flex-shrink: 0, sits
+   outside the scrollable .watchlist-panel__list), so it never
+   scrolls out of view no matter how long the list gets.
+   ============================================================ */
+
+.watchlist-panel__footer {
+  display: flex;
+
+  gap: var(--space-2);
+
+  margin-top: var(--space-4);
+
+  flex-shrink: 0;
+}
+
+.watchlist-panel__footer-btn {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  height: var(--button-height-md);
+
+  border-radius: var(--radius-md);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-panel__footer-btn:active {
+  transform: scale(0.97);
+}
+
+/* ============================================================
+   RENAME
+   ============================================================ */
+
+.watchlist-panel__footer-btn--edit {
+  border: 1px solid var(--button-secondary-border);
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+}
+
+.watchlist-panel__footer-btn--edit:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-focus);
+  color: var(--brand-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ============================================================
+   DELETE
+   ============================================================ */
+
+.watchlist-panel__footer-btn--delete {
+  border: 1px solid transparent;
+  background: var(--button-danger-bg);
+  color: var(--button-danger-text);
+}
+
+.watchlist-panel__footer-btn--delete:hover {
+  background: var(--button-danger-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   INLINE RENAME FORM (replaces the two buttons while editing)
+   ============================================================ */
+
+.watchlist-panel__rename-form {
+  display: flex;
+  width: 100%;
+
+  gap: var(--space-2);
+}
+
+.watchlist-panel__rename-form input {
+  flex: 1;
+  min-width: 0;
+  height: var(--input-height);
+
+  padding: 0 var(--input-padding-inline);
+
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+
+  background: var(--input-bg);
+  color: var(--input-text);
+
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+
+  outline: none;
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-panel__rename-form input:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.watchlist-panel__rename-form button {
+  flex-shrink: 0;
+
+  width: 40px;
+  height: var(--input-height);
+
+  border-radius: var(--radius-md);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+
+  cursor: pointer;
+
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.watchlist-panel__rename-form button[type="submit"] {
+  border: none;
+  background: var(--button-success-bg);
+  color: var(--button-success-text);
+}
+
+.watchlist-panel__rename-form button[type="submit"]:hover {
+  background: var(--button-success-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.watchlist-panel__rename-form button[type="button"] {
+  border: 1px solid var(--button-secondary-border);
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+}
+
+.watchlist-panel__rename-form button[type="button"]:hover {
+  background: var(--surface-hover);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1200px) {
+  .watchlist-panel {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+  }
+}
+
+@media (max-width: 768px) {
+  .watchlist-panel {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 290px;
+    min-width: 290px;
+    max-width: 290px;
+
+    z-index: var(--z-sidebar);
+
+    box-shadow: var(--shadow-lg);
+  }
+
+  .watchlist-panel--collapsed {
+    transform: translateX(-100%);
+  }
+}
+
+@media (max-width: 576px) {
+  .watchlist-panel {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+
+    padding: var(--space-4);
+  }
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+
+@media print {
+  .watchlist-panel {
+    display: none;
+  }
+}
+
+/* ============================================================
+   ACCESSIBILITY
+   Broad `.watchlist-panel` descendant selector — deliberately
+   catches every button/input/select inside the panel regardless
+   of which component (switcher, item) rendered it, so focus
+   styling stays consistent across the whole widget.
+   ============================================================ */
+
+.watchlist-panel button:focus-visible,
+.watchlist-panel input:focus-visible,
+.watchlist-panel select:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .watchlist-panel {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   FINAL POLISH
+   ============================================================ */
+
+.watchlist-panel {
+  user-select: none;
+}
+
+.watchlist-panel button {
+  appearance: none;
+}
+
+.watchlist-panel input,
+.watchlist-panel select {
+  appearance: none;
+}
+
+/* ============================================================
+   END OF WATCHLIST.CSS
+   ============================================================ */
+
+
+.watchlist-panel__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+}
+
+
+
+
+
+
+
+/* ============================================================
+   PANEL FOOTER — Rename / Delete active list
+   Pinned to the very bottom of the panel (flex-shrink: 0, sits
+   outside the scrollable .watchlist-panel__list), so it never
+   scrolls out of view no matter how long the list gets.
+   ============================================================ */
+
+.watchlist-panel__footer {
+  display: flex;
+
+  margin-top: var(--space-4);
+
+  flex-shrink: 0;
+}
+
+/* Groups Rename + Delete as one unit so they always render together —
+   Delete disables itself instead of disappearing when it's the last list. */
+.watchlist-panel__footer-actions {
+  display: flex;
+  width: 100%;
+
+  gap: var(--space-2);
+}
+
+.watchlist-panel__footer-btn {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  height: var(--button-height-md);
+
+  border-radius: var(--radius-md);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.watchlist-panel__footer-btn:active {
+  transform: scale(0.97);
+}
+
+.watchlist-panel__footer-btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================================
+   RENAME
+   ============================================================ */
+
+.watchlist-panel__footer-btn--edit {
+  border: 1px solid var(--button-secondary-border);
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+}
+
+.watchlist-panel__footer-btn--edit:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-focus);
+  color: var(--brand-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ============================================================
+   DELETE
+   ============================================================ */
+
+.watchlist-panel__footer-btn--delete {
+  border: 1px solid transparent;
+  background: var(--button-danger-bg);
+  color: var(--button-danger-text);
+}
+
+.watchlist-panel__footer-btn--delete:hover:not(:disabled) {
+  background: var(--button-danger-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.watchlist-panel__footer-btn--delete:disabled {
+  background: var(--surface-tertiary);
+  color: var(--text-disabled);
+}
+
+/* ============================================================
+   INLINE RENAME FORM (replaces the actions span while editing)
+   ============================================================ */
+
+.watchlist-panel__rename-form {
+  display: flex;
+  width: 100%;
+
+  gap: var(--space-2);
+}
+
+.watchlist-panel__rename-form input {
+  flex: 1;
+  min-width: 0;
+  height: var(--input-height);
+
+  padding: 0 var(--input-padding-inline);
+
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+
+  background: var(--input-bg);
+  color: var(--input-text);
+
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+
+  outline: none;
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-panel__rename-form input:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.watchlist-panel__rename-form button {
+  flex-shrink: 0;
+
+  width: 40px;
+  height: var(--input-height);
+
+  border-radius: var(--radius-md);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+
+  cursor: pointer;
+
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.watchlist-panel__rename-form button[type="submit"] {
+  border: none;
+  background: var(--button-success-bg);
+  color: var(--button-success-text);
+}
+
+.watchlist-panel__rename-form button[type="submit"]:hover {
+  background: var(--button-success-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.watchlist-panel__rename-form button[type="button"] {
+  border: 1px solid var(--button-secondary-border);
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+}
+
+.watchlist-panel__rename-form button[type="button"]:hover {
+  background: var(--surface-hover);
+}

@@ -1,0 +1,622 @@
+
+
+.watchlist-switcher {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-3);
+
+  margin-bottom: var(--space-5);
+
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   ROW
+   ============================================================ */
+
+.watchlist-switcher__row {
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-2);
+}
+
+/* ============================================================
+   SELECT
+   ============================================================ */
+
+.watchlist-switcher__select {
+  flex: 1;
+  min-width: 0;
+
+  height: var(--button-height-md);
+
+  padding: 0 var(--space-3);
+
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+
+  background: var(--input-bg);
+  color: var(--input-text);
+
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+
+  outline: none;
+  cursor: pointer;
+
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-switcher__select:hover {
+  border-color: var(--input-border-hover);
+}
+
+.watchlist-switcher__select:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+/* ============================================================
+   ADD STOCK BUTTON
+   ============================================================ */
+
+.watchlist-switcher__add-stock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: var(--button-height-md);
+
+  padding: 0 var(--space-4);
+
+  border: 1px solid var(--button-secondary-border);
+  border-radius: var(--radius-md);
+
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-switcher__add-stock-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-xs);
+}
+
+.watchlist-switcher__add-stock-btn:active {
+  transform: scale(0.97);
+}
+
+/* ============================================================
+   ADD LIST BUTTON ("+")
+   Uses brand-primary directly, which is deliberately distinct
+   from every surface/background color in every theme × mode
+   combination, so the "+" always reads clearly.
+   ============================================================ */
+
+.watchlist-switcher__add-list-btn {
+  display: grid;
+  place-items: center;
+
+  width: var(--button-height-md);
+  height: var(--button-height-md);
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+
+  font-size: 19px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-shadow: var(--shadow-xs);
+
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-switcher__add-list-btn:hover {
+  background: var(--button-primary-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.watchlist-switcher__add-list-btn:active {
+  transform: scale(0.94);
+}
+
+/* ============================================================
+   CREATE LIST FORM
+   ============================================================ */
+
+.watchlist-switcher__form {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-3);
+
+  padding: var(--card-padding-sm);
+
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-xs);
+}
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+.watchlist-switcher__form input {
+  width: 100%;
+  height: var(--input-height);
+
+  padding: 0 var(--input-padding-inline);
+
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+
+  background: var(--input-bg);
+  color: var(--input-text);
+
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+
+  outline: none;
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.watchlist-switcher__form input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.watchlist-switcher__form input:hover {
+  border-color: var(--input-border-hover);
+}
+
+.watchlist-switcher__form input:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+/* ============================================================
+   SUBMIT
+   ============================================================ */
+
+.watchlist-switcher__form button[type="submit"] {
+  height: var(--button-height-md);
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-switcher__form button[type="submit"]:hover {
+  background: var(--button-primary-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.watchlist-switcher__form button[type="submit"]:active {
+  transform: scale(0.98);
+}
+
+/* ============================================================
+   CANCEL
+   ============================================================ */
+
+.watchlist-switcher__form-cancel {
+  height: var(--button-height-md);
+
+  border: 1px solid var(--button-secondary-border);
+  border-radius: var(--radius-md);
+
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.watchlist-switcher__form-cancel:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-focus);
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   SEARCH PANEL
+   ============================================================ */
+
+.watchlist-switcher__add-stock-panel {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-3);
+
+  margin-top: var(--space-2);
+
+  padding: var(--card-padding-sm);
+
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--card-bg);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ============================================================
+   PANEL HEADER
+   ============================================================ */
+
+.watchlist-switcher__add-stock-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  color: var(--text-primary);
+}
+
+.watchlist-switcher__add-stock-header button {
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+  color: var(--text-secondary);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.watchlist-switcher__add-stock-header button:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   SEARCH INPUT
+   ============================================================ */
+
+.watchlist-switcher__add-stock-input {
+  width: 100%;
+  height: var(--input-height);
+
+  padding: 0 var(--input-padding-inline);
+
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+
+  background: var(--input-bg);
+  color: var(--input-text);
+
+  font-size: var(--font-size-sm);
+
+  outline: none;
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-switcher__add-stock-input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.watchlist-switcher__add-stock-input:hover {
+  border-color: var(--input-border-hover);
+}
+
+.watchlist-switcher__add-stock-input:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+/* ============================================================
+   SEARCH RESULTS
+   ============================================================ */
+
+.watchlist-switcher__add-stock-results {
+  list-style: none;
+
+  margin: 0;
+  padding: 0;
+
+  max-height: 260px;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* ============================================================
+   RESULT ITEM
+   ============================================================ */
+
+.watchlist-switcher__add-stock-results li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: var(--space-3);
+
+  border-radius: var(--radius-md);
+
+  cursor: pointer;
+
+  transition: background var(--transition-fast);
+}
+
+.watchlist-switcher__add-stock-results li:hover {
+  background: var(--surface-hover);
+}
+
+/* ============================================================
+   SYMBOL
+   ============================================================ */
+
+.watchlist-switcher__add-stock-symbol {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   PRICE
+   ============================================================ */
+
+.watchlist-switcher__add-stock-price {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   EMPTY SEARCH
+   ============================================================ */
+
+.watchlist-switcher__add-stock-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: var(--space-5);
+
+  color: var(--text-muted);
+
+  cursor: default !important;
+}
+
+.watchlist-switcher__add-stock-empty:hover {
+  background: transparent !important;
+}
+
+/* ============================================================
+   END OF WATCHLISTSWITCHER.CSS
+   ============================================================ */
+
+
+
+/* ============================================================
+   DROPDOWN (replaces native <select> — needed so each list row
+   can carry its own delete icon)
+   ============================================================ */
+
+.watchlist-switcher__dropdown {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.watchlist-switcher__select {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+
+  height: var(--button-height-md);
+
+  padding: 0 var(--space-3);
+
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+
+  background: var(--input-bg);
+  color: var(--input-text);
+
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+
+  outline: none;
+  cursor: pointer;
+
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-switcher__select:hover {
+  border-color: var(--input-border-hover);
+}
+
+.watchlist-switcher__select:focus-visible {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.watchlist-switcher__select-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.watchlist-switcher__select-chevron {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--icon-secondary);
+}
+
+.watchlist-switcher__dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  z-index: var(--z-dropdown);
+
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2);
+
+  max-height: 240px;
+  overflow-y: auto;
+
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--radius-md);
+
+  background: var(--dropdown-bg);
+  box-shadow: var(--dropdown-shadow);
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.watchlist-switcher__dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+
+  padding: var(--space-2) var(--space-3);
+
+  border-radius: var(--radius-sm);
+
+  color: var(--dropdown-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+
+  cursor: pointer;
+
+  transition: background var(--transition-fast);
+}
+
+.watchlist-switcher__dropdown-item:hover {
+  background: var(--dropdown-item-hover);
+}
+
+.watchlist-switcher__dropdown-item.is-active {
+  background: var(--dropdown-item-active);
+  font-weight: var(--font-weight-semibold);
+}
+
+.watchlist-switcher__dropdown-item-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.watchlist-switcher__dropdown-item-delete {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+
+  width: 26px;
+  height: 26px;
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+  color: var(--icon-secondary);
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.watchlist-switcher__dropdown-item-delete:hover:not(:disabled) {
+  background: var(--danger-bg);
+  color: var(--danger-fill);
+}
+
+.watchlist-switcher__dropdown-item-delete:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+.watchlist-switcher__dropdown-item-delete svg {
+  width: 13px;
+  height: 13px;
+} 

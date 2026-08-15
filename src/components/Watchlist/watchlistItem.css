@@ -1,0 +1,610 @@
+
+
+.watchlist-item {
+  position: relative;
+  isolation: isolate;
+
+  display: flex;
+  flex-direction: column;
+
+  /* FIX: without this, flex-shrink defaults to 1 on every flex child.
+     Combined with overflow:hidden below (which zeroes out the item's
+     automatic minimum size per the flexbox spec), the panel was free
+     to compress every card shorter and shorter to force the whole
+     list to fit inside .watchlist-panel__list's height — instead of
+     overflowing and triggering the scrollbar. flex-shrink:0 pins each
+     card to its natural height no matter how many stocks are added,
+     so the list overflows correctly and .watchlist-panel__list's
+     overflow-y:auto (in WatchList.css) has something real to scroll. */
+  flex-shrink: 0;
+
+  /* Visible by default, not just on hover: --border-hover is the
+     theme's own tinted border shade (e.g. navy-200 / olive-300 /
+     sand-300 / charcoal-300), which reads as a soft "raised card"
+     edge instead of a flat gray line. Paired with a light shadow
+     below for the bevel/3D feel. */
+  border: 1px solid var(--border-hover);
+  border-left: 3px solid transparent;
+  border-radius: var(--radius-lg);
+
+  background: var(--watchlist-card);
+
+  overflow: hidden;
+
+  box-shadow:
+    var(--card-shadow),
+    inset 0 1px 0 rgba(var(--white-rgb), 0.5);
+
+  cursor: default;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.watchlist-item:hover {
+  cursor: pointer;
+
+  background: var(--watchlist-card-hover);
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md);
+
+  transform: translateY(-1px);
+
+  z-index: 2;
+}
+
+/* ============================================================
+   DARK MODE — border picks up the active theme's accent color
+   (--border-focus keeps its theme-mapped value even in dark
+   mode, since it isn't one of the tokens [data-mode="dark"]
+   overrides) instead of a flat neutral gray. The inset top
+   highlight from light mode is dropped here since a white
+   bevel reads wrong on a dark card.
+   ============================================================ */
+
+[data-mode="dark"] .watchlist-item {
+  border-color: var(--border-focus);
+  box-shadow: var(--card-shadow);
+}
+
+[data-mode="dark"] .watchlist-item:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.watchlist-item.is-up {
+  border-left-color: transparent;
+}
+
+.watchlist-item.is-up:hover {
+  border-left-color: var(--watchlist-change-positive);
+}
+
+.watchlist-item.is-down:hover {
+  border-left-color: var(--watchlist-change-negative);
+}
+
+/* ============================================================
+   MAIN BUTTON
+   ============================================================ */
+
+.watchlist-item__main {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  padding: var(--card-padding-sm);
+
+  border: none;
+  background: none;
+
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.watchlist-item__main:focus {
+  outline: none;
+}
+
+/* ============================================================
+   LEFT
+   ============================================================ */
+
+.watchlist-item__left {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  transition: transform var(--transition-fast);
+}
+
+.watchlist-item:hover .watchlist-item__left {
+  transform: translateX(2px);
+}
+
+.watchlist-item__symbol-block {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+/* ============================================================
+   SYMBOL
+   ============================================================ */
+
+.watchlist-item__symbol {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  letter-spacing: var(--letter-spacing-tight);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  transition: color var(--transition-fast);
+}
+
+.watchlist-item:hover .watchlist-item__symbol {
+  color: var(--brand-primary);
+}
+
+/* ============================================================
+   COMPANY NAME
+   ============================================================ */
+
+.watchlist-item__name {
+  max-width: 150px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: var(--font-size-2xs);
+  color: var(--text-secondary);
+  line-height: var(--line-height-normal);
+
+  transition: color var(--transition-fast);
+}
+
+.watchlist-item:hover .watchlist-item__name {
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   RIGHT
+   ============================================================ */
+
+.watchlist-item__right {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-end;
+  justify-content: center;
+
+  gap: 4px;
+  flex-shrink: 0;
+
+  transition: transform var(--transition-fast);
+}
+
+.watchlist-item:hover .watchlist-item__right {
+  transform: translateX(-2px);
+}
+
+/* ============================================================
+   PRICE
+   ============================================================ */
+
+.watchlist-item__price {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ============================================================
+   CHANGE (percent, inline arrow)
+   ============================================================ */
+
+.watchlist-item__change {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.watchlist-item__change.is-up {
+  color: var(--watchlist-change-positive);
+}
+
+.watchlist-item__change.is-down {
+  color: var(--watchlist-change-negative);
+}
+
+/* ============================================================
+   DAY CHANGE BADGE (absolute rupee amount)
+   ============================================================ */
+
+.watchlist-item__day-change {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 64px;
+  height: 22px;
+
+  padding: 0 var(--space-2);
+
+  border-radius: var(--radius-round);
+
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.watchlist-item__day-change.is-up {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.watchlist-item__day-change.is-down {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+/* ============================================================
+   SEPARATOR — appears between price block and quick actions
+   ============================================================ */
+
+.watchlist-item::after {
+  content: "";
+
+  position: absolute;
+  left: var(--card-padding-sm);
+  right: var(--card-padding-sm);
+  bottom: 56px;
+
+  height: 1px;
+
+  background: var(--watchlist-divider);
+
+  opacity: 0;
+
+  transition: opacity var(--transition-fast);
+}
+
+.watchlist-item:hover::after {
+  opacity: 1;
+}
+
+/* ============================================================
+   QUICK ACTION CONTAINER
+   ============================================================ */
+
+.watchlist-item__quick-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-3);
+
+  padding: 0 var(--card-padding-sm) var(--card-padding-sm);
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    visibility var(--transition-fast);
+}
+
+.watchlist-item:hover .watchlist-item__quick-actions {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   TRADE BUTTON GROUP
+   ============================================================ */
+
+.watchlist-item__trade-actions {
+  display: flex;
+
+  flex: 1;
+  min-width: 0;
+
+  gap: var(--space-2);
+}
+
+/* ============================================================
+   COMMON TRADE BUTTON
+   ============================================================ */
+
+.watchlist-item__trade-btn {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 34px;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wide);
+
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    filter var(--transition-fast);
+}
+
+.watchlist-item__trade-btn:active {
+  transform: scale(0.96);
+}
+
+.watchlist-item__trade-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.watchlist-item__trade-btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================================================
+   BUY — always green
+   ============================================================ */
+
+.watchlist-item__trade-btn--buy {
+  background: var(--button-success-bg);
+  color: var(--button-success-text);
+}
+
+.watchlist-item__trade-btn--buy:hover {
+  background: var(--button-success-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   SELL — always red
+   ============================================================ */
+
+.watchlist-item__trade-btn--sell {
+  background: var(--button-danger-bg);
+  color: var(--button-danger-text);
+}
+
+.watchlist-item__trade-btn--sell:hover {
+  background: var(--button-danger-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   ICON BUTTON GROUP
+   ============================================================ */
+
+.watchlist-item__icon-actions {
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   ICON BUTTON
+   ============================================================ */
+
+.watchlist-item__icon-btn {
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+
+  background: var(--surface-secondary);
+  color: var(--icon-secondary);
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.watchlist-item__icon-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-focus);
+  color: var(--icon-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+.watchlist-item__icon-btn:active {
+  transform: scale(0.94);
+}
+
+.watchlist-item__icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.watchlist-item__icon-btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================================================
+   DELETE
+   ============================================================ */
+
+.watchlist-item__icon-btn--delete:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger-fill);
+  color: var(--danger-fill);
+}
+
+/* ============================================================
+   STAR / FAVORITE
+   ============================================================ */
+
+.watchlist-item__icon-btn--favorite:hover {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+/* ============================================================
+   ACTION BAR ANIMATION
+   ============================================================ */
+
+.watchlist-item:hover .watchlist-item__trade-btn {
+  animation: watchlistTradeFade 0.18s ease forwards;
+}
+
+.watchlist-item:hover .watchlist-item__icon-btn {
+  animation: watchlistIconFade 0.22s ease forwards;
+}
+
+@keyframes watchlistTradeFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes watchlistIconFade {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ============================================================
+   FLASH ON PRICE UPDATE (paired with usePriceFlash hook)
+   ============================================================ */
+
+.watchlist-item__right.flash-up {
+  animation: watchlistFlashUp 700ms ease;
+}
+
+.watchlist-item__right.flash-down {
+  animation: watchlistFlashDown 700ms ease;
+}
+
+@keyframes watchlistFlashUp {
+  0% { background-color: var(--success-bg); border-radius: var(--radius-sm); }
+  100% { background-color: transparent; }
+}
+
+@keyframes watchlistFlashDown {
+  0% { background-color: var(--danger-bg); border-radius: var(--radius-sm); }
+  100% { background-color: transparent; }
+}
+
+/* ============================================================
+   LOADING
+   ============================================================ */
+
+.watchlist-item.loading {
+  opacity: var(--opacity-muted);
+  pointer-events: none;
+}
+
+.watchlist-item.loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--overlay-light),
+    transparent
+  );
+  animation: watchlistLoading 1.2s linear infinite;
+}
+
+@keyframes watchlistLoading {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .watchlist-item,
+  .watchlist-item__quick-actions,
+  .watchlist-item__trade-btn,
+  .watchlist-item__icon-btn {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .watchlist-item:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   FINAL POLISH
+   ============================================================ */
+
+.watchlist-item__symbol,
+.watchlist-item__price,
+.watchlist-item__change {
+  user-select: text;
+}
+
+/* ============================================================
+   END OF WATCHLISTITEM.CSS
+   ============================================================ */

@@ -1,0 +1,89 @@
+/* ==========================================================
+   TRADING ANALYTICS DASHBOARD LAYOUT
+   ========================================================== */
+
+.trading-analytics-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 20px);
+  width: 100%;
+}
+
+/* Mobile & Tablet Baseline: Vertical Stacking */
+.trading-analytics-section__lower {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 20px);
+  width: 100%;
+}
+
+/* Base Card Styling & Equal Heights */
+.trading-analytics-section__lower > * {
+  width: 100%;
+  min-width: 0;
+}
+
+.most-traded,
+.most-traded-panel,
+.pnl-heatmap,
+.stock-analytics-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 520px;
+}
+
+/* Ensures internal charts & grids stretch vertically to fill card space */
+.most-traded .recharts-responsive-container,
+.pnl-heatmap__grid,
+.stock-analytics-panel__body {
+  flex: 1;
+}
+
+/* ----------------------------------------------------------
+   Desktop Layout (993px and wider)
+   Forces single horizontal line for 2 or 3 items
+   ---------------------------------------------------------- */
+@media (min-width: 993px) {
+  .trading-analytics-section__lower {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    gap: var(--space-5, 20px) !important;
+    width: 100% !important;
+  }
+
+  /* ALL children get equal width */
+  .trading-analytics-section__lower > * {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: auto !important;
+  }
+
+  /* VISUAL POSITIONING (Left to Right) */
+  .trading-analytics-section__lower > .most-traded,
+  .trading-analytics-section__lower > .most-traded-panel {
+    order: 1 !important;
+  }
+
+  .trading-analytics-section__lower > .stock-analytics-panel {
+    order: 2 !important;
+  }
+
+  .trading-analytics-section__lower > .pnl-heatmap {
+    order: 3 !important;
+  }
+}
+
+/* Smooth transitions during state change */
+.trading-analytics-section__lower > * {
+  transition: flex var(--transition-normal, 0.3s ease), opacity var(--transition-normal, 0.3s ease);
+}
+
+/* Fix for compact mode on desktop */
+@media (min-width: 993px) {
+  .trading-analytics-section__lower.has-analytics .pnl-heatmap {
+    flex: 1 1 0% !important;
+  }
+}

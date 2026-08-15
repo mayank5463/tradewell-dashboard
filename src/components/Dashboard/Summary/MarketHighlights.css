@@ -1,0 +1,807 @@
+/* ==========================================================
+   MARKET HIGHLIGHTS - Premium Card Design
+   Most Traded, Most Volume, 52W High, 52W Low
+   Inspired by Groww & Zerodha
+   ========================================================== */
+
+.market-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+  padding: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--card-shadow);
+  transition: all var(--transition-normal);
+}
+
+.market-highlights:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
+
+.market-highlights__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.market-highlights__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.market-highlights__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.market-highlights__subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.market-highlights__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.market-highlights__control {
+  display: flex;
+  align-items: center;
+}
+
+.market-highlights__select {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-primary);
+  background: var(--input-bg);
+  color: var(--input-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+  height: 36px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 32px;
+  min-width: 120px;
+}
+
+.market-highlights__select:hover {
+  border-color: var(--border-hover);
+  background-color: var(--surface-hover);
+}
+
+.market-highlights__select:focus {
+  border-color: var(--border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+/* ==========================================================
+   CONTENT
+   ========================================================== */
+
+.market-highlights__content {
+  flex: 1;
+  min-height: 200px;
+}
+
+.market-highlights__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+}
+
+/* ==========================================================
+   STOCK CARD
+   ========================================================== */
+
+.market-highlights__card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+  min-height: 62px;
+  position: relative;
+}
+
+.market-highlights__card:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-xs);
+}
+
+.market-highlights__card:active {
+  transform: scale(0.99);
+}
+
+.market-highlights__card:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Rank */
+.market-highlights__card-rank {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-tertiary);
+  background: var(--surface-tertiary);
+  border-radius: 50%;
+  transition: all var(--transition-fast);
+}
+
+.market-highlights__card:hover .market-highlights__card-rank {
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+}
+
+/* Identity */
+.market-highlights__card-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+}
+
+.market-highlights__card-logo {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-secondary);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.market-highlights__card:hover .market-highlights__card-logo {
+  border-color: var(--border-hover);
+  transform: scale(1.05);
+}
+
+.market-highlights__card-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 50%;
+}
+
+.market-highlights__card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.market-highlights__card-symbol {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.market-highlights__card-name {
+  font-size: var(--font-size-2xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* Metrics */
+.market-highlights__card-metrics {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.market-highlights__card-price {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.market-highlights__card-change {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: 1px 10px;
+  border-radius: var(--radius-round);
+  font-variant-numeric: tabular-nums;
+}
+
+.market-highlights__card-change.is-up {
+  color: var(--success-text);
+  background: var(--success-bg);
+}
+
+.market-highlights__card-change.is-down {
+  color: var(--danger-text);
+  background: var(--danger-bg);
+}
+
+/* Metric Value (Orders, Volume, 52W High/Low) */
+.market-highlights__card-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  flex-shrink: 0;
+  min-width: 80px;
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--border-secondary);
+}
+
+.market-highlights__card-metric-label {
+  font-size: var(--font-size-2xs);
+  color: var(--text-tertiary);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.market-highlights__card-metric-value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================
+   EMPTY STATE
+   ========================================================== */
+
+.market-highlights__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  color: var(--text-secondary);
+  text-align: center;
+  min-height: 200px;
+}
+
+.market-highlights__empty-icon {
+  font-size: 40px;
+  opacity: 0.4;
+}
+
+.market-highlights__empty p {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+
+.market-highlights__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-secondary);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.market-highlights__footer-info {
+  font-weight: var(--font-weight-medium);
+}
+
+.market-highlights__footer-view {
+  color: var(--text-tertiary);
+  background: var(--surface-secondary);
+  padding: 2px 10px;
+  border-radius: var(--radius-round);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ==========================================================
+   DARK MODE
+   ========================================================== */
+
+[data-mode="dark"] .market-highlights {
+  border-color: var(--border-primary);
+}
+
+[data-mode="dark"] .market-highlights:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-mode="dark"] .market-highlights__card {
+  background: var(--surface-secondary);
+  border-color: var(--border-secondary);
+}
+
+[data-mode="dark"] .market-highlights__card:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+}
+
+[data-mode="dark"] .market-highlights__card-rank {
+  background: var(--surface-tertiary);
+  color: var(--text-tertiary);
+}
+
+[data-mode="dark"] .market-highlights__card:hover .market-highlights__card-rank {
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+}
+
+[data-mode="dark"] .market-highlights__card-logo {
+  background: var(--surface-secondary);
+  border-color: var(--border-secondary);
+}
+
+[data-mode="dark"] .market-highlights__card-metric {
+  border-left-color: var(--border-secondary);
+}
+
+[data-mode="dark"] .market-highlights__select {
+  background-color: var(--input-bg);
+  border-color: var(--border-primary);
+  color: var(--input-text);
+}
+
+[data-mode="dark"] .market-highlights__footer-view {
+  background: var(--surface-secondary);
+  color: var(--text-tertiary);
+}
+
+/* ==========================================================
+   THEME VARIATIONS
+   ========================================================== */
+
+/* Navy Theme */
+[data-theme="navy"] .market-highlights__card:hover {
+  background: var(--navy-50);
+  border-color: var(--navy-200);
+}
+
+[data-theme="navy"] .market-highlights__card-rank {
+  background: var(--navy-100);
+  color: var(--navy-600);
+}
+
+[data-theme="navy"] .market-highlights__card:hover .market-highlights__card-rank {
+  background: var(--navy-600);
+  color: var(--white);
+}
+
+/* Olive Theme */
+[data-theme="olive"] .market-highlights__card:hover {
+  background: var(--olive-50);
+  border-color: var(--olive-200);
+}
+
+[data-theme="olive"] .market-highlights__card-rank {
+  background: var(--olive-100);
+  color: var(--olive-600);
+}
+
+[data-theme="olive"] .market-highlights__card:hover .market-highlights__card-rank {
+  background: var(--olive-600);
+  color: var(--white);
+}
+
+/* Charcoal Theme */
+[data-theme="charcoal"] .market-highlights__card:hover {
+  background: var(--charcoal-50);
+  border-color: var(--charcoal-200);
+}
+
+[data-theme="charcoal"] .market-highlights__card-rank {
+  background: var(--charcoal-100);
+  color: var(--charcoal-600);
+}
+
+[data-theme="charcoal"] .market-highlights__card:hover .market-highlights__card-rank {
+  background: var(--charcoal-600);
+  color: var(--white);
+}
+
+/* Sand Theme */
+[data-theme="sand"] .market-highlights__card:hover {
+  background: var(--sand-50);
+  border-color: var(--sand-200);
+}
+
+[data-theme="sand"] .market-highlights__card-rank {
+  background: var(--sand-100);
+  color: var(--sand-600);
+}
+
+[data-theme="sand"] .market-highlights__card:hover .market-highlights__card-rank {
+  background: var(--sand-600);
+  color: var(--white);
+}
+
+/* ==========================================================
+   DARK MODE THEME VARIATIONS
+   ========================================================== */
+
+[data-mode="dark"][data-theme="navy"] .market-highlights__card {
+  background: var(--navy-950);
+  border-color: var(--navy-800);
+}
+
+[data-mode="dark"][data-theme="navy"] .market-highlights__card:hover {
+  background: var(--navy-900);
+  border-color: var(--navy-700);
+}
+
+[data-mode="dark"][data-theme="olive"] .market-highlights__card {
+  background: var(--olive-950);
+  border-color: var(--olive-800);
+}
+
+[data-mode="dark"][data-theme="olive"] .market-highlights__card:hover {
+  background: var(--olive-900);
+  border-color: var(--olive-700);
+}
+
+[data-mode="dark"][data-theme="charcoal"] .market-highlights__card {
+  background: var(--charcoal-950);
+  border-color: var(--charcoal-800);
+}
+
+[data-mode="dark"][data-theme="charcoal"] .market-highlights__card:hover {
+  background: var(--charcoal-900);
+  border-color: var(--charcoal-700);
+}
+
+[data-mode="dark"][data-theme="sand"] .market-highlights__card {
+  background: var(--sand-950);
+  border-color: var(--sand-800);
+}
+
+[data-mode="dark"][data-theme="sand"] .market-highlights__card:hover {
+  background: var(--sand-900);
+  border-color: var(--sand-700);
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .market-highlights {
+    padding: var(--space-4);
+  }
+
+  .market-highlights__card {
+    padding: var(--space-2) var(--space-3);
+    min-height: 54px;
+  }
+
+  .market-highlights__card-logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .market-highlights__card-metric {
+    min-width: 60px;
+    padding-left: var(--space-2);
+  }
+
+  .market-highlights__card-metrics {
+    min-width: 60px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .market-highlights {
+    padding: var(--space-4);
+  }
+
+  .market-highlights__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .market-highlights__controls {
+    width: 100%;
+    gap: var(--space-2);
+  }
+
+  .market-highlights__control {
+    flex: 1;
+  }
+
+  .market-highlights__select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .market-highlights__card {
+    padding: var(--space-2);
+    gap: var(--space-2);
+    min-height: 50px;
+    flex-wrap: wrap;
+  }
+
+  .market-highlights__card-rank {
+    width: 24px;
+    height: 24px;
+    font-size: 9px;
+  }
+
+  .market-highlights__card-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .market-highlights__card-symbol {
+    font-size: var(--font-size-xs);
+  }
+
+  .market-highlights__card-name {
+    max-width: 80px;
+    font-size: var(--font-size-3xs);
+  }
+
+  .market-highlights__card-price {
+    font-size: var(--font-size-xs);
+  }
+
+  .market-highlights__card-change {
+    font-size: var(--font-size-2xs);
+    padding: 1px 6px;
+  }
+
+  .market-highlights__card-metric {
+    min-width: 50px;
+    padding-left: var(--space-2);
+  }
+
+  .market-highlights__card-metric-label {
+    font-size: var(--font-size-3xs);
+  }
+
+  .market-highlights__card-metric-value {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .market-highlights {
+    padding: var(--space-3);
+  }
+
+  .market-highlights__card {
+    padding: var(--space-1) var(--space-2);
+    min-height: 44px;
+    gap: var(--space-1);
+  }
+
+  .market-highlights__card-rank {
+    width: 20px;
+    height: 20px;
+    font-size: 8px;
+  }
+
+  .market-highlights__card-logo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .market-highlights__card-symbol {
+    font-size: var(--font-size-2xs);
+  }
+
+  .market-highlights__card-name {
+    display: none;
+  }
+
+  .market-highlights__card-price {
+    font-size: var(--font-size-2xs);
+  }
+
+  .market-highlights__card-change {
+    font-size: var(--font-size-3xs);
+    padding: 1px 4px;
+  }
+
+  .market-highlights__card-metric {
+    min-width: 40px;
+    padding-left: var(--space-1);
+  }
+
+  .market-highlights__card-metric-label {
+    display: none;
+  }
+
+  .market-highlights__card-metric-value {
+    font-size: var(--font-size-2xs);
+  }
+
+  .market-highlights__title {
+    font-size: var(--font-size-base);
+  }
+
+  .market-highlights__subtitle {
+    font-size: var(--font-size-2xs);
+  }
+
+  .market-highlights__select {
+    font-size: var(--font-size-2xs);
+    height: 30px;
+    padding-right: 24px;
+    background-position: right 6px center;
+    min-width: 80px;
+  }
+
+  .market-highlights__footer {
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: center;
+  }
+}
+
+/* ==========================================================
+   ACCESSIBILITY
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .market-highlights__card,
+  .market-highlights__select,
+  .market-highlights {
+    transition: none !important;
+  }
+
+  .market-highlights__card:hover {
+    transform: none !important;
+  }
+
+  .market-highlights:hover {
+    transform: none !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .market-highlights__card {
+    border: 2px solid var(--border-primary);
+  }
+
+  .market-highlights__card:hover {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: -2px;
+  }
+
+  .market-highlights__card-change.is-up {
+    color: #006400;
+    background: #e8f5e9;
+  }
+
+  .market-highlights__card-change.is-down {
+    color: #8b0000;
+    background: #ffebee;
+  }
+}
+
+/* ==========================================================
+   PRINT
+   ========================================================== */
+
+@media print {
+  .market-highlights {
+    border: 1px solid #000;
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .market-highlights__card {
+    border: 1px solid #ddd;
+    background: #fff !important;
+  }
+
+  .market-highlights__card:hover {
+    transform: none !important;
+    background: #fff !important;
+  }
+
+  .market-highlights__card-rank {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+  }
+
+  .market-highlights__select {
+    display: none;
+  }
+}
+
+/* ==========================================================
+   PRICE FLASH ANIMATION
+   ========================================================== */
+
+@keyframes flash-up {
+  0% { background-color: rgba(34, 197, 94, 0.15); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-down {
+  0% { background-color: rgba(239, 68, 68, 0.15); }
+  100% { background-color: transparent; }
+}
+
+.flash-up {
+  animation: flash-up 0.5s ease;
+}
+
+.flash-down {
+  animation: flash-down 0.5s ease;
+}
+
+[data-mode="dark"] .flash-up {
+  animation: flash-up-dark 0.5s ease;
+}
+
+[data-mode="dark"] .flash-down {
+  animation: flash-down-dark 0.5s ease;
+}
+
+@keyframes flash-up-dark {
+  0% { background-color: rgba(74, 222, 128, 0.2); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-down-dark {
+  0% { background-color: rgba(248, 113, 113, 0.2); }
+  100% { background-color: transparent; }
+}

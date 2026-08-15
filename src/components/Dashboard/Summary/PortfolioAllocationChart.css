@@ -1,0 +1,177 @@
+/* ============================================================
+   PORTFOLIO ALLOCATION CHART
+   Donut chart card. Colors come from theme tokens only (see the
+   BASE_SLICE_VARS list in the component) so this re-themes across
+   navy/olive/charcoal/sand and light/dark automatically — nothing
+   here is a hardcoded hex value.
+   ============================================================ */
+
+.portfolio-allocation-chart {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-4);
+
+  padding: var(--card-padding-md);
+}
+
+.portfolio-allocation-chart__header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.portfolio-allocation-chart__header h3 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--card-title);
+}
+
+.portfolio-allocation-chart__subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--card-subtitle);
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.portfolio-allocation-chart__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 180px;
+  padding: var(--space-6);
+
+  text-align: center;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   BODY
+   ============================================================ */
+
+.portfolio-allocation-chart__body {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+/* Recharts renders into an SVG we don't control the DOM of, so the only
+   themeable surface for the wedge outline is the `stroke` prop set to
+   var(--card-bg) directly in the component (keeps slices visually
+   separated against whatever surface color the active theme uses). */
+
+/* ============================================================
+   TOOLTIP
+   ============================================================ */
+
+.portfolio-allocation-chart__tooltip {
+  padding: var(--space-3);
+
+  background: var(--chart-tooltip-bg);
+  border: 1px solid var(--chart-tooltip-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.portfolio-allocation-chart__tooltip-symbol {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--chart-tooltip-text);
+  margin-bottom: 2px;
+}
+
+.portfolio-allocation-chart__tooltip-value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--chart-tooltip-text);
+}
+
+.portfolio-allocation-chart__tooltip-percent {
+  font-size: var(--font-size-2xs);
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   LEGEND
+   ============================================================ */
+
+.portfolio-allocation-chart__legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  flex: 1;
+  min-width: 0;
+
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.portfolio-allocation-chart__legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  padding: var(--space-2) var(--space-2);
+  border-radius: var(--radius-sm);
+
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.portfolio-allocation-chart__legend-item:hover {
+  background: var(--surface-hover);
+}
+
+.portfolio-allocation-chart__legend-dot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: var(--radius-round);
+}
+
+.portfolio-allocation-chart__legend-symbol {
+  flex: 1;
+  min-width: 0;
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portfolio-allocation-chart__legend-percent {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .portfolio-allocation-chart__body {
+    flex-direction: column;
+  }
+
+  .portfolio-allocation-chart__legend {
+    width: 100%;
+    max-height: none;
+  }
+}

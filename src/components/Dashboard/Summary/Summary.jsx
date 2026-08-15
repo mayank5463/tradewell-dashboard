@@ -3,9 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import GreetingBanner from "./GreetingBanner";
 import HoldingsSummaryBar from "./HoldingsSummaryBar";
 import HoldingsTable from "./HoldingsTable";
-import TopIndexFunds from "./TopIndexFunds"; // NEW
+import TopIndexFunds from "./TopIndexFunds";
 import GainersLosers from "./GainersLosers";
-import PortfolioAllocationChart from "./PortfolioAllocationChart";
 
 import TradeAnalyticsCards from "./TradeAnalyticsCards";
 import Button from "../../common/Button/Button";

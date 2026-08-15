@@ -2,7 +2,7 @@ import { useTheme } from "../../hooks/useTheme";
 import "./ThemeSwitcher.css";
 
 export default function ThemeSwitcher() {
-  const { mode, toggleMode, isDark } = useTheme();
+  const {  toggleMode, isDark } = useTheme();
 
   return (
     <button

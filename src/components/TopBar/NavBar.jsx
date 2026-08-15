@@ -12,9 +12,6 @@ import ProfileMenu from "./ProfileMenu";
 import ThemeSwitcher from "./ThemeSwitcher";
 import "./NavBar.css";
 
-/* ==========================================================
-   PRIMARY NAVIGATION
-========================================================== */
 
 const NAV_LINKS = [
   { to: "/dashboard", label: "Dashboard", end: true },
@@ -33,9 +30,7 @@ export default function NavBar() {
 
   return (
     <header className="navbar-row">
-      {/* ======================================================
-          BRAND
-      ====================================================== */}
+      
 
       <div className="navbar-row__brand">
         <span className="navbar-row__logo" aria-hidden="true">
@@ -101,9 +96,7 @@ export default function NavBar() {
         </nav>
       </div>
 
-      {/* ======================================================
-          RIGHT SIDE
-      ====================================================== */}
+      
 
       <div className="navbar-row__right">
         <ThemeSwitcher />

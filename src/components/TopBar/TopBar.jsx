@@ -1,5 +1,4 @@
-import Button from "@mui/material/Button";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+
 import NavBar from "./NavBar";
 import MarqueeStrip from "./MarqueeStrip";
 import SearchBar from "./SearchBar";

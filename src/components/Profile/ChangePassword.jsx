@@ -5,15 +5,6 @@ import { changePassword } from "../../services/authService";
 import "./Profile.css";
 import "./ChangePassword.css";
 
-// FIXED — this used to accept ANY value typed into "Current password" as
-// long as the field was non-empty; there was no actual check against the
-// real password anywhere, so it always "succeeded". That check can only
-// happen server-side (the frontend never has the real password — see
-// authService.getProfile()'s comment), so this now calls
-// authService.changePassword(), which POSTs to a real /change-password
-// route and surfaces whatever the server says — including "Current
-// password is incorrect." when it's wrong, instead of always reporting
-// success.
 
 function getPasswordStrength(pw) {
   if (!pw) return 0;

@@ -1,5 +1,5 @@
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3002";
+const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
 
 async function apiFetch(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {

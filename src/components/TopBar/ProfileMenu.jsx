@@ -1,8 +1,3 @@
-
-
-
-
-
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +13,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { logout } from "../../redux/slices/authSlice";
 import { logout as apiLogout } from "../../services/authService"; // ← ADDED
-import { LOGIN_APP_URL, BACKEND_URL } from "../../utils/constants";
+import { LOGIN_APP_URL, } from "../../utils/constants";
 import "./ProfileMenu.css";
 
 export default function ProfileMenu() {
@@ -46,13 +41,13 @@ export default function ProfileMenu() {
   // ── FIXED: Handle Logout Properly ────────────────────────────────────
   const handleLogout = async () => {
     setAnchorEl(null);
-    
+
     // Step 1: Set flag so login page doesn't auto-redirect
     sessionStorage.setItem("just_logged_out", "true");
-    
+
     // Step 2: Clear Redux state immediately
     dispatch(logout());
-    
+
     // Step 3: Call backend to clear httpOnly cookie
     try {
       await apiLogout();
@@ -61,10 +56,10 @@ export default function ProfileMenu() {
       console.warn("[LOGOUT] Backend logout failed:", err.message);
       // Continue anyway - we'll try to clear cookie via redirect
     }
-    
+
     // Step 4: Clear all local storage
     localStorage.clear();
-    
+
     // Step 5: Redirect to login page
     window.location.href = LOGIN_APP_URL;
   };
@@ -80,7 +75,10 @@ export default function ProfileMenu() {
       >
         <Avatar className="profile-menu__avatar">{initials}</Avatar>
         <span className="profile-menu__name">{user?.name ?? "Trader"}</span>
-        <KeyboardArrowDownIcon className="profile-menu__caret" fontSize="small" />
+        <KeyboardArrowDownIcon
+          className="profile-menu__caret"
+          fontSize="small"
+        />
       </button>
 
       <Menu
@@ -112,7 +110,10 @@ export default function ProfileMenu() {
         <Divider />
         <MenuItem onClick={handleLogout} className="profile-menu__logout-item">
           <ListItemIcon>
-            <LogoutIcon fontSize="small" className="profile-menu__logout-icon" />
+            <LogoutIcon
+              fontSize="small"
+              className="profile-menu__logout-icon"
+            />
           </ListItemIcon>
           Logout
         </MenuItem>

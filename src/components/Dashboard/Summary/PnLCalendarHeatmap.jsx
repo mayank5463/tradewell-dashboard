@@ -9,6 +9,7 @@ import "./PnLCalendarHeatmap.css";
 import "../../../styles/variables.css";
 import "../../../styles/global.css";
 import "../../../styles/icons.css";
+import "../../../styles/SectionHeadingsTheme.css"; 
 
 /* Range presets. `weeks` is chosen so each preset always renders full
    Sun→Sat columns while comfortably covering the named period (13

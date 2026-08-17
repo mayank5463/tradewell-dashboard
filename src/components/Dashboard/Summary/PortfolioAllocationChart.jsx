@@ -7,6 +7,7 @@ import iconHoldings from "../../../assets/icons/icon-holdings.png";
 import { selectHoldingsAllocation } from "../../../redux/selectors/fundsSelectors";
 import { formatCurrency, formatPercent } from "../../../utils/formatCurrency";
 import "./PortfolioAllocationChart.css";
+import "../../../styles/SectionHeadingsTheme.css";
 // NOTE: PortfolioAllocationChart.css needs one small addition — see the
 // README section "PortfolioAllocationChart.css addition" for the exact
 // snippet (styles for the new .portfolio-allocation-chart__total badge

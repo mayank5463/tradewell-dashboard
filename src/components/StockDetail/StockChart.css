@@ -1,45 +1,48 @@
-
-
+/* StockChart.css */
 .stock-chart {
   --sd-up: #0f9d58;
   --sd-down: #e11d48;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-  /* Let this component use however much width its parent gives it —
-     the actual widening of the surrounding panel happens in
-     StockDetailPanel.css (a file I don't have yet), not here. This is
-     just making sure StockChart itself never artificially caps out. */
+  font-family: var(--font-family-base, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif);
   width: 100%;
 }
 
-/* ── Toolbar: chart-type switcher (left) + fullscreen (right) ── */
+/* --- Toolbar --- */
 .stock-chart__toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
 }
 
-.stock-chart__type-group {
+.stock-chart__type-group,
+.stock-chart__zoom-group {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  background: var(--color-gray-100, #f3f4f9);
+  background: var(--surface-secondary, #f3f4f9);
   border: 1px solid var(--border-default, #e6e8f2);
   border-radius: 11px;
   padding: 3px;
 }
 
-.stock-chart__type-btn {
+.stock-chart__type-btn,
+.stock-chart__zoom-btn,
+.stock-chart__fullscreen-btn {
   border: none;
   background: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.stock-chart__type-btn {
   color: var(--text-secondary, #626b7d);
   font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.1px;
   padding: 7px 14px;
   border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .stock-chart__type-btn:hover {
@@ -48,25 +51,14 @@
 
 .stock-chart__type-btn.is-active {
   background: var(--bg-surface, #ffffff);
-  color: var(--color-primary-500, #3d4fe0);
+  color: var(--brand-primary, #3d4fe0);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 10px -4px rgba(15, 23, 42, 0.12);
 }
 
-/* Groups zoom controls + fullscreen together on the toolbar's right side */
 .stock-chart__toolbar-right {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.stock-chart__zoom-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  background: var(--color-gray-100, #f3f4f9);
-  border: 1px solid var(--border-default, #e6e8f2);
-  border-radius: 9px;
-  padding: 3px;
 }
 
 .stock-chart__zoom-btn {
@@ -75,20 +67,16 @@
   justify-content: center;
   width: 26px;
   height: 26px;
-  border: none;
   border-radius: 7px;
-  background: transparent;
   color: var(--text-secondary, #626b7d);
   font-size: 15px;
   font-weight: 700;
   line-height: 1;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .stock-chart__zoom-btn:hover {
   background: var(--bg-surface, #ffffff);
-  color: var(--color-primary-500, #3d4fe0);
+  color: var(--brand-primary, #3d4fe0);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 
@@ -106,33 +94,30 @@
   border: 1px solid var(--border-default, #e6e8f2);
   background: var(--bg-surface, #ffffff);
   color: var(--text-secondary, #626b7d);
-  cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
 .stock-chart__fullscreen-btn:hover {
-  color: var(--color-primary-500, #3d4fe0);
+  color: var(--brand-primary, #3d4fe0);
   border-color: var(--color-blue-100, #dfe3fb);
   background: var(--color-blue-50, #eef0fe);
 }
 
-/* ── Stage: holds the legend overlay + duration badge + the chart container ── */
+/* --- Stage (Container for chart and overlays) --- */
 .stock-chart__stage {
   position: relative;
 }
 
 .stock-chart__container {
-  /* Taller than before (was 400px) — more vertical room helps candles
-     read cleanly at higher density (up to ~375 per view) without the
-     wicks/bodies feeling cramped. */
   height: 460px;
   width: 100%;
   position: relative;
+  background: var(--bg-surface, #ffffff);
+  border-radius: var(--radius-md, 12px);
+  overflow: hidden;
+  z-index: 1; /* Ensure chart is above background */
 }
 
-/* faint background watermark — the symbol ticker sitting quietly behind
-   the plot, the way most trading terminals brand an otherwise-empty
-   canvas without competing with the candles for attention */
+/* Background Watermark */
 .stock-chart__container::before {
   content: attr(data-symbol);
   position: absolute;
@@ -150,36 +135,19 @@
   user-select: none;
 }
 
-.stock-chart--fullscreen {
-  background: var(--bg-surface, #ffffff);
-  padding: 18px 22px;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.stock-chart--fullscreen .stock-chart__stage {
-  flex: 1;
-  min-height: 0;
-}
-
-.stock-chart--fullscreen .stock-chart__container {
-  height: 100%;
-}
-
-/* ── OHLCV crosshair legend ── */
+/* --- Legend --- */
 .stock-chart__legend {
   position: absolute;
   top: 8px;
   left: 8px;
-  z-index: 2;
+  z-index: 10;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
   padding: 7px 12px;
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--glass-bg, rgba(255, 255, 255, 0.82));
   backdrop-filter: blur(6px);
   border: 1px solid var(--border-default, #e6e8f2);
   pointer-events: none;
@@ -203,16 +171,6 @@
   color: var(--text-primary, #0a0e1a);
 }
 
-/* Date/time row — sits below O/H/L/C/Vol, quieter than the price figures
-   since it's context, not a number the user is scanning for. */
-.stock-chart__legend-datetime {
-  margin-top: 4px;
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--text-tertiary, #98a1b3);
-  font-variant-numeric: tabular-nums;
-}
-
 .stock-chart__legend-item i {
   font-style: normal;
   font-size: 10px;
@@ -222,19 +180,26 @@
   color: var(--text-secondary, #98a1b3);
 }
 
+.stock-chart__legend-datetime {
+  margin-top: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-tertiary, #98a1b3);
+  font-variant-numeric: tabular-nums;
+}
+
 .stock-chart__legend.is-up .stock-chart__legend-item { color: var(--sd-up); }
 .stock-chart__legend.is-down .stock-chart__legend-item { color: var(--sd-down); }
 
-/* ── Candle-duration badge — top-right of the stage, mirrors the legend's
-   glass-panel treatment on the top-left ── */
+/* --- Duration Badge --- */
 .stock-chart__duration-badge {
   position: absolute;
   top: 8px;
   right: 8px;
-  z-index: 2;
+  z-index: 10;
   padding: 6px 11px;
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--glass-bg, rgba(255, 255, 255, 0.82));
   backdrop-filter: blur(6px);
   border: 1px solid var(--border-default, #e6e8f2);
   pointer-events: none;
@@ -250,11 +215,11 @@
   color: var(--text-tertiary, #98a1b3);
 }
 
-/* ── Empty / loading / error states ── */
+/* --- Empty / Loading / Error States --- */
 .stock-chart--empty {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -284,9 +249,9 @@
   border-radius: 3px;
   background: linear-gradient(
     100deg,
-    var(--color-gray-100, #eef0f7) 30%,
+    var(--surface-secondary, #eef0f7) 30%,
     var(--color-blue-50, #eef0fe) 50%,
-    var(--color-gray-100, #eef0f7) 70%
+    var(--surface-secondary, #eef0f7) 70%
   );
   background-size: 200% 100%;
   animation: stock-chart-shimmer 1.4s ease-in-out infinite;
@@ -295,6 +260,41 @@
 @keyframes stock-chart-shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+/* --- Fullscreen Mode --- */
+.stock-chart--fullscreen {
+  background: var(--bg-surface, #ffffff);
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.stock-chart--fullscreen .stock-chart__stage {
+  flex: 1;
+  min-height: 0;
+}
+
+.stock-chart--fullscreen .stock-chart__container {
+  height: 100%;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .stock-chart__container {
+    height: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .stock-chart__toolbar {
+    gap: 8px;
+  }
+  .stock-chart__type-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -314,5 +314,9 @@
   .stock-chart__duration-badge {
     font-size: 10.5px;
     padding: 5px 8px;
+  }
+  .stock-chart__fullscreen-btn {
+    width: 28px;
+    height: 28px;
   }
 }

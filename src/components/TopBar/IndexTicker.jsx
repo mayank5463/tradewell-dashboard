@@ -1,62 +1,86 @@
-
-
-
-
-
-import { useSelector } from "react-redux";
-import { formatPercent } from "../../utils/formatCurrency";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchMarketIndices } from "../../redux/slices/marketSlice";
+import { formatCurrency, formatPercent } from "../../utils/formatCurrency";
 import "./IndexTicker.css";
 
-// UPDATED — was `Object.values(indices).map(...)`, which rendered
-// whatever the backend response happened to contain, in whatever order
-// it arrived in. Since state.market.indices is only ever populated with
-// Sensex + Nifty (see marketSlice's fetchMarketIndices, which reads
-// WATCHED_INDICES on the backend), this pinned list just guarantees a
-// stable Sensex-then-Nifty order and a visible skeleton pill for
-// whichever one hasn't loaded yet yet, instead of the ticker being empty
-// or single-pill until both happen to have arrived.
-const DISPLAY_ORDER = [
-  { key: "SENSEX", label: "SENSEX" },
-  { key: "NIFTY50", label: "NIFTY 50" },
-];
+/**
+ * IndexTicker
+ * Displays Sensex + Nifty 50 with live LTP, change, and % change.
+ * Compact pill-style design for the search row.
+ * 
+ * Redux state structure (from marketSlice):
+ * state.market.indices = {
+ *   "SENSEX": { symbol, name, value, change, changePercent },
+ *   "NIFTY50": { symbol, name, value, change, changePercent },
+ *   ...other indices
+ * }
+ */
 
-export default function IndexTicker() {
-  const indices = useSelector((state) => state.market.indices);
+function IndexPill({ label, data }) {
+  if (!data) {
+    return (
+      <div className="index-ticker__pill index-ticker__pill--loading">
+        <span className="index-ticker__name">{label}</span>
+        <span className="index-ticker__skeleton" />
+      </div>
+    );
+  }
+
+  const { value, change, changePercent } = data;
+  const isUp = changePercent >= 0;
+  const changeSign = isUp ? "+" : "";
 
   return (
-    <div className="index-ticker">
-      {DISPLAY_ORDER.map(({ key, label }) => {
-        const idx = indices?.[key];
-
-        if (!idx) {
-          return (
-            <div key={key} className="index-ticker__pill index-ticker__pill--loading">
-              <span className="index-ticker__name">{label}</span>
-              <span className="index-ticker__skeleton" />
-            </div>
-          );
-        }
-
-        const isUp = idx.changePercent >= 0;
-        return (
-          <div key={key} className={`index-ticker__pill ${isUp ? "is-up" : "is-down"}`}>
-            <span className="index-ticker__live-dot" aria-hidden="true" />
-            <span className="index-ticker__name">{label}</span>
-            <span className="index-ticker__value">
-              {idx.value?.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
-            </span>
-            <span className="index-ticker__change">
-              {isUp ? "▲" : "▼"} {formatPercent(idx.changePercent)}
-            </span>
-          </div>
-        );
-      })}
+    <div className={`index-ticker__pill ${isUp ? "is-up" : "is-down"}`}>
+      <span className="index-ticker__live-dot" aria-hidden="true" />
+      <span className="index-ticker__name">{label}</span>
+      <span className="index-ticker__value">
+        {formatCurrency(value, { decimals: 2 })}
+      </span>
+      <span className="index-ticker__change">
+        {isUp ? "▲" : "▼"} {changeSign}{formatPercent(changePercent, { showSign: false })}
+      </span>
     </div>
   );
 }
 
+export default function IndexTicker() {
+  const dispatch = useDispatch();
+  const indices = useSelector((state) => state.market.indices || {});
 
+  // Fetch indices immediately on mount
+  useEffect(() => {
+    dispatch(fetchMarketIndices());
 
+    // Poll every 10 seconds for live updates
+    const intervalId = setInterval(() => {
+      dispatch(fetchMarketIndices());
+    }, 10000);
 
+    return () => clearInterval(intervalId);
+  }, [dispatch]);
 
+  // Find indices by exact keys (case-insensitive fallback)
+  const findIndex = (keys) => {
+    for (const key of keys) {
+      if (indices[key]) return indices[key];
+    }
+    // Fallback: search by name
+    const searchName = keys[0].toLowerCase().replace(/[^a-z]/g, "");
+    return Object.values(indices).find((idx) =>
+      (idx.name || "").toLowerCase().includes(searchName) ||
+      (idx.symbol || "").toLowerCase().includes(searchName)
+    );
+  };
 
+  const sensex = findIndex(["SENSEX", "sensex", "Sensex"]);
+  const nifty = findIndex(["NIFTY50", "NIFTY 50", "NIFTY", "nifty", "nifty50", "Nifty50"]);
+
+  return (
+    <div className="index-ticker" role="region" aria-label="Market indices ticker">
+      <IndexPill label="SENSEX" data={sensex} />
+      <IndexPill label="NIFTY 50" data={nifty} />
+    </div>
+  );
+}

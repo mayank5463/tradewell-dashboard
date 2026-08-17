@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
+import "../../../styles/SectionHeadingsTheme.css"; 
 
 import {
   ResponsiveContainer,

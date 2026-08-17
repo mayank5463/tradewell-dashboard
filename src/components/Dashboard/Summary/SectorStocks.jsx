@@ -5,6 +5,7 @@ import { SECTORS, getSectorForSymbol } from "../../../data/sectors";
 import StockLogo from "../../common/StockLogo";
 import { formatCurrency, formatPercent } from "../../../utils/formatCurrency";
 import "./SectorStocks.css";
+import "../../../styles/SectionHeadingsTheme.css";
 
 function SectorTile({ sector, isActive, onClick, stockCount }) {
   return (

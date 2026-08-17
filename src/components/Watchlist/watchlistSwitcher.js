@@ -1,5 +1,3 @@
-
-
 import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -34,11 +32,13 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
   // Close the dropdown on outside click
   useEffect(() => {
     if (!isDropdownOpen) return;
+
     const onClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setIsDropdownOpen(false);
       }
     };
+
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, [isDropdownOpen]);
@@ -49,21 +49,18 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
   };
 
   const handleDeleteList = (e, list) => {
-    e.stopPropagation(); // don't also trigger handleSelectList on the row
+    e.stopPropagation();
     if (isOnlyList) return;
     if (!window.confirm(`Delete "${list.name}"? This can't be undone.`)) return;
     dispatch(deleteList(list.id));
   };
 
-  // ── Create a new list, then immediately open the add-stock search for it ──
+  // Create a new list and immediately open the add-stock search
   const handleCreate = async (e) => {
     e.preventDefault();
     const name = newName.trim();
     if (!name) return;
 
-    // createList is a createAsyncThunk — dispatching it returns a promise
-    // that resolves to the action object itself, so the server's newList
-    // (with its Mongo-issued id) lives at result.payload.newList.
     const result = await dispatch(createList(name));
 
     setNewName("");
@@ -81,14 +78,7 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
     setIsAddingStock(true);
   };
 
-  // FIXED — was reading `activeList?.stocks`, but the backend
-  // (watchlistService.js's serialize()) sends the field as `symbols`, not
-  // `stocks`. Because of the `|| []` fallback this never crashed — it just
-  // silently evaluated to `[]` every time, which made the "already in
-  // list" filter a no-op: every stock showed up in the add-stock search
-  // results regardless of whether it was already on the list. Same root
-  // cause as the crash in StockDetailPanel.jsx and the empty-list render
-  // in WatchList.js — just a quieter symptom here.
+  // Filter stocks not already in the list
   const matches = stocks
     .filter((s) => !(activeList?.symbols || []).includes(s.symbol))
     .filter((s) =>
@@ -101,14 +91,18 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
   const handleAddStock = (symbol) => {
     if (!addStockTarget) return;
     dispatch(addStockToList({ listId: addStockTarget, symbol }));
+    // Keep the panel open to allow adding more stocks
+  };
+
+  const handleCloseAddStock = () => {
+    setIsAddingStock(false);
+    setQuery("");
   };
 
   return (
     <div className="watchlist-switcher">
       <div className="watchlist-switcher__row">
-        {/* Custom dropdown replaces the old native <select> — this is what
-            lets each list row carry its own delete icon, which a native
-            <option> can't do. */}
+        {/* Custom dropdown for list selection */}
         <div className="watchlist-switcher__dropdown" ref={dropdownRef}>
           <button
             type="button"
@@ -116,11 +110,15 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
             onClick={() => setIsDropdownOpen((o) => !o)}
             aria-haspopup="listbox"
             aria-expanded={isDropdownOpen}
+            aria-label={`Select watchlist: ${activeList?.name ?? "No list selected"}`}
           >
             <span className="watchlist-switcher__select-label">
               {activeList?.name ?? "Select list"}
             </span>
-            <span className="watchlist-switcher__select-chevron" aria-hidden="true">
+            <span
+              className="watchlist-switcher__select-chevron"
+              aria-hidden="true"
+            >
               {isDropdownOpen ? "▲" : "▼"}
             </span>
           </button>
@@ -164,6 +162,8 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
           className="watchlist-switcher__add-stock-btn"
           onClick={() => openAddStockFor(activeListId)}
           title="Add stock to this list"
+          type="button"
+          aria-label="Add stock to watchlist"
         >
           Add stock
         </button>
@@ -173,11 +173,13 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
           onClick={() => setIsCreating((c) => !c)}
           aria-label="New watchlist"
           title="New watchlist"
+          type="button"
         >
           +
         </button>
       </div>
 
+      {/* Create new list form */}
       {isCreating && (
         <form className="watchlist-switcher__form" onSubmit={handleCreate}>
           <input
@@ -185,8 +187,12 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
             placeholder="New list name"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
+            maxLength={40}
+            aria-label="New watchlist name"
           />
-          <button type="submit">Create</button>
+          <button type="submit" aria-label="Create watchlist">
+            Create
+          </button>
           <button
             type="button"
             className="watchlist-switcher__form-cancel"
@@ -194,20 +200,29 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
               setIsCreating(false);
               setNewName("");
             }}
+            aria-label="Cancel creating watchlist"
           >
-            ✕
+            ✕ Cancel
           </button>
         </form>
       )}
 
+      {/* Add stock search panel */}
       {isAddingStock && (
         <div className="watchlist-switcher__add-stock-panel">
           <div className="watchlist-switcher__add-stock-header">
             <span>
               Add stocks to "
-              {lists.find((l) => l.id === addStockTarget)?.name}"
+              {lists.find((l) => l.id === addStockTarget)?.name || "list"}"
             </span>
-            <button onClick={() => setIsAddingStock(false)}>✕</button>
+            <button
+              type="button"
+              onClick={handleCloseAddStock}
+              title="Close add stock panel"
+              aria-label="Close add stock"
+            >
+              ✕
+            </button>
           </div>
           <input
             autoFocus
@@ -215,10 +230,21 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
             placeholder="Search stock e.g. INFY, TCS"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search stocks"
           />
           <ul className="watchlist-switcher__add-stock-results">
             {matches.map((s) => (
-              <li key={s.symbol} onClick={() => handleAddStock(s.symbol)}>
+              <li
+                key={s.symbol}
+                onClick={() => handleAddStock(s.symbol)}
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleAddStock(s.symbol);
+                  }
+                }}
+              >
                 <span className="watchlist-switcher__add-stock-symbol">
                   {s.symbol}
                 </span>
@@ -227,9 +253,14 @@ export default function WatchlistSwitcher({ lists, activeListId }) {
                 </span>
               </li>
             ))}
-            {matches.length === 0 && (
+            {matches.length === 0 && query.trim() && (
               <li className="watchlist-switcher__add-stock-empty">
-                No matching stocks
+                No matching stocks found
+              </li>
+            )}
+            {matches.length === 0 && !query.trim() && (
+              <li className="watchlist-switcher__add-stock-empty">
+                Type a symbol to search
               </li>
             )}
           </ul>

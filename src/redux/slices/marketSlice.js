@@ -1,83 +1,115 @@
-
-
-
-
-
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchAllQuotes, fetchIndices, fetchIndexFunds, fetchPopular, fetchFeatured } from "../../services/marketService";
-// UPDATED — added fetchIndexFunds import above. It doesn't exist in
-// marketService.js yet — see the note at the bottom of this response for
-// the exact function to add there; this thunk will throw at call time
-// until that's in place.
+import {
+  fetchAllQuotes,
+  fetchIndices,
+  fetchIndexFunds,
+  fetchPopular,
+  fetchFeatured,
+} from "../../services/marketService";
+
+/**
+ * ASYNC THUNKS
+ */
 
 export const fetchMarketQuotes = createAsyncThunk(
   "market/fetchQuotes",
   async () => {
     const data = await fetchAllQuotes();
     return data.quotes || [];
-  },
+  }
 );
 
+/**
+ * Fetch market indices (SENSEX, NIFTY50)
+ * Backend returns: [
+ *   { symbol: "SENSEX", name: "BSE Sensex", ltp: 75123.45, netChange: 123.45, dayChangePercent: 0.16, ... },
+ *   { symbol: "NIFTY50", name: "Nifty 50", ltp: 22456.78, netChange: 56.78, dayChangePercent: 0.25, ... }
+ * ]
+ * 
+ * Transform to indexed object keyed by symbol:
+ * {
+ *   "SENSEX": { symbol, name, value, change, changePercent },
+ *   "NIFTY50": { symbol, name, value, change, changePercent }
+ * }
+ */
 export const fetchMarketIndices = createAsyncThunk(
   "market/fetchIndices",
   async () => {
     const list = await fetchIndices();
+    if (!Array.isArray(list)) return {};
+
     return list.reduce((acc, idx) => {
-      const key = idx.symbol || idx.name;
+      if (!idx || !idx.symbol) return acc;
+
+      const key = idx.symbol.toUpperCase(); // Normalize: SENSEX, NIFTY50
       acc[key] = {
-        name: idx.name,
-        value: idx.ltp,
-        changePercent: idx.dayChangePercent,
-        // Points change — see marketQuoteService.mapQuote, which already
-        // gives every index the same netChange field a stock gets, since
-        // indices go through the identical quotes batch.
+        symbol: idx.symbol,
+        name: idx.name || idx.symbol,
+        value: idx.ltp ?? 0,
         change: idx.netChange ?? 0,
+        changePercent: idx.dayChangePercent ?? 0,
       };
+
       return acc;
     }, {});
-  },
+  }
 );
 
-// NEW — the 10-index "Top Index Funds" strip on the Summary page. Unlike
-// fetchMarketIndices above, this does NOT reshape the response into the
-// lighter {value, changePercent} pill shape — it stores the FULL quote
-// objects as-is (symbol, name, ltp, netChange, dayChangePercent, open,
-// high, low, prevClose, ...), because TopIndexFunds.jsx's cards and
-// IndexDetailModal's OHLC grid both need those extra fields, and
-// backend's getTopIndexFunds() already returns them in exactly this
-// shape (see marketQuoteService.js) — no transform needed here.
+/**
+ * Fetch top 10 index funds (Sensex, Nifty, + 8 sector indices)
+ * Backend returns full quote objects, store as-is for cards/modals.
+ * Array format: [
+ *   { symbol: "NIFTY50", ltp: 22456, netChange: 56, dayChangePercent: 0.25, open, high, low, ... },
+ *   { symbol: "SENSEX", ltp: 75123, netChange: 123, dayChangePercent: 0.16, ... },
+ *   ...more indices
+ * ]
+ */
 export const fetchMarketIndexFunds = createAsyncThunk(
   "market/fetchIndexFunds",
   async () => {
-    return await fetchIndexFunds();
-  },
+    try {
+      const data = await fetchIndexFunds();
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      console.error("[REDUX] fetchMarketIndexFunds failed:", err.message);
+      return [];
+    }
+  }
 );
 
 export const fetchPopularStocks = createAsyncThunk(
   "market/fetchPopular",
   async () => {
-    return await fetchPopular();
-  },
+    const data = await fetchPopular();
+    return Array.isArray(data) ? data : [];
+  }
 );
 
 export const fetchFeaturedStocks = createAsyncThunk(
   "market/fetchFeatured",
   async () => {
-    return await fetchFeatured();
-  },
+    const data = await fetchFeatured();
+    return Array.isArray(data) ? data : [];
+  }
 );
 
+/**
+ * INITIAL STATE
+ */
 const initialState = {
   stocks: [],
   popularStocks: [],
   featuredStocks: [],
-  indices: {},
-  indexFunds: [], // NEW — array of full quote objects for the Top Index Funds strip
-  connectionStatus: "connecting",
+  indices: {}, // Keyed by symbol: { "SENSEX": {...}, "NIFTY50": {...} }
+  indexFunds: [], // Array of full quote objects for TopIndexFunds.jsx
+  connectionStatus: "connecting", // connecting | live | error
   visibleCount: 20,
+  error: null,
 };
 
+/**
+ * SLICE
+ */
 const marketSlice = createSlice({
   name: "market",
   initialState,
@@ -112,35 +144,58 @@ const marketSlice = createSlice({
     setVisibleCount(state, action) {
       state.visibleCount = action.payload;
     },
+    clearError(state) {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
+      // Quotes
       .addCase(fetchMarketQuotes.fulfilled, (state, action) => {
         state.stocks = action.payload;
         state.connectionStatus = "live";
+        state.error = null;
       })
-      .addCase(fetchMarketQuotes.rejected, (state) => {
+      .addCase(fetchMarketQuotes.rejected, (state, action) => {
         state.connectionStatus = "error";
+        state.error = action.error.message;
       })
+
+      // Indices
       .addCase(fetchMarketIndices.fulfilled, (state, action) => {
         state.indices = action.payload;
+        state.connectionStatus = "live";
+        state.error = null;
       })
-      .addCase(fetchMarketIndices.rejected, (state) => {
+      .addCase(fetchMarketIndices.rejected, (state, action) => {
         state.connectionStatus = "error";
+        state.error = action.error.message;
       })
-      // NEW
+
+      // Index Funds (10-index strip) — silent fail if unavailable
       .addCase(fetchMarketIndexFunds.fulfilled, (state, action) => {
         state.indexFunds = action.payload;
       })
       .addCase(fetchMarketIndexFunds.rejected, (state) => {
         // Deliberately doesn't touch connectionStatus — a failure here
         // shouldn't flip the whole app into "error" over one strip.
+        state.indexFunds = [];
       })
+
+      // Popular Stocks
       .addCase(fetchPopularStocks.fulfilled, (state, action) => {
         state.popularStocks = action.payload;
       })
+      .addCase(fetchPopularStocks.rejected, (state) => {
+        state.popularStocks = [];
+      })
+
+      // Featured Stocks
       .addCase(fetchFeaturedStocks.fulfilled, (state, action) => {
         state.featuredStocks = action.payload;
+      })
+      .addCase(fetchFeaturedStocks.rejected, (state) => {
+        state.featuredStocks = [];
       });
   },
 });
@@ -152,78 +207,58 @@ export const {
   updateIndex,
   setVisibleCount,
   setConnectionStatus,
+  clearError,
 } = marketSlice.actions;
+
 export default marketSlice.reducer;
 
-// ============================================================
-// UPDATED GAINERS & LOSERS SELECTORS
-// Properly fetches from Upstox API data
-// ============================================================
-
 /**
- * Select top gainers from the market data
- * Sorts by dayChangePercent descending (highest gain first)
- * Returns the top N based on visibleCount
+ * SELECTORS
+ * All defensive against missing/null data
  */
+
 export const selectGainers = (state, visibleCount = 20) => {
-  const stocks = state.market.stocks || [];
-
-  // Filter out stocks with invalid data
+  const stocks = state.market?.stocks || [];
   const validStocks = stocks.filter(
     (stock) =>
       stock &&
-      typeof stock.dayChangePercent === 'number' &&
+      typeof stock.dayChangePercent === "number" &&
       !isNaN(stock.dayChangePercent) &&
       stock.ltp > 0
   );
-
-  // Sort by dayChangePercent descending (highest gainers first)
-  const sorted = [...validStocks].sort((a, b) => b.dayChangePercent - a.dayChangePercent);
-
-  // Return the top N based on visibleCount
+  const sorted = [...validStocks].sort(
+    (a, b) => b.dayChangePercent - a.dayChangePercent
+  );
   return sorted.slice(0, visibleCount);
 };
 
-/**
- * Select top losers from the market data
- * Sorts by dayChangePercent ascending (highest loss first)
- * Returns the top N based on visibleCount
- */
 export const selectLosers = (state, visibleCount = 20) => {
-  const stocks = state.market.stocks || [];
-
-  // Filter out stocks with invalid data
+  const stocks = state.market?.stocks || [];
   const validStocks = stocks.filter(
     (stock) =>
       stock &&
-      typeof stock.dayChangePercent === 'number' &&
+      typeof stock.dayChangePercent === "number" &&
       !isNaN(stock.dayChangePercent) &&
       stock.ltp > 0
   );
-
-  // Sort by dayChangePercent ascending (most negative first)
-  const sorted = [...validStocks].sort((a, b) => a.dayChangePercent - b.dayChangePercent);
-
-  // Return the top N based on visibleCount
+  const sorted = [...validStocks].sort(
+    (a, b) => a.dayChangePercent - b.dayChangePercent
+  );
   return sorted.slice(0, visibleCount);
 };
 
-/**
- * Get the total count of gainers and losers
- * Useful for showing statistics
- */
 export const selectMarketStats = (state) => {
-  const stocks = state.market.stocks || [];
+  const stocks = state.market?.stocks || [];
   const validStocks = stocks.filter(
     (stock) =>
       stock &&
-      typeof stock.dayChangePercent === 'number' &&
+      typeof stock.dayChangePercent === "number" &&
       !isNaN(stock.dayChangePercent)
   );
 
-  const gainers = validStocks.filter(s => s.dayChangePercent > 0);
-  const losers = validStocks.filter(s => s.dayChangePercent < 0);
-  const unchanged = validStocks.filter(s => s.dayChangePercent === 0);
+  const gainers = validStocks.filter((s) => s.dayChangePercent > 0);
+  const losers = validStocks.filter((s) => s.dayChangePercent < 0);
+  const unchanged = validStocks.filter((s) => s.dayChangePercent === 0);
 
   return {
     total: validStocks.length,
@@ -233,18 +268,61 @@ export const selectMarketStats = (state) => {
   };
 };
 
-export const selectIndexByName = (state, nameMatch) => {
-  const indices = state.market.indices || {};
-  return Object.values(indices).find((idx) =>
-    idx.name?.toLowerCase().includes(nameMatch.toLowerCase()),
-  );
+/**
+ * Get index by symbol (SENSEX, NIFTY50, etc.)
+ * Exact match, case-insensitive
+ */
+export const selectIndexBySymbol = (state, symbol) => {
+  if (!symbol) return null;
+  const key = symbol.toUpperCase();
+  return state.market?.indices?.[key] || null;
 };
 
-// NEW — for TopIndexFunds.jsx / IndexDetailModal.jsx
-export const selectIndexFunds = (state) => state.market.indexFunds;
+/**
+ * Get index by name or symbol (fuzzy search)
+ * Used when you don't know exact key
+ */
+export const selectIndexByName = (state, nameMatch) => {
+  if (!nameMatch) return null;
+  const indices = state.market?.indices || {};
+  const match = nameMatch.toLowerCase();
+
+  // Try exact key match first (most reliable)
+  const keyMatch = Object.keys(indices).find(
+    (k) => k.toLowerCase() === match
+  );
+  if (keyMatch) return indices[keyMatch];
+
+  // Try partial key match
+  const partialKeyMatch = Object.keys(indices).find((k) =>
+    k.toLowerCase().includes(match)
+  );
+  if (partialKeyMatch) return indices[partialKeyMatch];
+
+  // Try name or symbol search
+  return Object.values(indices).find((idx) => {
+    const name = (idx.name || "").toLowerCase();
+    const symbol = (idx.symbol || "").toLowerCase();
+    return name.includes(match) || symbol.includes(match);
+  });
+};
+
+// Index Funds (10-index strip for TopIndexFunds.jsx / IndexDetailModal.jsx)
+export const selectIndexFunds = (state) => state.market?.indexFunds || [];
 
 export const selectIndexFundBySymbol = (state, symbol) =>
-  state.market.indexFunds.find((idx) => idx.symbol === symbol);
+  (state.market?.indexFunds || []).find((idx) => idx.symbol === symbol) || null;
 
-export const selectPopularStocks = (state) => state.market.popularStocks.slice(0, 100);
-export const selectFeaturedStocks = (state) => state.market.featuredStocks.slice(0, 100);
+// Popular & Featured Stocks (bounded lists for MarqueeStrip, etc.)
+export const selectPopularStocks = (state) =>
+  (state.market?.popularStocks || []).slice(0, 100);
+
+export const selectFeaturedStocks = (state) =>
+  (state.market?.featuredStocks || []).slice(0, 100);
+
+// Connection status
+export const selectConnectionStatus = (state) =>
+  state.market?.connectionStatus || "connecting";
+
+// Error
+export const selectMarketError = (state) => state.market?.error || null;

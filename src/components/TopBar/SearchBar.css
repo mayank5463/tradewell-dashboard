@@ -1,3 +1,10 @@
+/* ============================================================
+   SEARCH BAR
+   Dropdown is portaled to document.body (see SearchBar.jsx) and
+   positioned via inline style, so it no longer needs — or wants —
+   position: absolute or a high z-index chained through ancestors.
+   ============================================================ */
+
 .search-bar {
   position: relative;
   width: 100%;
@@ -12,79 +19,74 @@
 
 .search-bar__icon {
   position: absolute;
-  left: var(--space-4);
-  color: var(--input-icon);
+  left: var(--space-4, 16px);
+  color: var(--text-secondary);
   pointer-events: none;
+  z-index: 2;
 }
 
 .search-bar__input {
   width: 100%;
-  height: var(--input-height);
-  padding: 10px 40px 10px 38px;
-  border: 1px solid var(--search-border);
-  border-radius: var(--radius-md);
-  background: var(--search-bg);
-  color: var(--search-text);
+  height: 42px;
+  padding: 10px 44px 10px 40px;
+  border: 1.5px solid var(--border-primary);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface-primary);
+  color: var(--text-primary);
   font-family: var(--font-family-base);
-  font-size: var(--font-size-md);
-  transition:
-    border-color var(--transition-fast),
-    background-color var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.search-bar__input::placeholder {
-  color: var(--search-placeholder);
-}
-
-.search-bar__input:hover {
-  border-color: var(--search-hover);
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search-bar__input:focus {
   outline: none;
-  border-color: var(--search-focus);
-  background: var(--surface-primary);
-  box-shadow: 0 0 0 3px var(--brand-light);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px var(--brand-tint, rgba(59, 130, 246, 0.15));
 }
 
 .search-bar__clear {
   position: absolute !important;
-  right: 6px;
-  color: var(--input-icon) !important;
+  right: 8px;
+  color: var(--text-secondary) !important;
+  z-index: 3;
+}
+
+/* Portal wrapper — position: fixed, top/left/width set inline from JS.
+   This is the ONLY element that needs a high z-index now; it lives
+   directly on document.body, above everything. */
+.search-bar__portal {
+  position: fixed;
+  z-index: 999999;
 }
 
 .search-bar__dropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  background: var(--dropdown-bg);
-  border: 1px solid var(--dropdown-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--dropdown-shadow);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
   list-style: none;
   margin: 0;
-  padding: var(--space-2);
-  max-height: 380px;
+  padding: var(--space-2, 6px);
+  max-height: 400px;
   overflow-y: auto;
-  z-index: var(--z-dropdown);
 }
 
+/* Row */
 .search-bar__row {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-3) var(--space-3);
-  border-radius: var(--radius-md);
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md, 8px);
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: background-color 0.15s ease;
 }
 
 .search-bar__row.is-highlighted,
 .search-bar__row:hover {
   background: var(--brand-primary);
 }
+
 .search-bar__row.is-highlighted .search-bar__symbol,
 .search-bar__row:hover .search-bar__symbol,
 .search-bar__row.is-highlighted .search-bar__name,
@@ -93,7 +95,7 @@
 .search-bar__row:hover .search-bar__ltp,
 .search-bar__row.is-highlighted .search-bar__pct,
 .search-bar__row:hover .search-bar__pct {
-  color: var(--text-inverse);
+  color: #ffffff;
 }
 
 .search-bar__row-main {
@@ -104,13 +106,13 @@
 }
 
 .search-bar__symbol {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--dropdown-text);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .search-bar__name {
-  font-size: var(--font-size-2xs);
+  font-size: 12px;
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -125,43 +127,71 @@
 }
 
 .search-bar__ltp {
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-bold);
-  color: var(--dropdown-text);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
 
 .search-bar__pct {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
+  font-size: 12px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
 .search-bar__pct.is-up {
-  color: var(--success-fill);
+  color: var(--success-fill, #22c55e);
 }
 
 .search-bar__pct.is-down {
-  color: var(--danger-fill);
+  color: var(--danger-fill, #ef4444);
 }
 
+/* Empty state — same portal wrapper, just a message instead of a list */
 .search-bar__empty {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  background: var(--dropdown-bg);
-  border: 1px solid var(--dropdown-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  font-size: var(--font-size-md);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg, 12px);
+  padding: 20px;
+  font-size: 14px;
   color: var(--text-secondary);
   text-align: center;
-  z-index: var(--z-dropdown);
 }
 
+/* Dark mode */
+[data-mode="dark"] .search-bar__dropdown,
+[data-mode="dark"] .search-bar__empty {
+  background: var(--surface-primary);
+  border-color: var(--border-primary);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive — the portal's `width` is already set to match the input
+   from JS, so these just cap dropdown height on small screens. Long
+   term, if the on-screen keyboard eats too much space, consider clamping
+   coords.top server-side against window.innerHeight too. */
 @media (max-width: 768px) {
   .search-bar {
     max-width: none;
+  }
+
+  .search-bar__dropdown {
+    max-height: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar__input {
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .search-bar__dropdown {
+    max-height: 280px;
+  }
+
+  .search-bar__row {
+    padding: 8px;
+    gap: 8px;
   }
 }

@@ -1,10 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const THEMES = ["navy", "olive", "charcoal", "sand"];
+const MODES = ["light", "dark"];
+
 const initialState = {
-  colorTheme: "navy", // "navy" | "olive" | "charcoal" | "sand" — set only from SettingsPage
-  mode: "light",       // "light" | "dark" — toggled from navbar icon
+  colorTheme: "navy",
+  mode: "light",
+  initialized: false,
   searchQuery: "",
-  isWatchlistExpanded: true,
+  watchlistPanelOpen: true, // ← Panel starts OPEN
+  isWatchlistExpanded: true, // ← ADD THIS (matches WatchList.jsx)
 };
 
 const uiSlice = createSlice({
@@ -12,28 +17,38 @@ const uiSlice = createSlice({
   initialState,
   reducers: {
     setColorTheme(state, action) {
-      state.colorTheme = action.payload;
+      if (THEMES.includes(action.payload)) {
+        state.colorTheme = action.payload;
+      }
     },
     setMode(state, action) {
-      state.mode = action.payload;
+      if (MODES.includes(action.payload)) {
+        state.mode = action.payload;
+      }
     },
     toggleMode(state) {
       state.mode = state.mode === "light" ? "dark" : "light";
+    },
+    markInitialized(state) {
+      state.initialized = true;
     },
     setSearchQuery(state, action) {
       state.searchQuery = action.payload;
     },
     toggleWatchlistPanel(state) {
-      state.isWatchlistExpanded = !state.isWatchlistExpanded;
+      state.watchlistPanelOpen = !state.watchlistPanelOpen;
+      state.isWatchlistExpanded = !state.isWatchlistExpanded; // ← Sync both
     },
   },
 });
 
-export const {
-  setColorTheme,
-  setMode,
-  toggleMode,
+export const { 
+  setColorTheme, 
+  setMode, 
+  toggleMode, 
+  markInitialized,
   setSearchQuery,
   toggleWatchlistPanel,
 } = uiSlice.actions;
+
 export default uiSlice.reducer;

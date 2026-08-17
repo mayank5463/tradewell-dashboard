@@ -392,3 +392,508 @@
     transition: none !important;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   SUMMARY DASHBOARD — Consolidated stylesheet for Summary folder
+   (Summary, GreetingBanner, HoldingsSummaryBar, FundsCard)
+
+   HOLDINGS TABLE styles have been removed - they now live in Holdings.css
+   ========================================================================== */
+
+/* ==========================================================================
+   1. PAGE WRAPPER
+   ========================================================================== */
+
+.summary {
+  padding: var(--space-5);
+  max-width: 1280px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ==========================================================================
+   2. GREETING BANNER
+   ========================================================================== */
+
+.greeting-banner {
+  position: relative;
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--brand-dark), var(--brand-primary));
+  color: var(--white);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.greeting-banner::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: var(--brand-hover);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.greeting-banner__top {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.greeting-banner__title {
+  font-size: clamp(var(--font-size-lg), 2.4vw, var(--font-size-xl));
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: var(--letter-spacing-tight);
+  margin-bottom: var(--space-1);
+}
+
+.greeting-banner__title span {
+  color: var(--brand-light);
+}
+
+.greeting-banner__quote {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 480px;
+  line-height: var(--line-height-normal);
+  margin: 0;
+}
+
+.greeting-banner__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.greeting-banner__date {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.65);
+  white-space: nowrap;
+}
+
+.greeting-banner__market-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px var(--space-2);
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.greeting-banner__market-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.greeting-banner__market-pill.is-open {
+  color: #6ee7b7;
+}
+.greeting-banner__market-pill.is-closed {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.greeting-banner__portfolio {
+  position: relative;
+  display: flex;
+  gap: var(--space-6);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  flex-wrap: wrap;
+}
+
+.greeting-banner__portfolio-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.greeting-banner__portfolio-label {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.greeting-banner__portfolio-value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--white);
+}
+
+.greeting-banner__portfolio-value.is-up {
+  color: #6ee7b7;
+}
+.greeting-banner__portfolio-value.is-down {
+  color: #fca5a5;
+}
+
+.greeting-banner__portfolio-sub {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  opacity: 0.85;
+}
+
+/* ==========================================================================
+   3. HOLDINGS SUMMARY BAR
+   ========================================================================== */
+
+.holdings-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.holdings-summary-bar__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 110px;
+}
+
+.holdings-summary-bar__label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.holdings-summary-bar__value {
+  font-size: clamp(var(--font-size-md), 2vw, var(--font-size-xl));
+  font-weight: var(--font-weight-bold);
+  color: var(--text-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.holdings-summary-bar__sub {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.holdings-summary-bar__divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border-primary);
+}
+
+/* ==========================================================================
+   4. FUNDS CARD
+   ========================================================================== */
+
+.funds-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.funds-card__header h3 {
+  font-size: var(--font-size-md);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.funds-card__total {
+  font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-xl));
+  font-weight: var(--font-weight-bold);
+  color: var(--text-numeric);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: var(--space-3);
+}
+
+.funds-card__bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-gray-100);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+
+.funds-card__bar-fill {
+  height: 100%;
+  background: var(--color-primary-500);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.funds-card__breakdown {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.funds-card__breakdown > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.funds-card__label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.funds-card__value {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   5. SECTION HEADINGS — FIXED for dark mode visibility
+   ========================================================================== */
+
+.summary__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: 0;
+}
+
+.section-heading__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* FIXED: Title now uses --text-primary which adapts to both modes */
+.section-heading__title {
+  display: block;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.section-heading__subtitle {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Dark mode specific heading enhancements */
+[data-mode="dark"] .section-heading__title {
+  color: var(--text-primary);
+}
+
+[data-mode="dark"] .section-heading__subtitle {
+  color: var(--text-secondary);
+}
+
+/* Theme-specific dark mode heading colors */
+[data-theme="navy"][data-mode="dark"] .section-heading__title {
+  color: var(--navy-100);
+}
+
+[data-theme="olive"][data-mode="dark"] .section-heading__title {
+  color: var(--olive-100);
+}
+
+[data-theme="charcoal"][data-mode="dark"] .section-heading__title {
+  color: var(--charcoal-100);
+}
+
+[data-theme="sand"][data-mode="dark"] .section-heading__title {
+  color: var(--sand-100);
+}
+
+/* ==========================================================================
+   6. EMPTY PORTFOLIO STATE
+   ========================================================================== */
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--card-shadow);
+}
+
+.stat-card--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-5);
+}
+
+.stat-card--empty p {
+  font-size: var(--font-size-md);
+  font-style: italic;
+  color: var(--text-secondary);
+  max-width: 440px;
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* ==========================================================================
+   7. TRADING ANALYTICS WRAPPER
+   ========================================================================== */
+
+.trading-analytics-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.trading-analytics-wrapper > * {
+  width: 100% !important;
+}
+
+/* ==========================================================================
+   8. RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .holdings-summary-bar {
+    gap: var(--space-4);
+  }
+  .holdings-summary-bar__divider {
+    display: none;
+  }
+
+  .greeting-banner__top {
+    flex-direction: column;
+  }
+  .greeting-banner__meta {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .section-heading {
+    gap: var(--space-2);
+  }
+
+  .section-heading__title {
+    font-size: var(--font-size-sm);
+  }
+
+  .section-heading__subtitle {
+    font-size: var(--font-size-2xs);
+  }
+}
+
+@media (max-width: 640px) {
+  .summary {
+    padding: var(--space-4);
+    gap: var(--space-5);
+  }
+
+  .greeting-banner {
+    padding: var(--space-4);
+  }
+
+  .greeting-banner__portfolio {
+    gap: var(--space-4);
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .funds-card__breakdown {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}
+
+/* ==========================================================================
+   9. REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .funds-card__bar-fill {
+    transition: none !important;
+  }
+}

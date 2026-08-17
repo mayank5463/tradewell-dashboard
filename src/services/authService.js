@@ -37,3 +37,10 @@ export function changePassword({ currentPassword, newPassword }) {
     body: JSON.stringify({ currentPassword, newPassword }),
   });
 }
+
+export function updateProfile(profileData) {
+  return apiFetch("/update-profile", {
+    method: "PUT",
+    body: JSON.stringify(profileData),
+  });
+}

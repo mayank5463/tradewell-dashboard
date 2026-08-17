@@ -1,17 +1,8 @@
-
-
-
-
-
-
-
-
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import ProfileMenu from "./ProfileMenu";
 import ThemeSwitcher from "./ThemeSwitcher";
 import "./NavBar.css";
-
 
 const NAV_LINKS = [
   { to: "/dashboard", label: "Dashboard", end: true },
@@ -30,8 +21,6 @@ export default function NavBar() {
 
   return (
     <header className="navbar-row">
-      
-
       <div className="navbar-row__brand">
         <span className="navbar-row__logo" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -61,9 +50,16 @@ export default function NavBar() {
 
       {/* ======================================================
           MOBILE HAMBURGER
+          FIXED — missing type="button". Without it, a <button> inside
+          a <form> defaults to type="submit". Nothing here breaks today
+          since there's no surrounding <form>, but it's a landmine for
+          whoever reuses this component inside one later (a settings
+          page, a modal with a form, etc.) — clicking it would submit/
+          reload instead of toggling the menu.
       ====================================================== */}
 
       <button
+        type="button"
         className={`navbar-row__hamburger ${mobileMenuOpen ? "is-open" : ""}`}
         aria-label="Toggle Navigation"
         aria-expanded={mobileMenuOpen}
@@ -96,14 +92,11 @@ export default function NavBar() {
         </nav>
       </div>
 
-      
-
       <div className="navbar-row__right">
         <ThemeSwitcher />
 
         {/* ProfileMenu will render the circular
             Gmail/Groww style avatar and dropdown */}
-
         <ProfileMenu />
       </div>
     </header>

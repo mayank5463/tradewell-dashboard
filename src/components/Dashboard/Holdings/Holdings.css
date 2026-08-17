@@ -1,38 +1,6 @@
 /* ==========================================================
    Holdings.css
    Styles for src/components/.../Holdings/Holdings.jsx
-
-   FIXED — .holdings previously had no page-level padding at all, unlike
-   every sibling page (Funds/.funds-page, Orders/.orders-page,
-   Positions/.positions-page each set `padding: var(--space-5)`). That
-   missing padding is what made Holdings read as "stuck to the top-left"
-   of the routed content area — its header and cards started flush
-   against the edge of .app-shell__main instead of sitting inside the
-   same breathing room every other page has. Padding added below,
-   matching the exact pattern (and the 640px responsive step-down) used
-   everywhere else, so all four pages now line up.
-
-   UPDATED — digit values (Invested / Current Value) now read
-   --text-numeric instead of --text-primary, so they render pure white
-   in dark mode instead of the slightly off-white --gray-50 the rest of
-   the UI uses — same token every other page's figures use. Day's P&L /
-   Overall P&L keep their is-up/is-down colors untouched, since those
-   already carry the sign clearly.
-
-   Everything else below is unchanged from the original file — same
-   institutional-terminal design direction:
-
-   - No tinted "chip" backgrounds behind icons/numbers. Color is
-     reserved for one thing only — P&L sign — and nothing else
-     borrows it.
-   - Hairline 1px dividers instead of shadows/elevation.
-   - Numbers are the typography, not the labels.
-   - Sharper corners (radius-sm, not xl).
-   - No decorative motion — a single flat color wash on update,
-     the way an exchange ticker flashes.
-
-   Still 100% variables.css tokens, so every theme + data-mode
-   combination stays correct automatically.
    ========================================================== */
 
 .holdings {
@@ -45,21 +13,16 @@
 @media (max-width: 640px) {
   .holdings {
     padding: var(--space-4);
+    gap: var(--space-4);
   }
 }
 
-/* Page header sits flush with the rest of the ledger-style
-   layout below it — no card, no border, just breathing room. */
 .holdings .page-header {
   padding-bottom: var(--space-2);
 }
 
 /* ==========================================================
    EMPTY STATE
-   Now driven by the shared .empty-state block in icons.css
-   (large muted PageIcon + title + subtitle) instead of a
-   bespoke dashed box, so Holdings/Positions/Orders read as one
-   consistent empty-state pattern app-wide.
    ========================================================== */
 
 .holdings .empty-state {
@@ -70,8 +33,6 @@
 
 /* ==========================================================
    SUMMARY STRIP
-   One ruled row, divided by hairlines instead of four separate
-   floating cards — reads as a single ledger, not four widgets.
    ========================================================== */
 
 .holdings__summary {
@@ -131,9 +92,6 @@
   background: var(--holdings-card-hover, var(--card-hover));
 }
 
-/* The icon in the JSX is dropped — a colored icon badge next to
-   every number is the single biggest tell of a templated finance
-   UI. The label + figure carry all the meaning on their own. */
 .holdings-stat__icon {
   display: none;
 }
@@ -153,10 +111,6 @@
   letter-spacing: var(--letter-spacing-widest);
 }
 
-/* UPDATED — font-family already read --font-family-mono (now the new
-   simple/standard numeral stack from variables.css); color switched
-   from --text-primary to --text-numeric so this figure goes pure white
-   in dark mode instead of off-white. */
 .holdings-stat__value {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-2xl);
@@ -165,6 +119,12 @@
   letter-spacing: var(--letter-spacing-tight);
   font-variant-numeric: tabular-nums lining-nums;
   line-height: var(--line-height-tight);
+}
+
+@media (max-width: 480px) {
+  .holdings-stat__value {
+    font-size: var(--font-size-xl);
+  }
 }
 
 .holdings-stat__value.is-up {
@@ -238,6 +198,17 @@
   border-radius: var(--radius-sm);
 }
 
+@media (max-width: 480px) {
+  .holdings__chart {
+    padding: var(--card-padding-sm);
+  }
+}
+
+.holdings__chart-wrapper {
+  width: 100%;
+  min-height: 160px;
+}
+
 .holdings__chart-header {
   display: flex;
   align-items: center;
@@ -246,6 +217,16 @@
   padding-bottom: var(--space-4);
   margin-bottom: var(--space-4);
   border-bottom: 1px solid var(--holdings-border, var(--card-border));
+}
+
+@media (max-width: 480px) {
+  .holdings__chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
 }
 
 .holdings__chart-title {
@@ -274,12 +255,404 @@
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-.holdings__live-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: var(--radius-round);
-  background: var(--success-fill);
+/* ==========================================================
+   CHART HINT - Mobile tap indicator
+   ========================================================== */
+
+.holdings__chart-hint {
+  display: none;
+  text-align: center;
+  font-size: var(--font-size-2xs);
+  color: var(--text-tertiary);
+  padding-top: var(--space-3);
+  margin-top: var(--space-2);
+  border-top: 1px solid var(--border-secondary);
+  letter-spacing: 0.3px;
 }
+
+@media (max-width: 768px) {
+  .holdings__chart-hint {
+    display: block;
+  }
+}
+
+/* ==========================================================
+   ENHANCED TOOLTIP - Full details with theming
+   ========================================================== */
+
+.holdings-tooltip {
+  min-width: 200px;
+  max-width: 300px;
+  padding: var(--space-4);
+  background: var(--chart-tooltip-bg, var(--card-bg));
+  border: 1px solid var(--chart-tooltip-border, var(--border-primary));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+@media (max-width: 768px) {
+  .holdings-tooltip {
+    min-width: 170px;
+    max-width: 240px;
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip {
+    min-width: 150px;
+    max-width: 200px;
+    padding: var(--space-2);
+  }
+}
+
+.holdings-tooltip__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip__header {
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
+  }
+}
+
+.holdings-tooltip__symbol {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--chart-tooltip-text, var(--text-primary));
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip__symbol {
+    font-size: var(--font-size-sm);
+  }
+}
+
+.holdings-tooltip__pnl-badge {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: 2px 10px;
+  border-radius: var(--radius-round);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip__pnl-badge {
+    font-size: var(--font-size-2xs);
+    padding: 1px 8px;
+  }
+}
+
+.holdings-tooltip__pnl-badge.is-up {
+  color: var(--success-fill);
+  background: color-mix(in srgb, var(--success-fill) 12%, transparent);
+}
+
+.holdings-tooltip__pnl-badge.is-down {
+  color: var(--danger-fill);
+  background: color-mix(in srgb, var(--danger-fill) 12%, transparent);
+}
+
+.holdings-tooltip__divider {
+  height: 1px;
+  margin: var(--space-2) 0;
+  background: var(--chart-tooltip-border, var(--border-secondary));
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip__divider {
+    margin: var(--space-1) 0;
+  }
+}
+
+.holdings-tooltip__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2) var(--space-3);
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip__grid {
+    gap: var(--space-1) var(--space-2);
+  }
+}
+
+.holdings-tooltip__item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.holdings-tooltip__label {
+  font-size: var(--font-size-3xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.holdings-tooltip__value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--chart-tooltip-text, var(--text-primary));
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip__value {
+    font-size: var(--font-size-xs);
+  }
+}
+
+.holdings-tooltip__pnl-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-2);
+  margin-top: var(--space-1);
+  border-top: 1px solid var(--chart-tooltip-border, var(--border-secondary));
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip__pnl-row {
+    padding-top: var(--space-1);
+    margin-top: var(--space-1);
+  }
+}
+
+.holdings-tooltip__pnl-label {
+  font-size: var(--font-size-3xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.holdings-tooltip__pnl-value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip__pnl-value {
+    font-size: var(--font-size-sm);
+  }
+}
+
+.holdings-tooltip__pnl-pct {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+  .holdings-tooltip__pnl-pct {
+    font-size: var(--font-size-2xs);
+  }
+}
+
+.holdings-tooltip__pnl-row.is-up .holdings-tooltip__pnl-value {
+  color: var(--success-fill);
+}
+
+.holdings-tooltip__pnl-row.is-down .holdings-tooltip__pnl-value {
+  color: var(--danger-fill);
+}
+
+/* ==========================================================
+   MOBILE TOOLTIP OVERLAY
+   ========================================================== */
+
+.holdings__mobile-tooltip-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  animation: holdings-overlay-in 0.25s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+@keyframes holdings-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.holdings__mobile-tooltip {
+  position: relative;
+  max-width: 340px;
+  width: 100%;
+  background: var(--chart-tooltip-bg, var(--card-bg));
+  border: 1px solid var(--chart-tooltip-border, var(--border-primary));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-4);
+  animation: holdings-tooltip-slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes holdings-tooltip-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.holdings__mobile-tooltip-close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-round);
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  z-index: 10;
+}
+
+.holdings__mobile-tooltip-close:hover {
+  background: var(--surface-tertiary);
+  color: var(--text-primary);
+}
+
+.holdings__mobile-tooltip-close:active {
+  transform: scale(0.92);
+}
+
+.holdings__mobile-tooltip .holdings-tooltip {
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  min-width: auto;
+  max-width: none;
+}
+
+.holdings__mobile-tooltip .holdings-tooltip__symbol {
+  font-size: var(--font-size-lg);
+}
+
+.holdings__mobile-tooltip .holdings-tooltip__value {
+  font-size: var(--font-size-base);
+}
+
+.holdings__mobile-tooltip .holdings-tooltip__pnl-value {
+  font-size: var(--font-size-lg);
+}
+
+/* ==========================================================
+   DARK MODE TOOLTIP
+   ========================================================== */
+
+[data-mode="dark"] .holdings-tooltip {
+  background: var(--surface-secondary, #1a1a2e);
+  border-color: var(--border-primary, #2d2d44);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+[data-mode="dark"] .holdings__mobile-tooltip {
+  background: var(--surface-secondary, #1a1a2e);
+  border-color: var(--border-primary, #2d2d44);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+}
+
+[data-mode="dark"] .holdings__mobile-tooltip-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+[data-mode="dark"] .holdings-tooltip__symbol {
+  color: var(--text-primary, #ffffff);
+}
+
+[data-mode="dark"] .holdings-tooltip__value {
+  color: var(--text-primary, #ffffff);
+}
+
+[data-mode="dark"] .holdings-tooltip__label {
+  color: var(--text-tertiary, #8b8ba0);
+}
+
+[data-mode="dark"] .holdings-tooltip__divider {
+  background: var(--border-primary, #2d2d44);
+}
+
+[data-mode="dark"] .holdings-tooltip__pnl-row {
+  border-top-color: var(--border-primary, #2d2d44);
+}
+
+[data-mode="dark"] .holdings-tooltip__pnl-badge.is-up {
+  background: color-mix(in srgb, var(--success-fill) 20%, transparent);
+}
+
+[data-mode="dark"] .holdings-tooltip__pnl-badge.is-down {
+  background: color-mix(in srgb, var(--danger-fill) 20%, transparent);
+}
+
+/* Theme-specific dark mode */
+[data-theme="navy"][data-mode="dark"] .holdings-tooltip,
+[data-theme="navy"][data-mode="dark"] .holdings__mobile-tooltip {
+  background: #0f1a2e;
+  border-color: #1a2a4a;
+}
+
+[data-theme="olive"][data-mode="dark"] .holdings-tooltip,
+[data-theme="olive"][data-mode="dark"] .holdings__mobile-tooltip {
+  background: #0f1a0f;
+  border-color: #1a2a1a;
+}
+
+[data-theme="charcoal"][data-mode="dark"] .holdings-tooltip,
+[data-theme="charcoal"][data-mode="dark"] .holdings__mobile-tooltip {
+  background: #141414;
+  border-color: #2a2a2a;
+}
+
+[data-theme="sand"][data-mode="dark"] .holdings-tooltip,
+[data-theme="sand"][data-mode="dark"] .holdings__mobile-tooltip {
+  background: #1a1610;
+  border-color: #2a2218;
+}
+
+/* ==========================================================
+   CHART TOOLTIP OVERRIDES
+   ========================================================== */
 
 .holdings__chart .recharts-cartesian-axis-tick-value {
   fill: var(--chart-label);
@@ -296,60 +669,96 @@
 }
 
 /* ==========================================================
-   TOOLTIP
+   MARKET STATUS DOTS
    ========================================================== */
 
-.holdings-tooltip {
-  min-width: 176px;
-  padding: var(--space-4);
-  background: var(--chart-tooltip-bg);
-  border: 1px solid var(--chart-tooltip-border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
+.holdings__live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success-fill, #22c55e);
+  flex-shrink: 0;
+  margin-right: 5px;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+  animation: holdings-live-pulse 2s ease-in-out infinite;
+  vertical-align: middle;
 }
 
-.holdings-tooltip__symbol {
-  margin-bottom: var(--space-3);
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--chart-tooltip-border);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  color: var(--chart-tooltip-text);
-  letter-spacing: var(--letter-spacing-wide);
+.holdings__closed-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-tertiary, #9ca3af);
+  flex-shrink: 0;
+  margin-right: 5px;
+  vertical-align: middle;
 }
 
-.holdings-tooltip__row {
-  display: flex;
+@keyframes holdings-live-pulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+  }
+}
+
+.holdings__chart-count {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-5);
-  padding: 3px 0;
-  font-size: var(--font-size-2xs);
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+  font-size: var(--font-size-xs, 12px);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--text-secondary, #6b7280);
+  white-space: nowrap;
 }
 
-.holdings-tooltip__row strong {
-  font-family: var(--font-family-mono);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-xs);
-  color: var(--chart-tooltip-text);
-  font-variant-numeric: tabular-nums lining-nums;
-  letter-spacing: var(--letter-spacing-normal);
-  text-transform: none;
+@media (max-width: 480px) {
+  .holdings__chart-count {
+    font-size: 10px;
+  }
 }
 
-.holdings-tooltip__row.is-up strong {
-  color: var(--success-fill);
+/* Dark mode dot adjustments */
+[data-mode="dark"] .holdings__live-dot {
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
 }
 
-.holdings-tooltip__row.is-down strong {
-  color: var(--danger-fill);
+[data-mode="dark"] .holdings__closed-dot {
+  background: var(--text-tertiary, #6b7280);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .holdings__live-dot {
+    animation: none;
+    box-shadow: 0 0 4px rgba(34, 197, 94, 0.4);
+  }
+  .holdings__mobile-tooltip-overlay {
+    animation: none;
+  }
+  .holdings__mobile-tooltip {
+    animation: none;
+  }
 }
 
 
 
-.page-header__subtitle {
-  color: var(--text-muted);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

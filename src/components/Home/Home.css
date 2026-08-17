@@ -1,23 +1,15 @@
 /* ============================================================
-   Home.css — app shell layout
-   Home.jsx renders: TopBar (top) + .app-shell__sidebar > WatchList
-   (sidebar) + Outlet (main).
-
-   .app-shell is a real, fixed-height 100vh box; .topbar-shell
-   (flex-shrink: 0, set in TopBar.css) keeps whatever height its content
-   actually needs; .app-shell__body with flex:1 + min-height:0
-   automatically absorbs exactly what's left - correct no matter how tall
-   the header ends up being, without hardcoding a topbar height anywhere.
+   Home.css — App Shell Layout
+   Complete Responsive: Desktop / Tablet / Mobile
    ============================================================ */
 
-/* -- Loading screen (shown while useAuth() status === "checking") -- */
-
+/* Loading screen */
 .home-loading {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: var(--app-background);
+  background: var(--app-background, var(--surface-secondary));
   font-family: var(--font-family-base);
 }
 
@@ -25,73 +17,60 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-2, 8px);
 }
 
 .home-spinner {
-  width: 28px;
-  height: 28px;
-  border: 2px solid var(--border-primary);
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-primary);
   border-top-color: var(--brand-primary);
   border-radius: 50%;
   animation: home-spin 0.7s linear infinite;
 }
 
 @keyframes home-spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 .home-loading-text {
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-md, 14px);
+  font-weight: var(--font-weight-medium, 500);
   color: var(--text-primary);
   margin: 0;
 }
 
 .home-loading-sub {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-sm, 13px);
   color: var(--text-secondary);
   margin: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .home-spinner {
-    animation-duration: 1.4s;
-  }
-}
-
 /* ============================================================
-   App shell - TopBar + Sidebar (WatchList) + Main (Outlet)
+   APP SHELL — Main Layout
    ============================================================ */
 
 .app-shell {
   display: flex;
   flex-direction: column;
-
-  /* Hard height, not min-height: makes .app-shell a real, bounded box
-     instead of one that grows with its content. Nothing scrolls at this
-     level or above it - only .app-shell__main and .watchlist-panel__list
-     scroll internally, each within their own region. */
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
-
-  background: var(--app-background);
+  background: var(--app-background, var(--surface-secondary));
 }
 
 .app-shell__body {
   display: flex;
   align-items: stretch;
-
-  /* Takes exactly whatever height TopBar didn't use - regardless of how
-     tall TopBar's stacked rows actually render. */
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  position: relative;
 }
 
-/* -- Sidebar wrapper (holds WatchList) -- */
+/* ============================================================
+   SIDEBAR — Desktop
+   ============================================================ */
 
 .app-shell__sidebar {
   flex: 0 0 auto;
@@ -99,52 +78,120 @@
   height: 100%;
   border-right: 1px solid var(--border-primary);
   background: var(--surface-primary);
-  overflow: hidden; /* WatchList's own scroll area inside handles scrolling, not this element */
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* -- Main content (Outlet - Summary/Holdings/Orders/Positions/Funds/StockDetail) -- */
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
 
 .app-shell__main {
   flex: 1 1 auto;
-  min-width: 0; /* prevents inner tables/cards forcing this wider than available space */
+  min-width: 0;
   height: 100%;
   overflow-y: auto;
-  background: var(--app-background);
+  overflow-x: hidden;
+  background: var(--app-background, var(--surface-secondary));
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
-/* Caps content width so it doesn't stretch edge-to-edge on wide monitors.
-   Each page's own CSS still controls its own internal padding. */
 .app-shell__main > * {
   max-width: 1280px;
   margin: 0 auto;
 }
 
+/* Scrollbar styling */
+.app-shell__main::-webkit-scrollbar {
+  width: 8px;
+}
+
+.app-shell__main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-shell__main::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: 4px;
+}
+
+.app-shell__main::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
 /* ============================================================
-   Responsive - stack sidebar above main on tablet/mobile
+   RESPONSIVE — Tablet (768px - 1024px)
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .app-shell__main > * {
+    max-width: 100%;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — Mobile & Tablet (≤768px)
    ============================================================ */
 
 @media (max-width: 768px) {
   .app-shell {
-    height: auto;
-    overflow: visible;
+    height: 100dvh;
+    overflow: hidden;
   }
 
   .app-shell__body {
     flex-direction: column;
-    overflow: visible;
+    overflow: hidden;
+    position: relative;
+    padding-top: 0;
+  }
+
+  /* Main takes full width */
+  .app-shell__main {
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — Small Mobile (≤480px)
+   ============================================================ */
+
+@media (max-width: 480px) {
+  .app-shell__main {
+    padding: 0;
+  }
+
+  .app-shell__main > * {
+    max-width: 100%;
+    padding: 0 var(--space-2, 4px);
+  }
+}
+
+/* ============================================================
+   DARK MODE ADJUSTMENTS
+   ============================================================ */
+
+[data-mode="dark"] .app-shell__sidebar {
+  background: var(--surface-primary);
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .home-spinner {
+    animation-duration: 1.4s;
   }
 
   .app-shell__sidebar {
-    width: 100%;
-    max-width: 100%;
-    flex-basis: auto;
-    height: auto;
-    max-height: 320px;
-    border-right: none;
-    border-bottom: 1px solid var(--border-primary);
+    transition: none;
   }
 
   .app-shell__main {
-    height: auto;
+    scroll-behavior: auto;
   }
 }

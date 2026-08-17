@@ -5,6 +5,8 @@ import StockLogo from "../../common/StockLogo";
 import { formatCurrency, formatCompactNumber } from "../../../utils/formatCurrency";
 import { usePriceFlash } from "../../../hooks/usePriceFlash";
 import "./MarketHighlights.css";
+import "../../../styles/SectionHeadingsTheme.css"; 
+
 
 const VIEW_OPTIONS = [
   { value: "mostTraded", label: "Most Traded", requiresData: "orderCount" },

@@ -25,6 +25,7 @@ export default function WatchlistItem({ stock, listId }) {
   const flashClass = usePriceFlash(stock?.ltp);
 
   if (!stock) return null;
+
   const isUp = stock.dayChangePercent >= 0;
   const dayChange = getDayChange(stock);
   const directionClass = isUp ? "is-up" : "is-down";
@@ -36,9 +37,23 @@ export default function WatchlistItem({ stock, listId }) {
     dispatch(removeStockFromList({ listId, symbol: stock.symbol }));
   };
 
+  const handleBuy = (e) => {
+    e.stopPropagation();
+    openBuyWindow(stock);
+  };
+
+  const handleSell = (e) => {
+    e.stopPropagation();
+    openSellWindow(stock);
+  };
+
   return (
     <div className={`watchlist-item ${directionClass}`}>
-      <button className="watchlist-item__main" onClick={openDetail}>
+      <button
+        className="watchlist-item__main"
+        onClick={openDetail}
+        type="button"
+      >
         <span className="watchlist-item__left">
           <StockLogo symbol={stock.symbol} logoUrl={stock.logoUrl} size={34} />
           <span className="watchlist-item__symbol-block">
@@ -50,7 +65,9 @@ export default function WatchlistItem({ stock, listId }) {
         </span>
 
         <span className={`watchlist-item__right ${flashClass ?? ""}`}>
-          <span className="watchlist-item__price">{formatCurrency(stock.ltp)}</span>
+          <span className="watchlist-item__price">
+            {formatCurrency(stock.ltp)}
+          </span>
           <span className={`watchlist-item__change ${directionClass}`}>
             {isUp ? "▲" : "▼"} {formatPercent(stock.dayChangePercent)}
           </span>
@@ -66,27 +83,39 @@ export default function WatchlistItem({ stock, listId }) {
           <button
             className="watchlist-item__trade-btn watchlist-item__trade-btn--buy"
             title={`Buy ${stock.symbol}`}
-            onClick={() => openBuyWindow(stock)}
+            onClick={handleBuy}
+            type="button"
+            aria-label={`Buy ${stock.symbol}`}
           >
             Buy
           </button>
           <button
             className="watchlist-item__trade-btn watchlist-item__trade-btn--sell"
             title={`Sell ${stock.symbol}`}
-            onClick={() => openSellWindow(stock)}
+            onClick={handleSell}
+            type="button"
+            aria-label={`Sell ${stock.symbol}`}
           >
             Sell
           </button>
         </div>
 
         <div className="watchlist-item__icon-actions">
-          <button className="watchlist-item__icon-btn" title={`Analytics for ${stock.symbol}`} onClick={openDetail}>
+          <button
+            className="watchlist-item__icon-btn"
+            title={`Analytics for ${stock.symbol}`}
+            onClick={openDetail}
+            type="button"
+            aria-label={`View analytics for ${stock.symbol}`}
+          >
             📈
           </button>
           <button
             className="watchlist-item__icon-btn watchlist-item__icon-btn--delete"
             title={`Remove ${stock.symbol} from list`}
             onClick={handleRemove}
+            type="button"
+            aria-label={`Remove ${stock.symbol} from watchlist`}
           >
             <TrashIcon />
           </button>

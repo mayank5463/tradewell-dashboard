@@ -1,9 +1,5 @@
 /* ==========================================================
-   MARKET INDICES TICKER
-   Replaces the "Ask NiveshAI" CTA in TopBar's search row.
-   Built entirely from existing tokens (card/text/is-up/is-down),
-   so it repaints correctly across all 4 themes and both modes
-   with zero new color literals.
+   MARKET INDICES TICKER — SENSEX + NIFTY 50
    ========================================================== */
 
 .market-ticker {
@@ -15,6 +11,8 @@
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   flex-shrink: 0;
+  position: relative;
+  z-index: 20;
 }
 
 .market-ticker__divider {
@@ -28,13 +26,17 @@
   flex-direction: column;
   gap: 2px;
   min-width: 108px;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .market-ticker__label {
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-2xs, 11px);
+  font-weight: var(--font-weight-semibold, 600);
   color: var(--text-secondary);
-  letter-spacing: var(--letter-spacing-wide);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  text-transform: uppercase;
 }
 
 .market-ticker__figures {
@@ -44,33 +46,93 @@
 }
 
 .market-ticker__value {
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md, 14px);
+  font-weight: var(--font-weight-bold, 700);
   color: var(--text-numeric);
+  white-space: nowrap;
 }
 
 .market-ticker__change {
-  font-size: var(--font-size-2xs);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-2xs, 11px);
+  font-weight: var(--font-weight-semibold, 600);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-/* .is-up / .is-down already defined globally in global.css — reused here */
+.is-up {
+  color: var(--success-fill, #22c55e) !important;
+}
+
+.is-down {
+  color: var(--danger-fill, #ef4444) !important;
+}
 
 .market-ticker__skeleton {
   width: 90px;
   height: 14px;
   border-radius: var(--radius-xs);
-  background: var(--skeleton-base);
+  background: var(--skeleton-base, var(--border-primary));
+}
+
+@media (max-width: 1200px) {
+  .market-ticker {
+    gap: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+  }
+  .market-ticker__block {
+    min-width: 96px;
+  }
+}
+
+@media (max-width: 900px) {
+  .market-ticker {
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    margin-left: 56px;
+  }
+  .market-ticker__block {
+    min-width: 88px;
+  }
+  .market-ticker__divider {
+    height: 24px;
+  }
 }
 
 @media (max-width: 768px) {
   .market-ticker {
-    gap: var(--space-3);
-    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+    padding: 6px var(--space-3);
   }
   .market-ticker__block {
-    min-width: 84px;
+    min-width: 76px;
+  }
+  .market-ticker__value {
+    font-size: var(--font-size-sm, 13px);
+  }
+  .market-ticker__label {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .market-ticker {
+    gap: var(--space-2);
+    padding: 5px var(--space-2);
+    margin-left: 48px;
+  }
+  .market-ticker__block {
+    min-width: 66px;
+  }
+  .market-ticker__divider {
+    height: 20px;
+  }
+  .market-ticker__value {
+    font-size: 12px;
+  }
+  .market-ticker__change {
+    font-size: 10px;
+  }
+  .market-ticker__label {
+    font-size: 9px;
   }
 }

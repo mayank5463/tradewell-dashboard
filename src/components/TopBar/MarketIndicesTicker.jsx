@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchMarketIndices, selectIndexByName } from "../../redux/slices/marketSlice";
+import { fetchMarketIndices } from "../../redux/slices/marketSlice";
 import "./MarketIndicesTicker.css";
 
 function IndexBlock({ label, index }) {
@@ -37,19 +37,27 @@ function IndexBlock({ label, index }) {
 
 export default function MarketIndicesTicker() {
   const dispatch = useDispatch();
-  const sensex = useSelector((state) => selectIndexByName(state, "sensex"));
-  const nifty = useSelector((state) => selectIndexByName(state, "nifty"));
+  const indices = useSelector((state) => state.market.indices);
 
   useEffect(() => {
     dispatch(fetchMarketIndices());
-    // Local poll — remove this interval if useMarketPolling.js (or a
-    // socket feed) already refreshes state.market.indices elsewhere;
-    // no need to double-poll the same slice.
     const id = setInterval(() => {
       dispatch(fetchMarketIndices());
     }, 10000);
     return () => clearInterval(id);
   }, [dispatch]);
+
+  // Find Sensex by KEY
+  const sensexKey = Object.keys(indices || {}).find((k) =>
+    k.toUpperCase().includes("SENSEX")
+  );
+  const sensex = sensexKey ? indices[sensexKey] : null;
+
+  // Find Nifty by KEY (exclude BANK)
+  const niftyKey = Object.keys(indices || {}).find((k) =>
+    k.toUpperCase().includes("NIFTY") && !k.toUpperCase().includes("BANK")
+  );
+  const nifty = niftyKey ? indices[niftyKey] : null;
 
   return (
     <div className="market-ticker">

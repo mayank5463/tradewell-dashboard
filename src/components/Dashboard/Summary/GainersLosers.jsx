@@ -15,6 +15,7 @@ import { VISIBLE_COUNT_OPTIONS } from "../../../utils/constants";
 import "./GainersLosers.css";
 import "../../../styles/variables.css";
 import "../../../styles/global.css";
+import "../../../styles/SectionHeadingsTheme.css";
 
 function StockCard({ stock, onClick, index }) {
   const isUp = stock.dayChangePercent >= 0;

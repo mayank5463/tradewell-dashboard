@@ -1,0 +1,151 @@
+/* ============================================================
+   SectionHeadingsTheme.css
+
+   PROBLEM THIS FIXES:
+   .section-heading__title / .section-heading__subtitle,
+   .most-traded__header h3 / .most-traded__subtitle, and
+   .market-highlights__title / .market-highlights__subtitle
+   all use --text-primary / --text-secondary, which FLIP to a
+   light color in [data-mode="dark"] (see variables.css).
+   But the cards these headings sit on (Trade Performance,
+   Trading Analytics, Top Index Funds, Market Highlights) keep a
+   white/light background in dark mode too — same root cause you
+   already fixed for .greeting-banner in Summary.css. Light text
+   on a white card = invisible / washed out.
+
+   FIX:
+   Pin these headings to the theme's own dark color scale
+   (--navy-900 / --olive-900 / --charcoal-900 / --sand-900 for
+   the title, one step lighter for the subtitle) instead of the
+   mode-flipping tokens. Scoped by [data-theme="..."] only (NOT
+   [data-mode="dark"]), so light mode and dark mode render
+   IDENTICALLY per theme — which is exactly the "same heading
+   style as light mode" behavior requested.
+
+   SCOPE: only the title/subtitle elements of the three
+   requested sections. Nothing else is touched, nothing else
+   should visually shift.
+
+   Load this AFTER SummaryCharts.css / TradeAnalyticsCards.css /
+   TopIndexFunds.css / MarketHighlights.css so the theme selector
+   (2 attribute selectors: [data-theme] + class) naturally wins
+   over the mode-only rule ([data-mode="dark"] + class). The
+   !important pairs match the !important already used on
+   .most-traded__header h3 in your existing CSS, so this file
+   reliably wins there too regardless of import order.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   Shared selector groups — one rule set per theme, reused for:
+     - .section-heading__title / __subtitle
+       (Trade Performance + Trading Analytics headings in
+       Summary.jsx, and Top Index Funds heading in
+       TopIndexFunds.jsx — all three use this exact class)
+     - .most-traded__header h3 / .most-traded__heading h3 /
+       .most-traded__subtitle (Most Traded Symbols card, part of
+       Trading Analytics)
+     - .market-highlights__title / __subtitle (Market Movers /
+       Gainers-Losers card)
+   ------------------------------------------------------------ */
+
+/* ============================================================
+   NAVY THEME
+   ============================================================ */
+
+/* Top Index Funds + Market Highlights only — unchanged, still navy scale */
+[data-theme="navy"] .index-fund-section .section-heading__title,
+[data-theme="navy"] .market-highlights__title {
+  color: var(--navy-900) !important;
+}
+
+[data-theme="navy"] .index-fund-section .section-heading__subtitle,
+[data-theme="navy"] .market-highlights__subtitle {
+  color: var(--navy-700) !important;
+}
+
+/* Trade Performance + Trading Analytics (Most Traded, P&L Calendar,
+   Stock Analytics Panel — all live inside .summary__section) — plain
+   black / dark grey for navy only, per request. */
+[data-theme="navy"] .summary__section .section-heading__title,
+[data-theme="navy"] .most-traded__header h3,
+[data-theme="navy"] .most-traded__heading h3,
+[data-theme="navy"] .most-traded__empty h4 {
+  color: #111111 !important;
+}
+
+[data-theme="navy"] .summary__section .section-heading__subtitle,
+[data-theme="navy"] .most-traded__subtitle {
+  color: #4b4b4b !important;
+}
+
+/* Market Movers (Top Gainers / Top Losers section heading + count
+   pill) — same plain black / dark grey treatment for navy only. The
+   green/red Top Gainers / Top Losers panel titles themselves are left
+   untouched since that color is semantic (up/down), not thematic. */
+[data-theme="navy"] .movers-section__title {
+  color: #111111 !important;
+}
+
+[data-theme="navy"] .movers-section__stat--total {
+  color: #4b4b4b !important;
+}
+
+/* ============================================================
+   OLIVE THEME
+   ============================================================ */
+
+[data-theme="olive"] .section-heading__title,
+[data-theme="olive"] .most-traded__header h3,
+[data-theme="olive"] .most-traded__heading h3,
+[data-theme="olive"] .most-traded__empty h4,
+[data-theme="olive"] .market-highlights__title,
+[data-theme="olive"] .movers-section__title {
+  color: var(--olive-900) !important;
+}
+
+[data-theme="olive"] .section-heading__subtitle,
+[data-theme="olive"] .most-traded__subtitle,
+[data-theme="olive"] .market-highlights__subtitle,
+[data-theme="olive"] .movers-section__stat--total {
+  color: var(--olive-700) !important;
+}
+
+/* ============================================================
+   CHARCOAL THEME
+   ============================================================ */
+
+[data-theme="charcoal"] .section-heading__title,
+[data-theme="charcoal"] .most-traded__header h3,
+[data-theme="charcoal"] .most-traded__heading h3,
+[data-theme="charcoal"] .most-traded__empty h4,
+[data-theme="charcoal"] .market-highlights__title,
+[data-theme="charcoal"] .movers-section__title {
+  color: var(--charcoal-900) !important;
+}
+
+[data-theme="charcoal"] .section-heading__subtitle,
+[data-theme="charcoal"] .most-traded__subtitle,
+[data-theme="charcoal"] .market-highlights__subtitle,
+[data-theme="charcoal"] .movers-section__stat--total {
+  color: var(--charcoal-700) !important;
+}
+
+/* ============================================================
+   SAND THEME
+   ============================================================ */
+
+[data-theme="sand"] .section-heading__title,
+[data-theme="sand"] .most-traded__header h3,
+[data-theme="sand"] .most-traded__heading h3,
+[data-theme="sand"] .most-traded__empty h4,
+[data-theme="sand"] .market-highlights__title,
+[data-theme="sand"] .movers-section__title {
+  color: var(--sand-900) !important;
+}
+
+[data-theme="sand"] .section-heading__subtitle,
+[data-theme="sand"] .most-traded__subtitle,
+[data-theme="sand"] .market-highlights__subtitle,
+[data-theme="sand"] .movers-section__stat--total {
+  color: var(--sand-700) !important;
+}

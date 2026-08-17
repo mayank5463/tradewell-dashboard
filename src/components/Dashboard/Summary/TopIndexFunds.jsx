@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchMarketIndexFunds, selectIndexFunds } from "../../../redux/slices/marketSlice";
 import "./TopIndexFunds.css";
+import "../../../styles/SectionHeadingsTheme.css";
 
 // Simple deterministic color/monogram per index, since these aren't
 // ISIN-backed equities — instrumentMapService.buildLogoUrl() only works

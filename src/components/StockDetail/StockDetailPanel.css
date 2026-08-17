@@ -1,41 +1,11 @@
-/* ============================================================
-   StockDetailPanel.css — premium edition
-   ------------------------------------------------------------
-   Design direction: quiet, confident fintech — the Kite/Groww
-   school of design. Flat surfaces, one restrained brand accent,
-   semantic green/rose for gains & losses, and depth that comes
-   from spacing and a single soft shadow — not from gradients,
-   glows, or color noise. Nothing here "announces" itself.
-
-   ------------------------------------------------------------
-   THEMING
-   Every color below is a semantic token from variables.css
-   (--text-primary, --card-bg, --brand-primary, --success-fill,
-   etc). Nothing is hardcoded and nothing is a local fallback
-   hex, so this page automatically:
-     • matches whichever brand theme is active
-       ([data-theme="navy" | "olive" | "charcoal" | "sand"])
-     • switches to the dark palette when [data-mode="dark"]
-       is set (that attribute lives higher up the tree — on
-       <html> or <body> — and everything here inherits from it)
-
-   Tint / wash colors (badges, pills, stat tiles) are built with
-   color-mix() against the *-fill tokens rather than the
-   *-bg/*-text tokens. The *-bg/*-text tokens are only defined
-   per light-mode theme and don't have a dark-mode override, so
-   a color-mix() wash against the live surface color is what
-   keeps every tint looking correct in both modes instead of
-   turning into a pale, illegible smear on a dark card.
-   ============================================================ */
-
+/* StockDetailPanel.css */
 .stock-detail {
-  /* ---- ink ---- */
+  /* --- Variables & Theming --- */
   --sd-ink: var(--text-primary);
   --sd-ink-soft: var(--text-secondary);
   --sd-ink-faint: var(--text-tertiary);
   --sd-ink-muted: var(--text-muted);
 
-  /* ---- surfaces ---- */
   --sd-canvas: var(--surface-secondary);
   --sd-surface: var(--card-bg);
   --sd-surface-2: var(--surface-secondary);
@@ -43,1183 +13,14 @@
   --sd-border-soft: var(--divider-secondary);
   --sd-divider: var(--divider-primary);
 
-  /* ---- brand ---- */
-  --sd-brand: var(--brand-primary);
-  --sd-brand-hover: var(--brand-hover);
-  --sd-brand-tint: color-mix(
-    in srgb,
-    var(--brand-primary) 9%,
-    var(--surface-primary)
-  );
-  --sd-brand-tint-strong: color-mix(
-    in srgb,
-    var(--brand-primary) 15%,
-    var(--surface-primary)
-  );
-  --sd-brand-border: color-mix(
-    in srgb,
-    var(--brand-primary) 24%,
-    var(--surface-primary)
-  );
-
-  /* ---- gain / loss ---- */
-  --sd-up: var(--success-fill);
-  --sd-up-tint: color-mix(
-    in srgb,
-    var(--success-fill) 12%,
-    var(--surface-primary)
-  );
-  --sd-up-border: color-mix(
-    in srgb,
-    var(--success-fill) 26%,
-    var(--surface-primary)
-  );
-
-  --sd-down: var(--danger-fill);
-  --sd-down-tint: color-mix(
-    in srgb,
-    var(--danger-fill) 12%,
-    var(--surface-primary)
-  );
-  --sd-down-border: color-mix(
-    in srgb,
-    var(--danger-fill) 26%,
-    var(--surface-primary)
-  );
-
-  /* ---- gold / watch / risk ---- */
-  --sd-gold: var(--warning-fill);
-  --sd-gold-tint: color-mix(
-    in srgb,
-    var(--warning-fill) 14%,
-    var(--surface-primary)
-  );
-  --sd-gold-border: color-mix(
-    in srgb,
-    var(--warning-fill) 30%,
-    var(--surface-primary)
-  );
-
-  /* ---- type ---- */
-  --sd-font-display: var(--font-family-display);
-  --sd-font-body: var(--font-family-base);
-
-  /* ---- radius / shadow (mapped onto the shared scale) ---- */
-  --sd-radius-lg: var(--radius-xl);
-  --sd-radius-md: var(--radius-md);
-  --sd-radius-sm: var(--radius-sm);
-  --sd-shadow-card: var(--card-shadow);
-  --sd-shadow-card-hover: var(--shadow-md);
-
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: var(--space-5) var(--space-4) 72px;
-  font-family: var(--sd-font-body);
-  color: var(--sd-ink);
-  background: var(--sd-canvas);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings:
-    "tnum" 1,
-    "cv11" 1,
-    "ss01" 1;
-}
-
-.stock-detail * {
-  box-sizing: border-box;
-}
-
-/* ── Loading / error message state ── */
-.stock-detail--message {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  min-height: 320px;
-  text-align: center;
-  color: var(--sd-ink-soft);
-  font-size: var(--font-size-sm);
-  max-width: 340px;
-  margin: 0 auto;
-}
-
-.stock-detail__spinner {
-  width: 30px;
-  height: 30px;
-  border: 3px solid var(--sd-brand-tint-strong);
-  border-top-color: var(--sd-brand);
-  border-right-color: var(--sd-brand);
-  border-radius: 50%;
-  animation: stock-detail-spin 0.7s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
-}
-
-@keyframes stock-detail-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ── Header: logo + identity (left) / price (right) ──
-   Flat card, one hairline border, one quiet shadow. No gradient
-   wash, no decorative glow — the header earns "premium" from
-   generous spacing and precise type, not from color effects. */
-.stock-detail__header {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 26px 28px;
-  margin-bottom: 22px;
-  background: var(--sd-surface);
-  border: 1px solid var(--sd-border);
-  border-radius: var(--sd-radius-lg);
-  box-shadow: var(--sd-shadow-card);
-  flex-wrap: wrap;
-}
-
-.stock-detail__identity {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  min-width: 0;
-}
-
-/* ── Logo — real image if available, otherwise a clean initials badge ── */
-.stock-detail__logo-img,
-.stock-detail__logo-fallback {
-  width: 58px;
-  height: 58px;
-  border-radius: 15px;
-  flex-shrink: 0;
-}
-
-.stock-detail__logo-img {
-  object-fit: contain;
-  background: var(--white);
-  border: 1px solid var(--sd-border);
-  padding: 7px;
-}
-
-.stock-detail__logo-fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--sd-brand);
-  color: var(--white);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.stock-detail__title-row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.stock-detail__title-row h2 {
-  font-family: var(--sd-font-display);
-  font-size: 25px;
-  font-weight: 800;
-  margin: 0;
-  letter-spacing: -0.3px;
-  color: var(--sd-ink);
-}
-
-.stock-detail__watch-toggle {
-  border: none;
-  background: none;
-  font-size: 19px;
-  line-height: 1;
-  cursor: pointer;
-  color: var(--sd-ink-faint);
-  transition:
-    color var(--transition-fast),
-    transform var(--transition-fast);
-  padding: 2px;
-  margin-top: -1px;
-}
-
-.stock-detail__watch-toggle:hover {
-  color: var(--sd-gold);
-}
-
-.stock-detail__watch-toggle.is-active {
-  color: var(--sd-gold);
-}
-
-.stock-detail__watch-toggle:active {
-  transform: scale(0.85);
-}
-
-.stock-detail__name {
-  margin: 4px 0 8px;
-  font-size: 14px;
-  color: var(--sd-ink-soft);
-  font-weight: 500;
-}
-
-.stock-detail__industry-badge {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  color: var(--sd-brand);
-  background: var(--sd-brand-tint);
-  border: 1px solid var(--sd-brand-border);
-  border-radius: var(--radius-round);
-  padding: 4px 11px;
-}
-
-/* ── Price block ── */
-.stock-detail__price {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 9px;
-}
-
-.stock-detail__live-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: var(--sd-ink-faint);
-}
-
-.stock-detail__live-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--sd-up);
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--sd-up) 55%, transparent);
-  animation: stock-detail-pulse 1.8s ease-out infinite;
-}
-
-@keyframes stock-detail-pulse {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--sd-up) 45%, transparent);
-  }
-  70% {
-    box-shadow: 0 0 0 6px transparent;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-}
-
-.stock-detail__ltp {
-  font-family: var(--sd-font-display);
-  font-size: 38px;
-  font-weight: 800;
-  letter-spacing: -0.6px;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-  color: var(--sd-ink);
-  transition: color 0.3s ease;
-}
-
-/* usePriceFlash toggles a class like .flash-up/.flash-down on tick */
-.stock-detail__ltp.flash-up {
-  color: var(--sd-up);
-}
-.stock-detail__ltp.flash-down {
-  color: var(--sd-down);
-}
-
-.stock-detail__change-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13.5px;
-  font-weight: 700;
-  padding: 6px 13px;
-  border-radius: var(--radius-round);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-}
-
-.stock-detail__change-arrow {
-  flex-shrink: 0;
-}
-
-.stock-detail__change-pill-divider {
-  align-self: stretch;
-  width: 1px;
-  margin: 0 1px;
-}
-
-.stock-detail__change-pill.is-up {
-  color: var(--sd-up);
-  background: var(--sd-up-tint);
-  border: 1px solid var(--sd-up-border);
-}
-
-.stock-detail__change-pill.is-up .stock-detail__change-pill-divider {
-  background: var(--sd-up-border);
-}
-
-.stock-detail__change-pill.is-down {
-  color: var(--sd-down);
-  background: var(--sd-down-tint);
-  border: 1px solid var(--sd-down-border);
-}
-
-.stock-detail__change-pill.is-down .stock-detail__change-pill-divider {
-  background: var(--sd-down-border);
-}
-
-/* ── Buy / Sell actions — flat fills, the way an order ticket
-   actually looks on a trading terminal. No gradients, no glow;
-   the only "lift" is a subtle press/hover state. ── */
-.stock-detail__actions {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.stock-detail__btn {
-  flex: 1;
-  max-width: 220px;
-  padding: 14px 20px;
-  border-radius: var(--sd-radius-md);
-  border: none;
-  font-family: var(--sd-font-display);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.1px;
-  cursor: pointer;
-  color: var(--white);
-  transition:
-    filter var(--transition-fast),
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.stock-detail__btn:hover {
-  filter: brightness(0.94);
-}
-
-.stock-detail__btn:active {
-  transform: scale(0.98);
-}
-
-.stock-detail__btn--buy {
-  background: var(--sd-up);
-}
-
-.stock-detail__btn--sell {
-  background: var(--sd-down);
-}
-
-/* ── Holding banner ── */
-.stock-detail__holding-row {
-  display: flex;
-  justify-content: space-between;
-  background: var(--sd-brand-tint);
-  border: 1px solid var(--sd-brand-border);
-  border-radius: var(--sd-radius-md);
-  padding: 12px 18px;
-  font-size: 13.5px;
-  color: var(--sd-ink-soft);
-  margin-bottom: 26px;
-}
-
-.stock-detail__holding-row strong {
-  color: var(--sd-ink);
-}
-
-/* ── Chart card — a plain frame; StockChart.jsx supplies its own look ── */
-.stock-detail__chart-card {
-  position: relative;
-  background: var(--sd-surface);
-  border: 1px solid var(--sd-border);
-  border-radius: var(--sd-radius-lg);
-  padding: 22px;
-  margin-bottom: 34px;
-  box-shadow: var(--sd-shadow-card);
-}
-
-/* ── Section titles ── */
-.stock-detail__section-title {
-  position: relative;
-  display: flex;
-  align-items: center;
-  font-family: var(--sd-font-display);
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: -0.1px;
-  margin: 0 0 16px;
-  padding-left: 13px;
-  color: var(--sd-ink);
-}
-
-.stock-detail__section-title::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 1px;
-  bottom: 1px;
-  width: 4px;
-  border-radius: 4px;
-  background: var(--sd-brand);
-}
-
-/* ── Today's stats / Fundamentals — flat neutral tiles ── */
-.stock-detail__stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 34px;
-}
-
-.stock-detail__stat {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  background: var(--sd-surface-2);
-  border: 1px solid var(--sd-border);
-  border-radius: var(--sd-radius-md);
-  padding: 14px 16px;
-  transition:
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast),
-    border-color var(--transition-fast);
-}
-
-.stock-detail__stat:hover {
-  box-shadow: var(--sd-shadow-card-hover);
-  transform: translateY(-2px);
-  border-color: var(--sd-brand-border);
-}
-
-.stock-detail__stat span {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--sd-ink-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-
-.stock-detail__stat strong {
-  font-family: var(--sd-font-display);
-  font-size: 17.5px;
-  font-weight: 800;
-  letter-spacing: -0.2px;
-  color: var(--sd-ink);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-}
-
-.stock-detail__stat strong.stock-detail__stat--small,
-.stock-detail__stat strong .stock-detail__stat--small {
-  font-size: 12.5px;
-  letter-spacing: 0.2px;
-  font-variant-numeric: normal;
-}
-
-/* ── Company overview grid ── */
-.stock-detail__overview-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0 32px;
-  border: 1px solid var(--sd-border);
-  border-radius: var(--sd-radius-lg);
-  padding: 8px 22px;
-  margin-bottom: 30px;
-  background: var(--sd-surface);
-  box-shadow: var(--sd-shadow-card);
-}
-
-.stock-detail__overview-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--sd-border-soft);
-  font-size: 13.5px;
-}
-
-.stock-detail__overview-row:nth-last-child(-n + 1) {
-  border-bottom: none;
-}
-
-.stock-detail__overview-label {
-  color: var(--sd-ink-soft);
-  font-weight: 500;
-}
-
-.stock-detail__overview-value {
-  font-family: var(--sd-font-display);
-  font-weight: 700;
-  letter-spacing: -0.1px;
-  color: var(--sd-ink);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-  text-align: right;
-}
-
-.stock-detail__overview-link {
-  color: var(--sd-brand);
-  text-decoration: none;
-}
-
-.stock-detail__overview-link:hover {
-  text-decoration: underline;
-}
-
-/* ── Analyst recommendation ──
-   Note: .stock-detail__reco-badge's background and
-   .stock-detail__reco-bar-fill's background are set inline from
-   RATING_COLORS / r.colorCode in StockDetailPanel.jsx — those are
-   fixed rating colors, not theme tokens, so their text stays a
-   hardcoded white (var(--white)) rather than --text-inverse,
-   which flips to near-black in dark mode and would go illegible
-   against those always-saturated fills. */
-.stock-detail__reco-card {
-  background: var(--sd-surface);
-  border: 1px solid var(--sd-border);
-  border-radius: var(--sd-radius-lg);
-  padding: 22px 24px;
-  margin-bottom: 30px;
-  box-shadow: var(--sd-shadow-card);
-}
-
-.stock-detail__reco-summary {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--sd-border-soft);
-}
-
-.stock-detail__reco-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 18px;
-  border-radius: var(--radius-round);
-  color: var(--white);
-  font-family: var(--sd-font-display);
-  font-size: 13.5px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-}
-
-.stock-detail__reco-count {
-  font-size: 13px;
-  color: var(--sd-ink-soft);
-  font-weight: 500;
-}
-
-.stock-detail__reco-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.stock-detail__reco-row {
-  display: grid;
-  grid-template-columns: 96px 1fr 30px;
-  align-items: center;
-  gap: 12px;
-}
-
-.stock-detail__reco-label {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--sd-ink-soft);
-}
-
-.stock-detail__reco-bar {
-  height: 9px;
-  border-radius: var(--radius-round);
-  background: var(--sd-border-soft);
-  overflow: hidden;
-}
-
-.stock-detail__reco-bar-fill {
-  height: 100%;
-  border-radius: var(--radius-round);
-  transition: width 0.4s ease;
-}
-
-.stock-detail__reco-value {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--sd-ink);
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── Shareholding pattern ──
-   Note: segment/legend-dot backgrounds come inline from
-   SHAREHOLDING_COLORS in the JSX — fixed brand colors by design,
-   left untouched here. ── */
-.stock-detail__shareholding {
-  background: var(--sd-surface);
-  border: 1px solid var(--sd-border);
-  border-radius: var(--sd-radius-lg);
-  padding: 22px 24px;
-  margin-bottom: 30px;
-  box-shadow: var(--sd-shadow-card);
-}
-
-.stock-detail__shareholding-bar {
-  display: flex;
-  width: 100%;
-  height: 14px;
-  border-radius: var(--radius-round);
-  overflow: hidden;
-  background: var(--sd-border-soft);
-  margin-bottom: 16px;
-}
-
-.stock-detail__shareholding-segment {
-  height: 100%;
-  transition: filter var(--transition-fast);
-}
-
-.stock-detail__shareholding-segment:hover {
-  filter: brightness(1.08);
-}
-
-.stock-detail__shareholding-segment + .stock-detail__shareholding-segment {
-  border-left: 2px solid var(--sd-surface);
-}
-
-.stock-detail__shareholding-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 20px;
-}
-
-.stock-detail__shareholding-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--sd-ink-soft);
-}
-
-.stock-detail__shareholding-legend-item i {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
-  flex-shrink: 0;
-}
-
-/* ── Risk meter ── */
-.stock-detail__risk-badge {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  background: var(--sd-gold-tint);
-  border: 1px solid var(--sd-gold-border);
-  border-radius: var(--sd-radius-md);
-  padding: 13px 18px;
-  font-size: 13.5px;
-  color: var(--sd-ink-soft);
-  font-weight: 500;
-  margin-bottom: 30px;
-}
-
-.stock-detail__risk-badge strong {
-  color: var(--sd-gold);
-  font-weight: 800;
-}
-
-.stock-detail__risk-stddev {
-  margin-left: auto;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--sd-ink-faint);
-  font-variant-numeric: tabular-nums;
-  background: var(--sd-surface);
-  border-radius: var(--radius-round);
-  padding: 3px 10px;
-}
-
-/* ── Management ── */
-.stock-detail__officers {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 30px;
-  counter-reset: officer-rank;
-}
-
-.stock-detail__officer {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  background: var(--sd-surface);
-  border: 1px solid var(--sd-border);
-  border-radius: var(--sd-radius-md);
-  padding: 14px 16px 14px 46px;
-  counter-increment: officer-rank;
-  transition:
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.stock-detail__officer:hover {
-  box-shadow: var(--sd-shadow-card-hover);
-  transform: translateY(-1px);
-}
-
-.stock-detail__officer::before {
-  content: counter(officer-rank);
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--sd-brand-tint-strong);
-  color: var(--sd-brand);
-  font-size: 11px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stock-detail__officer-name {
-  font-family: var(--sd-font-display);
-  font-size: 13.5px;
-  font-weight: 700;
-  letter-spacing: -0.1px;
-  color: var(--sd-ink);
-}
-
-.stock-detail__officer-title {
-  font-size: 12px;
-  color: var(--sd-ink-soft);
-}
-
-/* ── About section ── */
-.stock-detail__about {
-  background: var(--sd-surface);
-  border: 1px solid var(--sd-border);
-  border-radius: var(--sd-radius-lg);
-  padding: 22px 24px;
-  margin-bottom: 30px;
-  box-shadow: var(--sd-shadow-card);
-}
-
-.stock-detail__about h4 {
-  font-family: var(--sd-font-display);
-  margin: 0 0 10px;
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: -0.1px;
-  color: var(--sd-ink);
-}
-
-.stock-detail__about p {
-  margin: 0;
-  font-size: 13.5px;
-  line-height: 1.75;
-  color: var(--sd-ink-soft);
-}
-
-.stock-detail__about--muted {
-  border: 1px dashed var(--sd-border);
-  color: var(--sd-ink-faint);
-  text-align: center;
-  font-size: 13px;
-  padding: 26px;
-  box-shadow: none;
-}
-
-/* ── Recent news ── */
-.stock-detail__news {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.stock-detail__news-item {
-  display: flex;
-  gap: 12px;
-  background: var(--sd-surface);
-  border: 1px solid var(--sd-border);
-  border-radius: var(--sd-radius-md);
-  padding: 12px;
-  text-decoration: none;
-  color: inherit;
-  transition:
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast),
-    border-color var(--transition-fast);
-}
-
-.stock-detail__news-item:hover {
-  box-shadow: var(--sd-shadow-card-hover);
-  transform: translateY(-1px);
-  border-color: var(--sd-brand-border);
-}
-
-.stock-detail__news-item img {
-  width: 68px;
-  height: 68px;
-  border-radius: 9px;
-  object-fit: cover;
-  flex-shrink: 0;
-  background: var(--sd-surface-2);
-}
-
-.stock-detail__news-headline {
-  font-family: var(--sd-font-display);
-  margin: 0 0 8px;
-  font-size: 13.5px;
-  font-weight: 700;
-  letter-spacing: -0.1px;
-  line-height: 1.4;
-  color: var(--sd-ink);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.stock-detail__news-date {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--sd-ink-soft);
-}
-
-/* ============================================================
-   Responsive
-   ============================================================ */
-
-@media (min-width: 1300px) {
-  .stock-detail__overview-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .stock-detail__officers {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .stock-detail__news {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 720px) {
-  .stock-detail__stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .stock-detail__overview-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stock-detail__officers,
-  .stock-detail__news {
-    grid-template-columns: 1fr;
-  }
-
-  .stock-detail__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .stock-detail__price {
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  .stock-detail__reco-row {
-    grid-template-columns: 80px 1fr 26px;
-  }
-}
-
-@media (max-width: 480px) {
-  .stock-detail {
-    padding: var(--space-4) var(--space-3) 48px;
-  }
-
-  .stock-detail__header {
-    padding: 18px;
-  }
-
-  .stock-detail__stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  .stock-detail__logo-img,
-  .stock-detail__logo-fallback {
-    width: 46px;
-    height: 46px;
-    border-radius: 11px;
-  }
-
-  .stock-detail__ltp {
-    font-size: 29px;
-  }
-
-  .stock-detail__actions {
-    flex-direction: column;
-  }
-
-  .stock-detail__btn {
-    max-width: 100%;
-  }
-
-  .stock-detail__risk-stddev {
-    margin-left: 0;
-  }
-}
-
-/* ============================================================
-   Reduced motion — respected globally in global.css too, but
-   this page has its own spinner/pulse/hover-lift animations
-   so it repeats the guard locally.
-   ============================================================ */
-@media (prefers-reduced-motion: reduce) {
-  .stock-detail__spinner,
-  .stock-detail__live-dot {
-    animation: none;
-  }
-
-  .stock-detail__stat,
-  .stock-detail__officer,
-  .stock-detail__news-item,
-  .stock-detail__btn {
-    transition: none;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ============================================================
-   StockDetailPanel.css — premium edition
-   ------------------------------------------------------------
-   Design direction: quiet, confident fintech — the Kite/Groww
-   school of design. Flat surfaces, one restrained brand accent,
-   semantic green/rose for gains & losses, and depth that comes
-   from spacing, a soft shadow, and a 1px inner highlight — not
-   from gradients, glows, or color noise. Nothing here "announces"
-   itself; the signature is the day-range meter under the price,
-   which is real information (not decoration).
-
-   ------------------------------------------------------------
-   THEMING
-   Every color below is a semantic token from variables.css
-   (--text-primary, --card-bg, --brand-primary, --success-fill,
-   etc). Nothing is hardcoded and nothing is a local fallback
-   hex, so this page automatically:
-     • matches whichever brand theme is active
-       ([data-theme="navy" | "olive" | "charcoal" | "sand"])
-     • switches to the dark palette when [data-mode="dark"]
-       is set (that attribute lives higher up the tree — on
-       <html> or <body> — and everything here inherits from it)
-
-   Tint / wash colors (badges, pills, stat tiles) are built with
-   color-mix() against the *-fill tokens rather than the
-   *-bg/*-text tokens. The *-bg/*-text tokens are only defined
-   per light-mode theme and have no dark-mode override, so a
-   color-mix() wash against the live surface color is what keeps
-   every tint correct in both modes instead of turning into a
-   pale, illegible smear on a dark card.
-   ============================================================ */
-
-.stock-detail {
-  /* ---- ink ---- */
-  --sd-ink: var(--text-primary);
-  --sd-ink-soft: var(--text-secondary);
-  --sd-ink-faint: var(--text-tertiary);
-  --sd-ink-muted: var(--text-muted);
-
-  /* ---- surfaces ---- */
-  --sd-canvas: var(--surface-secondary);
-  --sd-surface: var(--card-bg);
-  --sd-surface-2: var(--surface-secondary);
-  --sd-border: var(--card-border);
-  --sd-border-soft: var(--divider-secondary);
-  --sd-divider: var(--divider-primary);
-
-  /* a hairline inner highlight along a card's top edge — the one bit of
-     "depth" this design allows itself, subtle enough to read as quality
-     rather than effect. Automatically near-invisible in dark mode
-     because it's mixed from --white at low strength. */
   --sd-inset-highlight: inset 0 1px 0 color-mix(in srgb, var(--white) 6%, transparent);
 
-  /* ---- brand ---- */
   --sd-brand: var(--brand-primary);
   --sd-brand-hover: var(--brand-hover);
   --sd-brand-tint: color-mix(in srgb, var(--brand-primary) 9%, var(--surface-primary));
   --sd-brand-tint-strong: color-mix(in srgb, var(--brand-primary) 15%, var(--surface-primary));
   --sd-brand-border: color-mix(in srgb, var(--brand-primary) 24%, var(--surface-primary));
 
-  /* ---- gain / loss ---- */
   --sd-up: var(--success-fill);
   --sd-up-tint: color-mix(in srgb, var(--success-fill) 12%, var(--surface-primary));
   --sd-up-border: color-mix(in srgb, var(--success-fill) 26%, var(--surface-primary));
@@ -1228,16 +29,13 @@
   --sd-down-tint: color-mix(in srgb, var(--danger-fill) 12%, var(--surface-primary));
   --sd-down-border: color-mix(in srgb, var(--danger-fill) 26%, var(--surface-primary));
 
-  /* ---- gold / watch / risk ---- */
   --sd-gold: var(--warning-fill);
   --sd-gold-tint: color-mix(in srgb, var(--warning-fill) 14%, var(--surface-primary));
   --sd-gold-border: color-mix(in srgb, var(--warning-fill) 30%, var(--surface-primary));
 
-  /* ---- type ---- */
   --sd-font-display: var(--font-family-display);
   --sd-font-body: var(--font-family-base);
 
-  /* ---- radius / shadow (mapped onto the shared scale) ---- */
   --sd-radius-lg: var(--radius-xl);
   --sd-radius-md: var(--radius-md);
   --sd-radius-sm: var(--radius-sm);
@@ -1255,11 +53,9 @@
   font-feature-settings: 'tnum' 1, 'cv11' 1, 'ss01' 1;
 }
 
-.stock-detail * {
-  box-sizing: border-box;
-}
+.stock-detail * { box-sizing: border-box; }
 
-/* ── Loading / error message state ── */
+/* --- Loading / Error --- */
 .stock-detail--message {
   display: flex;
   flex-direction: column;
@@ -1288,10 +84,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* ── Header: logo + identity (left) / price (right), with the day-range
-   meter as a third, full-width row underneath. Flat card, one hairline
-   border, one quiet shadow — "premium" comes from spacing and precise
-   type, never from a gradient wash or glow. ── */
+/* --- Header --- */
 .stock-detail__header {
   position: relative;
   display: flex;
@@ -1308,14 +101,52 @@
 }
 
 .stock-detail__identity {
-  position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
   min-width: 0;
+  flex-wrap: wrap;
 }
 
-/* ── Logo — real image if available, otherwise a clean initials badge ── */
+/* --- Back Button --- */
+.stock-detail__back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-round, 50%);
+  border: 1px solid var(--sd-border-soft);
+  background: transparent;
+  color: var(--sd-ink-soft);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.stock-detail__back-btn:hover {
+  background: var(--sd-brand-tint);
+  color: var(--sd-brand);
+  border-color: var(--sd-brand-border);
+}
+
+.stock-detail__back-btn:active {
+  transform: scale(0.92);
+}
+
+@media (max-width: 480px) {
+  .stock-detail__back-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .stock-detail__back-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* --- Logo --- */
 .stock-detail__logo-img,
 .stock-detail__logo-fallback {
   width: 58px;
@@ -1342,6 +173,7 @@
   letter-spacing: 0.5px;
 }
 
+/* --- Identity Text --- */
 .stock-detail__title-row {
   display: flex;
   align-items: center;
@@ -1369,17 +201,9 @@
   margin-top: -1px;
 }
 
-.stock-detail__watch-toggle:hover {
-  color: var(--sd-gold);
-}
-
-.stock-detail__watch-toggle.is-active {
-  color: var(--sd-gold);
-}
-
-.stock-detail__watch-toggle:active {
-  transform: scale(0.85);
-}
+.stock-detail__watch-toggle:hover { color: var(--sd-gold); }
+.stock-detail__watch-toggle.is-active { color: var(--sd-gold); }
+.stock-detail__watch-toggle:active { transform: scale(0.85); }
 
 .stock-detail__name {
   margin: 4px 0 8px;
@@ -1400,9 +224,8 @@
   padding: 4px 11px;
 }
 
-/* ── Price block ── */
+/* --- Price Block --- */
 .stock-detail__price {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -1442,12 +265,10 @@
   letter-spacing: -0.6px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
   color: var(--sd-ink);
   transition: color 0.3s ease;
 }
 
-/* usePriceFlash toggles a class like .flash-up/.flash-down on tick */
 .stock-detail__ltp.flash-up { color: var(--sd-up); }
 .stock-detail__ltp.flash-down { color: var(--sd-down); }
 
@@ -1460,12 +281,9 @@
   padding: 6px 13px;
   border-radius: var(--radius-round);
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
 }
 
-.stock-detail__change-arrow {
-  flex-shrink: 0;
-}
+.stock-detail__change-arrow { flex-shrink: 0; }
 
 .stock-detail__change-pill-divider {
   align-self: stretch;
@@ -1478,26 +296,16 @@
   background: var(--sd-up-tint);
   border: 1px solid var(--sd-up-border);
 }
-
-.stock-detail__change-pill.is-up .stock-detail__change-pill-divider {
-  background: var(--sd-up-border);
-}
+.stock-detail__change-pill.is-up .stock-detail__change-pill-divider { background: var(--sd-up-border); }
 
 .stock-detail__change-pill.is-down {
   color: var(--sd-down);
   background: var(--sd-down-tint);
   border: 1px solid var(--sd-down-border);
 }
+.stock-detail__change-pill.is-down .stock-detail__change-pill-divider { background: var(--sd-down-border); }
 
-.stock-detail__change-pill.is-down .stock-detail__change-pill-divider {
-  background: var(--sd-down-border);
-}
-
-/* ── Day range meter — the panel's one signature element. A flat track,
-   a brand-colored fill up to today's LTP, and a small dot marker; low/
-   high sit as tabular labels at each edge. Forced onto its own full-width
-   row under identity+price via flex-basis, so it reads as a footer strip
-   for the header card rather than a squeezed-in third column. ── */
+/* --- Day Range Meter --- */
 .stock-detail__range-meter {
   flex-basis: 100%;
   display: flex;
@@ -1514,13 +322,9 @@
   font-weight: 700;
   color: var(--sd-ink-faint);
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
   min-width: 64px;
 }
-
-.stock-detail__range-edge:last-child {
-  text-align: right;
-}
+.stock-detail__range-edge:last-child { text-align: right; }
 
 .stock-detail__range-track {
   position: relative;
@@ -1548,9 +352,7 @@
   transform: translate(-50%, -50%);
 }
 
-/* ── Buy / Sell actions — flat fills with a direction glyph, the way an
-   order ticket actually looks on a trading terminal. No gradients, no
-   glow; the only "lift" is a subtle press/hover state. ── */
+/* --- Actions (Buy/Sell) --- */
 .stock-detail__actions {
   display: flex;
   gap: 12px;
@@ -1583,32 +385,15 @@
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
 }
+.stock-detail__btn--buy::before { border-bottom: 6px solid var(--white); }
+.stock-detail__btn--sell::before { border-top: 6px solid var(--white); }
 
-.stock-detail__btn--buy::before {
-  border-bottom: 6px solid var(--white);
-}
+.stock-detail__btn:hover { filter: brightness(0.94); }
+.stock-detail__btn:active { transform: scale(0.98); }
+.stock-detail__btn--buy { background: var(--sd-up); }
+.stock-detail__btn--sell { background: var(--sd-down); }
 
-.stock-detail__btn--sell::before {
-  border-top: 6px solid var(--white);
-}
-
-.stock-detail__btn:hover {
-  filter: brightness(0.94);
-}
-
-.stock-detail__btn:active {
-  transform: scale(0.98);
-}
-
-.stock-detail__btn--buy {
-  background: var(--sd-up);
-}
-
-.stock-detail__btn--sell {
-  background: var(--sd-down);
-}
-
-/* ── Holding banner ── */
+/* --- Holding Banner --- */
 .stock-detail__holding-row {
   display: flex;
   justify-content: space-between;
@@ -1620,14 +405,10 @@
   color: var(--sd-ink-soft);
   margin-bottom: 26px;
 }
+.stock-detail__holding-row strong { color: var(--sd-ink); }
 
-.stock-detail__holding-row strong {
-  color: var(--sd-ink);
-}
-
-/* ── Chart card — a plain frame; StockChart.jsx supplies its own look ── */
+/* --- Chart Card --- */
 .stock-detail__chart-card {
-  position: relative;
   background: var(--sd-surface);
   border: 1px solid var(--sd-border);
   border-radius: var(--sd-radius-lg);
@@ -1636,7 +417,7 @@
   box-shadow: var(--sd-shadow-card);
 }
 
-/* ── Section titles ── */
+/* --- Section Titles --- */
 .stock-detail__section-title {
   position: relative;
   display: flex;
@@ -1661,7 +442,7 @@
   background: var(--sd-brand);
 }
 
-/* ── Today's stats / Fundamentals — flat neutral tiles ── */
+/* --- Stats Grids --- */
 .stock-detail__stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1701,17 +482,15 @@
   letter-spacing: -0.2px;
   color: var(--sd-ink);
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
 }
 
-.stock-detail__stat strong.stock-detail__stat--small,
-.stock-detail__stat strong .stock-detail__stat--small {
+.stock-detail__stat strong.stock-detail__stat--small {
   font-size: 12.5px;
   letter-spacing: 0.2px;
   font-variant-numeric: normal;
 }
 
-/* ── Company overview grid ── */
+/* --- Overview Grid (Company Info) --- */
 .stock-detail__overview-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1732,15 +511,9 @@
   border-bottom: 1px solid var(--sd-border-soft);
   font-size: 13.5px;
 }
+.stock-detail__overview-row:last-child { border-bottom: none; }
 
-.stock-detail__overview-row:nth-last-child(-n+1) {
-  border-bottom: none;
-}
-
-.stock-detail__overview-label {
-  color: var(--sd-ink-soft);
-  font-weight: 500;
-}
+.stock-detail__overview-label { color: var(--sd-ink-soft); font-weight: 500; }
 
 .stock-detail__overview-value {
   font-family: var(--sd-font-display);
@@ -1748,27 +521,13 @@
   letter-spacing: -0.1px;
   color: var(--sd-ink);
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
   text-align: right;
 }
 
-.stock-detail__overview-link {
-  color: var(--sd-brand);
-  text-decoration: none;
-}
+.stock-detail__overview-link { color: var(--sd-brand); text-decoration: none; }
+.stock-detail__overview-link:hover { text-decoration: underline; }
 
-.stock-detail__overview-link:hover {
-  text-decoration: underline;
-}
-
-/* ── Analyst recommendation ──
-   Note: .stock-detail__reco-badge's background and
-   .stock-detail__reco-bar-fill's background are set inline from
-   RATING_COLORS / r.colorCode in StockDetailPanel.jsx — those are
-   fixed rating colors, not theme tokens, so their text stays a
-   hardcoded white (var(--white)) rather than --text-inverse, which
-   flips to near-black in dark mode and would go illegible against
-   those always-saturated fills. ── */
+/* --- Analyst Recommendation --- */
 .stock-detail__reco-card {
   background: var(--sd-surface);
   border: 1px solid var(--sd-border);
@@ -1845,10 +604,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Shareholding pattern ──
-   Note: segment/legend-dot backgrounds come inline from
-   SHAREHOLDING_COLORS in the JSX — fixed brand colors by design, left
-   untouched here. ── */
+/* --- Shareholding Pattern --- */
 .stock-detail__shareholding {
   background: var(--sd-surface);
   border: 1px solid var(--sd-border);
@@ -1872,11 +628,7 @@
   height: 100%;
   transition: filter var(--transition-fast);
 }
-
-.stock-detail__shareholding-segment:hover {
-  filter: brightness(1.08);
-}
-
+.stock-detail__shareholding-segment:hover { filter: brightness(1.08); }
 .stock-detail__shareholding-segment + .stock-detail__shareholding-segment {
   border-left: 2px solid var(--sd-surface);
 }
@@ -1903,7 +655,7 @@
   flex-shrink: 0;
 }
 
-/* ── Risk meter ── */
+/* --- Risk Meter --- */
 .stock-detail__risk-badge {
   display: flex;
   align-items: center;
@@ -1919,10 +671,7 @@
   margin-bottom: 30px;
 }
 
-.stock-detail__risk-badge strong {
-  color: var(--sd-gold);
-  font-weight: 800;
-}
+.stock-detail__risk-badge strong { color: var(--sd-gold); font-weight: 800; }
 
 .stock-detail__risk-stddev {
   margin-left: auto;
@@ -1935,7 +684,7 @@
   padding: 3px 10px;
 }
 
-/* ── Management ── */
+/* --- Management --- */
 .stock-detail__officers {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1993,7 +742,7 @@
   color: var(--sd-ink-soft);
 }
 
-/* ── About section ── */
+/* --- About Section --- */
 .stock-detail__about {
   background: var(--sd-surface);
   border: 1px solid var(--sd-border);
@@ -2028,7 +777,7 @@
   box-shadow: none;
 }
 
-/* ── Recent news ── */
+/* --- Recent News --- */
 .stock-detail__news {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -2086,18 +835,24 @@
 /* ============================================================
    Responsive
    ============================================================ */
-
-@media (min-width: 1300px) {
+@media (min-width: 1400px) {
+  .stock-detail__stats-grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
   .stock-detail__overview-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-
   .stock-detail__officers {
     grid-template-columns: repeat(3, 1fr);
   }
-
   .stock-detail__news {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .stock-detail__stats-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -2105,31 +860,25 @@
   .stock-detail__stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-
   .stock-detail__overview-grid {
     grid-template-columns: 1fr;
   }
-
   .stock-detail__officers,
   .stock-detail__news {
     grid-template-columns: 1fr;
   }
-
   .stock-detail__header {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .stock-detail__price {
     align-items: flex-start;
     width: 100%;
   }
-
   .stock-detail__range-meter {
     margin-top: 18px;
     padding-top: 16px;
   }
-
   .stock-detail__reco-row {
     grid-template-columns: 80px 1fr 26px;
   }
@@ -2139,56 +888,44 @@
   .stock-detail {
     padding: var(--space-4) var(--space-3) 48px;
   }
-
   .stock-detail__header {
     padding: 18px;
   }
-
   .stock-detail__stats-grid {
-    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
-
   .stock-detail__logo-img,
   .stock-detail__logo-fallback {
     width: 46px;
     height: 46px;
     border-radius: 11px;
   }
-
   .stock-detail__ltp {
     font-size: 29px;
   }
-
   .stock-detail__range-edge {
     min-width: 48px;
     font-size: 10.5px;
   }
-
   .stock-detail__actions {
     flex-direction: column;
   }
-
   .stock-detail__btn {
     max-width: 100%;
   }
-
   .stock-detail__risk-stddev {
     margin-left: 0;
   }
 }
 
 /* ============================================================
-   Reduced motion — respected globally in global.css too, but
-   this page has its own spinner/pulse/hover-lift animations
-   so it repeats the guard locally.
+   Reduced Motion
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .stock-detail__spinner,
   .stock-detail__live-dot {
     animation: none;
   }
-
   .stock-detail__stat,
   .stock-detail__officer,
   .stock-detail__news-item,

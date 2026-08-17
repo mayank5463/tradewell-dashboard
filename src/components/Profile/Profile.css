@@ -1,35 +1,30 @@
 /* ============================================================
-   Profile.css — shared shell
-   Common structural pieces + atoms used by 2+ of the profile
-   pages (MyAccount.css / ChangePassword.css / SettingsPage.css
-   layer page-specific rules on top of this). Reads the app's
-   existing design tokens (--space-*, --text-primary, --color-
-   primary-500, etc) — same tokens Card.css/Button.css already use.
+   Profile.css — Shared Shell + Advanced Responsive
    ============================================================ */
 
 .profile-page {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: var(--space-5);
+  padding: var(--space-6) var(--space-5);
 }
 
 .profile-page__title {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 var(--space-1);
-  letter-spacing: -0.2px;
+  letter-spacing: -0.02em;
 }
 
 .profile-page__subtitle {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
-  margin: 0 0 var(--space-5);
+  margin: 0 0 var(--space-6);
 }
 
-/* ── Section grouping: eyebrow label + the Card beneath it ── */
+/* Section grouping */
 .profile-section {
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
 .profile-section__title {
@@ -42,22 +37,33 @@
   margin: 0 0 var(--space-2) var(--space-1);
 }
 
-/* ── Field rows (label / value pairs inside a Card) ── */
+/* ============================================================
+   FIELD ROWS
+   ============================================================ */
+
 .profile-field {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-3) 0;
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border-default);
   gap: var(--space-3);
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
+
 .profile-field:last-child {
   border-bottom: none;
+}
+
+.profile-field:hover {
+  background: var(--surface-hover, rgba(0, 0, 0, 0.02));
 }
 
 .profile-field__label {
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
+  font-weight: 500;
+  flex-shrink: 0;
 }
 
 .profile-field__value {
@@ -65,23 +71,32 @@
   font-size: var(--font-size-sm);
   font-weight: 600;
   text-align: right;
+  word-break: break-all;
 }
 
-/* ── Pill badge — "Paper Trading", etc ── */
+/* ============================================================
+   PILL BADGE
+   ============================================================ */
+
 .profile-badge {
   display: inline-flex;
   align-items: center;
   font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: 0.2px;
-  color: var(--color-primary-500);
-  background: var(--color-primary-100);
+  color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary) 12%, var(--surface-primary));
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 25%, var(--surface-primary));
   border-radius: 999px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   white-space: nowrap;
+  box-shadow: var(--shadow-xs);
 }
 
-/* ── Inline banners — replaces bare <p class="profile-form__error/success"> ── */
+/* ============================================================
+   BANNERS
+   ============================================================ */
+
 .profile-banner {
   display: flex;
   align-items: center;
@@ -89,7 +104,7 @@
   font-size: var(--font-size-sm);
   font-weight: 500;
   margin: 0;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
 }
 
@@ -98,29 +113,33 @@
 }
 
 .profile-banner--error {
-  color: var(--color-danger-600);
-  background: var(--color-danger-100, rgba(225, 29, 72, 0.08));
+  color: var(--danger-fill);
+  background: color-mix(in srgb, var(--danger-fill) 10%, var(--surface-primary));
+  border: 1px solid color-mix(in srgb, var(--danger-fill) 25%, var(--surface-primary));
 }
 
 .profile-banner--success {
-  color: var(--color-success-600, #0f9d58);
-  background: var(--color-success-100, rgba(15, 157, 88, 0.08));
+  color: var(--success-fill);
+  background: color-mix(in srgb, var(--success-fill) 10%, var(--surface-primary));
+  border: 1px solid color-mix(in srgb, var(--success-fill) 25%, var(--surface-primary));
 }
 
-/* Kept for backward compatibility — no longer used by the pages in this
-   folder (they've moved to .profile-banner), but left in case anything
-   else in the app still targets these class names. */
+/* Legacy compatibility */
 .profile-form__error {
-  color: var(--color-danger-600);
+  color: var(--danger-fill);
   font-size: var(--font-size-sm);
   margin: 0;
 }
 
 .profile-form__success {
-  color: var(--color-success-600);
+  color: var(--success-fill);
   font-size: var(--font-size-sm);
   margin: 0;
 }
+
+/* ============================================================
+   FORM
+   ============================================================ */
 
 .profile-form {
   display: flex;
@@ -136,52 +155,164 @@
   color: var(--text-secondary);
 }
 
+.profile-form__field label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .profile-form__field input {
   width: 100%;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border-default);
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--border-default);
   border-radius: var(--radius-sm);
-  background: var(--bg-app);
+  background: var(--surface-primary);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
+
 .profile-form__field input:focus {
   outline: none;
-  border-color: var(--color-primary-500);
-  box-shadow: 0 0 0 3px var(--color-primary-100);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, transparent);
 }
+
 .profile-form__field input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* ── Settings row atom — used by SettingsPage, generic enough that any
-   future settings entries can reuse it without new CSS ── */
+/* ============================================================
+   SETTINGS ROW
+   ============================================================ */
+
 .settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-default);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.settings-row:last-child {
+  border-bottom: none;
 }
 
 .settings-row__left {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-width: 0;
 }
 
-.settings-row__icon {
-  display: inline-flex;
+/* ============================================================
+   ICON — HIGHEST SPECIFICITY to override global styles
+   ============================================================ */
+
+.settings-row__icon,
+.settings-row .settings-row__icon,
+div.settings-row__icon,
+span.settings-row__icon {
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-md);
-  background: var(--color-primary-100);
-  color: var(--color-primary-500);
   flex-shrink: 0;
+  background: color-mix(in srgb, var(--brand-primary) 12%, var(--surface-primary));
+  color: var(--brand-primary) !important;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
+
+/* Force SVG color inheritance */
+.settings-row__icon svg,
+.settings-row .settings-row__icon svg {
+  width: 18px;
+  height: 18px;
+  color: inherit !important;
+  fill: none;
+  stroke: currentColor;
+}
+
+/* ============================================================
+   DARK MODE ICON — WHITE COLOR with HIGHEST SPECIFICITY
+   ============================================================ */
+
+[data-mode="dark"] .settings-row__icon,
+[data-mode="dark"] .settings-row .settings-row__icon,
+[data-mode="dark"] div.settings-row__icon,
+[data-mode="dark"] span.settings-row__icon {
+  background: color-mix(in srgb, var(--brand-primary) 20%, var(--surface-secondary)) !important;
+  color: var(--white) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 25%, transparent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Force SVG to be white in dark mode */
+[data-mode="dark"] .settings-row__icon svg,
+[data-mode="dark"] .settings-row .settings-row__icon svg {
+  color: var(--white) !important;
+  stroke: var(--white) !important;
+  fill: none;
+}
+
+/* Theme-specific dark mode - KEEPING ICONS WHITE */
+[data-theme="navy"][data-mode="dark"] .settings-row__icon,
+[data-theme="navy"][data-mode="dark"] .settings-row .settings-row__icon {
+  background: color-mix(in srgb, var(--navy-400) 25%, var(--surface-secondary)) !important;
+  color: var(--white) !important;
+  border-color: color-mix(in srgb, var(--navy-400) 30%, transparent);
+}
+
+[data-theme="olive"][data-mode="dark"] .settings-row__icon,
+[data-theme="olive"][data-mode="dark"] .settings-row .settings-row__icon {
+  background: color-mix(in srgb, var(--olive-400) 25%, var(--surface-secondary)) !important;
+  color: var(--white) !important;
+  border-color: color-mix(in srgb, var(--olive-400) 30%, transparent);
+}
+
+[data-theme="charcoal"][data-mode="dark"] .settings-row__icon,
+[data-theme="charcoal"][data-mode="dark"] .settings-row .settings-row__icon {
+  background: color-mix(in srgb, var(--charcoal-400) 25%, var(--surface-secondary)) !important;
+  color: var(--white) !important;
+  border-color: color-mix(in srgb, var(--charcoal-400) 30%, transparent);
+}
+
+[data-theme="sand"][data-mode="dark"] .settings-row__icon,
+[data-theme="sand"][data-mode="dark"] .settings-row .settings-row__icon {
+  background: color-mix(in srgb, var(--sand-400) 25%, var(--surface-secondary)) !important;
+  color: var(--white) !important;
+  border-color: color-mix(in srgb, var(--sand-400) 30%, transparent);
+}
+
+/* Force SVG white in theme-specific dark mode */
+[data-theme="navy"][data-mode="dark"] .settings-row__icon svg,
+[data-theme="olive"][data-mode="dark"] .settings-row__icon svg,
+[data-theme="charcoal"][data-mode="dark"] .settings-row__icon svg,
+[data-theme="sand"][data-mode="dark"] .settings-row__icon svg {
+  color: var(--white) !important;
+  stroke: var(--white) !important;
+}
+
+/* Hover state */
+.settings-row__icon:hover,
+.settings-row .settings-row__icon:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-mode="dark"] .settings-row__icon:hover,
+[data-mode="dark"] .settings-row .settings-row__icon:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+/* ============================================================
+   LABEL & HINT
+   ============================================================ */
 
 .settings-row__label {
   font-size: var(--font-size-sm);
@@ -195,38 +326,346 @@
   margin-top: 2px;
 }
 
+[data-mode="dark"] .settings-row__label {
+  color: var(--text-primary);
+  opacity: 1;
+}
+
+[data-mode="dark"] .settings-row__hint {
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
+/* ============================================================
+   TOGGLE SWITCH
+   ============================================================ */
+
 .theme-switch {
   position: relative;
-  width: 44px;
-  height: 24px;
-  border-radius: 12px;
-  background: var(--color-gray-300);
+  width: 46px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--border-default);
   border: none;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 .theme-switch.is-on {
-  background: var(--color-primary-500);
+  background: var(--brand-primary);
+}
+
+[data-mode="dark"] .theme-switch {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--border-primary);
+}
+
+[data-mode="dark"] .theme-switch.is-on {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
 }
 
 .theme-switch__knob {
   position: absolute;
   top: 3px;
   left: 3px;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: var(--color-white);
+  background: var(--white);
   transition: transform 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-sm);
 }
+
+[data-mode="dark"] .theme-switch__knob {
+  background: var(--white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 .theme-switch.is-on .theme-switch__knob {
   transform: translateX(20px);
 }
 
+/* ============================================================
+   DARK MODE — FIELD ROWS & BORDERS
+   ============================================================ */
+
+[data-mode="dark"] .profile-field {
+  border-bottom-color: var(--border-primary);
+}
+
+[data-mode="dark"] .profile-field:hover {
+  background: var(--surface-hover, rgba(255, 255, 255, 0.04));
+}
+
+[data-mode="dark"] .profile-field__label {
+  color: var(--text-secondary);
+  opacity: 0.9;
+}
+
+[data-mode="dark"] .profile-field__value {
+  color: var(--text-primary);
+  opacity: 1;
+}
+
+[data-mode="dark"] .profile-form__field input {
+  background: var(--surface-secondary);
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+}
+
+[data-mode="dark"] .profile-form__field input:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 30%, transparent);
+}
+
+[data-mode="dark"] .profile-badge {
+  background: color-mix(in srgb, var(--brand-primary) 25%, var(--surface-secondary));
+  border-color: color-mix(in srgb, var(--brand-primary) 40%, var(--surface-secondary));
+  color: var(--brand-primary);
+}
+
+/* ============================================================
+   DARK MODE — SECTION TITLE & PAGE TEXT
+   ============================================================ */
+
+[data-mode="dark"] .profile-page__title {
+  color: var(--text-primary);
+  opacity: 1;
+}
+
+[data-mode="dark"] .profile-page__subtitle {
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
+[data-mode="dark"] .profile-section__title {
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+/* ============================================================
+   DARK MODE — BANNERS
+   ============================================================ */
+
+[data-mode="dark"] .profile-banner--error {
+  color: var(--danger-fill);
+  background: color-mix(in srgb, var(--danger-fill) 15%, var(--surface-secondary));
+  border-color: color-mix(in srgb, var(--danger-fill) 35%, var(--surface-secondary));
+}
+
+[data-mode="dark"] .profile-banner--success {
+  color: var(--success-fill);
+  background: color-mix(in srgb, var(--success-fill) 15%, var(--surface-secondary));
+  border-color: color-mix(in srgb, var(--success-fill) 35%, var(--surface-secondary));
+}
+
+/* ============================================================
+   RESPONSIVE — Tablet (768px and below)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .profile-page {
+    max-width: 100%;
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .profile-page__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .profile-page__subtitle {
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--space-5);
+  }
+
+  .profile-field {
+    padding: var(--space-3);
+  }
+
+  .profile-field__value {
+    font-size: var(--font-size-xs);
+  }
+
+  .settings-row {
+    padding: var(--space-3);
+  }
+
+  .settings-row__icon,
+  .settings-row .settings-row__icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .settings-row__icon svg,
+  .settings-row .settings-row__icon svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — Mobile (480px and below)
+   ============================================================ */
+
 @media (max-width: 480px) {
   .profile-page {
     padding: var(--space-4) var(--space-3);
+  }
+
+  .profile-page__title {
+    font-size: var(--font-size-base);
+  }
+
+  .profile-page__subtitle {
+    font-size: var(--font-size-2xs);
+    margin-bottom: var(--space-4);
+  }
+
+  .profile-section {
+    margin-bottom: var(--space-4);
+  }
+
+  .profile-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .profile-field__value {
+    text-align: left;
+    font-size: var(--font-size-xs);
+    word-break: break-all;
+  }
+
+  .profile-badge {
+    font-size: var(--font-size-3xs);
+    padding: 3px 8px;
+  }
+
+  .settings-row {
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .settings-row__left {
+    gap: var(--space-2);
+  }
+
+  .settings-row__icon,
+  .settings-row .settings-row__icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .settings-row__icon svg,
+  .settings-row .settings-row__icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .settings-row__label {
+    font-size: var(--font-size-xs);
+  }
+
+  .settings-row__hint {
+    font-size: var(--font-size-3xs);
+  }
+
+  .theme-switch {
+    width: 40px;
+    height: 22px;
+  }
+
+  .theme-switch__knob {
+    width: 16px;
+    height: 16px;
+  }
+
+  .theme-switch.is-on .theme-switch__knob {
+    transform: translateX(18px);
+  }
+
+  .profile-form__field input {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-row__icon,
+  .settings-row .settings-row__icon {
+    transition: none;
+  }
+  .settings-row__icon:hover,
+  .settings-row .settings-row__icon:hover {
+    transform: none;
+  }
+  .theme-switch,
+  .theme-switch__knob {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   HIGH CONTRAST — Accessibility
+   ============================================================ */
+
+@media (prefers-contrast: high) {
+  .settings-row {
+    border-bottom-width: 2px;
+  }
+
+  .settings-row__icon,
+  .settings-row .settings-row__icon {
+    border: 2px solid var(--brand-primary);
+  }
+
+  [data-mode="dark"] .settings-row__icon,
+  [data-mode="dark"] .settings-row .settings-row__icon {
+    border: 2px solid var(--white);
+    color: var(--white) !important;
+  }
+
+  [data-mode="dark"] .settings-row__label {
+    color: var(--white);
+  }
+
+  [data-mode="dark"] .settings-row__hint {
+    color: var(--text-secondary);
+  }
+
+  .profile-field {
+    border-bottom-width: 2px;
+  }
+
+  .profile-badge {
+    border-width: 2px;
+  }
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+
+@media print {
+  .profile-page {
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  .settings-row__icon,
+  .settings-row .settings-row__icon {
+    border: 1px solid #000;
+  }
+
+  .theme-switch {
+    border: 1px solid #000;
   }
 }

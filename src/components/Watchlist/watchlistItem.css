@@ -1,5 +1,3 @@
-
-
 .watchlist-item {
   position: relative;
   isolation: isolate;
@@ -332,6 +330,20 @@
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+
+/* FIXED — on touch devices there is no :hover, so these buttons were
+   permanently opacity:0/visibility:hidden and effectively unusable on
+   mobile (present in the DOM, invisible, untappable). `(hover: none)`
+   targets touchscreens specifically (as opposed to `max-width`, which
+   would also affect a narrow desktop window where hover DOES work), so
+   mouse users keep the reveal-on-hover interaction unchanged. */
+@media (hover: none) {
+  .watchlist-item__quick-actions {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
 }
 
 /* ============================================================

@@ -4,6 +4,7 @@ import MostTradedSymbols from "./MostTradedSymbols";
 import StockAnalyticsPanel from "./StockAnalyticsPanel";
 import PnLCalendarHeatmap from "./PnLCalendarHeatmap";
 import "./TradingAnalyticsSection.css";
+import "../../../styles/SectionHeadingsTheme.css";
 
 export default function TradingAnalyticsSection() {
   const navigate = useNavigate();

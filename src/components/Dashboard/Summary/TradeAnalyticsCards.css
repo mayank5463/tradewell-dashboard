@@ -1,8 +1,5 @@
 /* ============================================================
    TRADE ANALYTICS STAT CARDS
-   .is-up / .is-down come from global.css (--success-fill /
-   --danger-fill) — same green/red convention used everywhere
-   else in the app, including in dark mode.
    ============================================================ */
 
 .trade-stats {
@@ -15,37 +12,40 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   min-height: 100px;
   padding: var(--space-6);
-
   text-align: center;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-relaxed);
   color: var(--text-muted);
-
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
+}
+
+/* Dark mode empty state fix */
+[data-mode="dark"] .trade-stats--empty {
+  color: var(--text-secondary);
+  background: var(--card-bg);
+  border-color: var(--border-primary);
 }
 
 .trade-stat-card {
   display: flex;
   flex-direction: column;
   gap: 4px;
-
   padding: var(--card-padding-sm);
-
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--card-shadow);
+  transition: background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
 
-  transition:
-    background var(--transition-fast),
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
+/* Dark mode card background enhancement */
+[data-mode="dark"] .trade-stat-card {
+  background: var(--surface-secondary);
+  border-color: var(--border-primary);
 }
 
 .trade-stat-card--clickable {
@@ -59,12 +59,40 @@
   transform: translateY(-1px);
 }
 
+/* Dark mode hover enhancement */
+[data-mode="dark"] .trade-stat-card--clickable:hover {
+  background: var(--surface-hover);
+  border-color: color-mix(in srgb, var(--brand-primary) 30%, var(--border-primary));
+  box-shadow: var(--shadow-md);
+}
+
 .trade-stat-card__label {
   font-size: var(--font-size-2xs);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing-wide);
   text-transform: uppercase;
   color: var(--card-subtitle);
+}
+
+/* Dark mode label - dark/black since on light background */
+[data-mode="dark"] .trade-stat-card__label {
+  color: #4a4a6a;
+}
+
+[data-theme="navy"][data-mode="dark"] .trade-stat-card__label {
+  color: #334155;
+}
+
+[data-theme="olive"][data-mode="dark"] .trade-stat-card__label {
+  color: #3d5a3d;
+}
+
+[data-theme="charcoal"][data-mode="dark"] .trade-stat-card__label {
+  color: #4a4a4a;
+}
+
+[data-theme="sand"][data-mode="dark"] .trade-stat-card__label {
+  color: #5c5540;
 }
 
 .trade-stat-card__value {
@@ -75,13 +103,141 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Dark mode value visibility */
+[data-mode="dark"] .trade-stat-card__value {
+  color: var(--text-primary);
+}
+
+/* Up/Down colors - using theme tokens that work in both modes */
+.trade-stat-card__value.is-up {
+  color: var(--success-fill);
+}
+
+.trade-stat-card__value.is-down {
+  color: var(--danger-fill);
+}
+
 .trade-stat-card__sub {
   font-size: var(--font-size-2xs);
   color: var(--text-tertiary);
 }
 
+/* Dark mode sub visibility - dark/black since on light background */
+[data-mode="dark"] .trade-stat-card__sub {
+  color: #6a6a8a;
+}
+
+[data-theme="navy"][data-mode="dark"] .trade-stat-card__sub {
+  color: #475569;
+}
+
+[data-theme="olive"][data-mode="dark"] .trade-stat-card__sub {
+  color: #5a7a5a;
+}
+
+[data-theme="charcoal"][data-mode="dark"] .trade-stat-card__sub {
+  color: #6a6a6a;
+}
+
+[data-theme="sand"][data-mode="dark"] .trade-stat-card__sub {
+  color: #7a7355;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
 @media (max-width: 576px) {
   .trade-stats {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .trade-stat-card {
+    padding: var(--space-3);
+  }
+
+  .trade-stat-card__value {
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (max-width: 400px) {
+  .trade-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+
+  .trade-stat-card {
+    padding: var(--space-2);
+  }
+
+  .trade-stat-card__value {
+    font-size: var(--font-size-base);
+  }
+
+  .trade-stat-card__label {
+    font-size: var(--font-size-3xs);
+  }
+
+  .trade-stat-card__sub {
+    font-size: var(--font-size-3xs);
+  }
+}
+
+/* ============================================================
+   ACCESSIBILITY - Reduced Motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .trade-stat-card {
+    transition: none;
+  }
+
+  .trade-stat-card--clickable:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   ACCESSIBILITY - High Contrast
+   ============================================================ */
+
+@media (prefers-contrast: high) {
+  .trade-stat-card {
+    border-width: 2px;
+  }
+
+  .trade-stat-card__value.is-up {
+    color: #00cc66;
+  }
+
+  .trade-stat-card__value.is-down {
+    color: #ff3333;
+  }
+
+  [data-mode="dark"] .trade-stat-card {
+    background: var(--surface-primary);
+    border-color: var(--border-focus);
+  }
+
+  [data-mode="dark"] .trade-stat-card--clickable:hover {
+    border-color: var(--white);
+  }
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+
+@media print {
+  .trade-stat-card {
+    break-inside: avoid;
+    border: 1px solid #000;
+    box-shadow: none;
+  }
+
+  .trade-stat-card--clickable:hover {
+    transform: none;
   }
 }

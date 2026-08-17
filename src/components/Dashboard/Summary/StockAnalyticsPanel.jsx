@@ -1,5 +1,6 @@
 import { formatCurrency, formatPercent } from "../../../utils/formatCurrency";
 import "./StockAnalyticsPanel.css";
+import "../../../styles/SectionHeadingsTheme.css";
 
 function formatHolding(days = 0) {
   if (days < 1) {

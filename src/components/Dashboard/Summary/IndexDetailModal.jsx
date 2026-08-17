@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectIndexFundBySymbol } from "../../../redux/slices/marketSlice";
 import "./IndexDetailModal.css";
+import "../../../styles/SectionHeadingsTheme.css"; 
 
 export default function IndexDetailModal({ symbol, onClose }) {
   const data = useSelector((state) => selectIndexFundBySymbol(state, symbol));

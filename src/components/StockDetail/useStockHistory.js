@@ -136,8 +136,6 @@
 
 
 
-
-
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -156,40 +154,31 @@ function toDateStr(d) {
   return d.toISOString().slice(0, 10);
 }
 
+// DEFAULT RANGE = "1D" — clicking into any stock opens straight into the
+// 1-day intraday chart (today's session if the market's open or already
+// closed today, otherwise the last trading day), matching RANGES[0] in
+// RangeSelector.jsx. Every other tab (1W/1M/3M/6M/1Y/5Y/MAX) is fetched
+// on demand only once the user actually switches to it.
 export function useStockHistory(symbol) {
   const dispatch = useDispatch();
   const [range, setRange] = useState("1D");
 
-  // clockTick itself is never read inside a callback — it exists purely
-  // to force `oneDayPlan` below to recompute every CLOCK_TICK_MS so the
-  // 1D range flips from "live" to "static" right at market close without
-  // needing a page refresh. It's a deliberate re-run trigger, not a
-  // missing dependency, hence the disable comment on that line.
+  // Re-evaluates whether today's session just opened/closed without
+  // needing a full poll — cheap enough to just re-derive the plan on a
+  // slow interval rather than wiring a precise open/close timer.
   const [clockTick, setClockTick] = useState(0);
   useEffect(() => {
     const t = setInterval(() => setClockTick((n) => n + 1), CLOCK_TICK_MS);
     return () => clearInterval(t);
   }, []);
 
-  // Always resolve to a valid config so every hook below runs
-  // unconditionally on every render (Rules of Hooks) — never
-  // early-return before this point.
-  const config = useMemo(
-    () => RANGES.find((r) => r.key === range) ?? RANGES.find((r) => r.key === "1D"),
-    [range],
-  );
-
-  // Guard against a stale/invalid range key as a side effect, not
-  // during render.
-  useEffect(() => {
-    if (!RANGES.some((r) => r.key === range)) {
-      console.warn(`[useStockHistory] Invalid range key: ${range}, defaulting to 1D`);
-      setRange("1D");
-    }
-  }, [range]);
+  const config = useMemo(() => RANGES.find((r) => r.key === range), [range]);
 
   const oneDayPlan = useMemo(() => getOneDayPlan(), [clockTick]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Changes whenever which day/session the "1D" tab should be showing
+  // changes (e.g. market just opened, or just closed) — triggers a
+  // refetch even if `range` itself hasn't changed.
   const planKey = useMemo(
     () => `${oneDayPlan.dateStr}|${oneDayPlan.isToday}|${oneDayPlan.live}`,
     [oneDayPlan],
@@ -197,6 +186,8 @@ export function useStockHistory(symbol) {
 
   const cacheKey = config.key;
 
+  // Only the currently active tab polls — switching tabs starts/stops
+  // polling automatically since this recomputes off `range`.
   const isLive = useMemo(() => {
     if (!config.live) return false;
     if (config.key === "1D") return oneDayPlan.live;
@@ -208,8 +199,17 @@ export function useStockHistory(symbol) {
   const options = useMemo(() => {
     if (config.kind === "intraday") {
       if (oneDayPlan.isToday) {
-        return { symbol, unit: config.unit, interval: config.interval, cacheKey };
+        // Today's session, live or just-closed — no from/to needed, the
+        // intraday endpoint always means "today so far."
+        return {
+          symbol,
+          unit: config.unit,
+          interval: config.interval,
+          cacheKey,
+        };
       }
+      // Weekend or before market open — show the last completed session
+      // as a fixed from=to= date via the regular historical endpoint.
       return {
         symbol,
         unit: config.unit,
@@ -231,24 +231,41 @@ export function useStockHistory(symbol) {
     };
   }, [config, symbol, cacheKey, oneDayPlan]);
 
-  const dispatchFetch = useMemoizedDispatchFetch(dispatch, useIntradayThunk, options);
+  const dispatchFetch = useMemoizedDispatchFetch(
+    dispatch,
+    useIntradayThunk,
+    options,
+  );
 
+  // Refetches on: symbol change (new stock clicked), range change (tab
+  // switch), or planKey change (today's session state moved on).
   useEffect(() => {
     if (symbol) dispatchFetch();
   }, [symbol, range, planKey, dispatchFetch]);
 
+  // Only the live-eligible, currently-open-market tab polls.
   useEffect(() => {
     if (!symbol || !isLive) return undefined;
     const timer = setInterval(dispatchFetch, POLL_INTERVAL_MS);
     return () => clearInterval(timer);
   }, [symbol, isLive, dispatchFetch]);
 
-  const candles = useSelector((state) => selectCandles(state, symbol, cacheKey));
-  const status = useSelector((state) => selectCandlesStatus(state, symbol, cacheKey));
+  const candles = useSelector((state) =>
+    selectCandles(state, symbol, cacheKey),
+  );
+  const status = useSelector((state) =>
+    selectCandlesStatus(state, symbol, cacheKey),
+  );
 
   return { range, setRange, candles, status, isLive, oneDayPlan };
 }
 
+// Guards against a slow, stale request landing after a newer one (e.g.
+// rapidly switching 1D -> 1M -> 1D before the first 1D fetch resolves) by
+// tagging each dispatch with an incrementing id. historicalSlice.js keys
+// candles purely by symbol+cacheKey, so this doesn't change what gets
+// stored — it's a hook-level no-op today, but cheap insurance if a
+// dedupe/cancel check is ever added to the thunk later.
 function useMemoizedDispatchFetch(dispatch, useIntradayThunk, options) {
   const requestIdRef = useRef(0);
   const ref = useRef();
@@ -264,5 +281,5 @@ function useMemoizedDispatchFetch(dispatch, useIntradayThunk, options) {
         : fetchHistorical(payload),
     );
   };
-  return useMemo(() => () => ref.current(), []);
+  return useMemo(() => () => ref.current(), []); // eslint-disable-line react-hooks/exhaustive-deps
 }

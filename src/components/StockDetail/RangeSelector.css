@@ -1,17 +1,109 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ============================================================
-   RANGE SELECTOR - FINAL VERSION
-   Works seamlessly with updated StockChart
+   RangeSelector.css
+   Shares tokens with StockDetailPanel.css / StockChart.css
+   (--text-primary, --border-default, --color-primary-500, etc)
+   so the whole chart module reads as one surface.
    ============================================================ */
 
 .range-selector {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 3px;
-  background: var(--color-gray-100);
-  border: 1px solid var(--border-default);
-  border-radius: 10px;
-  padding: 4px;
+  gap: 2px;
+  background: var(--color-gray-100, #f3f4f9);
+  border: 1px solid var(--border-default, #e6e8f2);
+  border-radius: 11px;
+  padding: 3px;
+  margin: 14px 0 18px;
   width: fit-content;
   max-width: 100%;
   overflow-x: auto;
@@ -27,160 +119,54 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
+  gap: 5px;
   flex-shrink: 0;
   border: none;
   background: transparent;
-  color: var(--text-secondary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
-    sans-serif;
-  font-size: 12px;
+  color: var(--text-secondary, #626b7d);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 12.5px;
   font-weight: 700;
-  letter-spacing: 0.05px;
-  padding: 6px 11px;
+  letter-spacing: 0.1px;
+  padding: 7px 13px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.12s ease;
-  user-select: none;
-  -webkit-user-select: none;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .range-selector__btn:hover {
-  color: var(--text-primary);
-  background: rgba(61, 79, 224, 0.05);
+  color: var(--text-primary, #0a0e1a);
 }
 
 .range-selector__btn.is-active {
-  background: var(--bg-surface);
-  color: var(--color-primary-500);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  background: var(--bg-surface, #ffffff);
+  color: var(--color-primary-500, #3d4fe0);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 10px -4px rgba(15, 23, 42, 0.12);
 }
 
 .range-selector__btn:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 1px;
-}
-
-.range-selector__btn:active {
-  transform: scale(0.98);
+  outline: 2px solid var(--color-primary-500, #3d4fe0);
+  outline-offset: 2px;
 }
 
 .range-selector__live-dot {
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: var(--success-fill);
+  background: #0f9d58;
   box-shadow: 0 0 0 0 rgba(15, 157, 88, 0.5);
-  animation: range-pulse 1.5s ease-out infinite;
-  flex-shrink: 0;
+  animation: range-selector-pulse 1.8s ease-out infinite;
 }
 
-@keyframes range-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(15, 157, 88, 0.6);
-  }
-  70% {
-    box-shadow: 0 0 0 4px rgba(15, 157, 88, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(15, 157, 88, 0);
-  }
+@keyframes range-selector-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(15, 157, 88, 0.45); }
+  70%  { box-shadow: 0 0 0 5px rgba(15, 157, 88, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(15, 157, 88, 0); }
 }
-
-/* ============================================================
-   LIGHT MODE
-   ============================================================ */
-
-[data-mode="light"] .range-selector {
-  background: #f3f4f9;
-  border-color: #e6e8f2;
-}
-
-[data-mode="light"] .range-selector__btn.is-active {
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-}
-
-/* ============================================================
-   DARK MODE
-   ============================================================ */
-
-[data-mode="dark"] .range-selector {
-  background: #2d3452;
-  border-color: #252f4a;
-}
-
-[data-mode="dark"] .range-selector__btn:hover {
-  background: rgba(61, 79, 224, 0.08);
-}
-
-[data-mode="dark"] .range-selector__btn.is-active {
-  background: #1a1f3a;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-}
-
-/* ============================================================
-   RESPONSIVE - TABLET (768px)
-   ============================================================ */
-
-@media (max-width: 768px) {
-  .range-selector {
-    gap: 2px;
-    padding: 3px;
-  }
-
-  .range-selector__btn {
-    padding: 5px 9px;
-    font-size: 11px;
-  }
-
-  .range-selector__live-dot {
-    width: 3px;
-    height: 3px;
-  }
-}
-
-/* ============================================================
-   RESPONSIVE - MOBILE (480px)
-   ============================================================ */
 
 @media (max-width: 480px) {
-  .range-selector {
-    gap: 1px;
-    padding: 2px;
-  }
-
   .range-selector__btn {
-    padding: 4px 7px;
-    font-size: 10px;
-    font-weight: 600;
-  }
-
-  .range-selector__live-dot {
-    width: 3px;
-    height: 3px;
-  }
-}
-
-/* ============================================================
-   RESPONSIVE - MOBILE EXTRA SMALL (380px)
-   ============================================================ */
-
-@media (max-width: 380px) {
-  .range-selector {
-    gap: 1px;
-    padding: 2px;
-  }
-
-  .range-selector__btn {
-    padding: 3px 5px;
-    font-size: 9px;
-    font-weight: 600;
-  }
-
-  .range-selector__live-dot {
-    width: 2px;
-    height: 2px;
+    padding: 6px 10px;
+    font-size: 12px;
   }
 }

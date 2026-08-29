@@ -1,742 +1,395 @@
-/* ============================================================
-   STOCK CHART - COMPLETE REWRITE
-   Full responsive, no transparency, works everywhere
-   ============================================================ */
-
+/* StockChart.css */
 .stock-chart {
+  --sd-up: #0f9d58;
+  --sd-down: #e11d48;
+  position: relative;
+  font-family: var(--font-family-base, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif);
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: var(--bg-surface);
-  border-radius: 12px;
-  border: 1px solid var(--border-default);
-  padding: 12px;
-  gap: 8px;
-  min-height: 0;
-  height: auto;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.stock-chart__header {
+/* --- Toolbar --- */
+.stock-chart__toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 12px;
 }
 
-.stock-chart__header-right {
+.stock-chart__type-group,
+.stock-chart__zoom-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface-secondary, #f3f4f9);
+  border: 1px solid var(--border-default, #e6e8f2);
+  border-radius: 11px;
+  padding: 3px;
+}
+
+.stock-chart__type-btn,
+.stock-chart__zoom-btn,
+.stock-chart__fullscreen-btn,
+.stock-chart__close-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.stock-chart__type-btn {
+  color: var(--text-secondary, #626b7d);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  padding: 7px 14px;
+  border-radius: 8px;
+}
+
+.stock-chart__type-btn:hover {
+  color: var(--text-primary, #0a0e1a);
+}
+
+.stock-chart__type-btn.is-active {
+  background: var(--bg-surface, #ffffff);
+  color: var(--brand-primary, #3d4fe0);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 10px -4px rgba(15, 23, 42, 0.12);
+}
+
+.stock-chart__toolbar-right {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.stock-chart__badge {
+.stock-chart__zoom-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-gray-100);
-  color: var(--text-secondary);
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 11px;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  color: var(--text-secondary, #626b7d);
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.05px;
-  white-space: nowrap;
-  border: 1px solid var(--border-subtle);
+  line-height: 1;
 }
 
-/* ============================================================
-   EXPAND / CLOSE BUTTONS
-   ============================================================ */
+.stock-chart__zoom-btn:hover {
+  background: var(--bg-surface, #ffffff);
+  color: var(--brand-primary, #3d4fe0);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
 
-.stock-chart__expand-btn,
+.stock-chart__zoom-btn:active {
+  transform: scale(0.94);
+}
+
+.stock-chart__fullscreen-btn,
 .stock-chart__close-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 0;
-  flex-shrink: 0;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
-    transform 0.1s ease;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid var(--border-default, #e6e8f2);
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-secondary, #626b7d);
 }
 
-.stock-chart__expand-btn:hover,
+.stock-chart__fullscreen-btn:hover,
 .stock-chart__close-btn:hover {
-  background: rgba(61, 79, 224, 0.08);
-  color: var(--color-primary-500);
-  border-color: var(--color-primary-500);
+  color: var(--brand-primary, #3d4fe0);
+  border-color: var(--color-blue-100, #dfe3fb);
+  background: var(--color-blue-50, #eef0fe);
 }
 
-.stock-chart__expand-btn:active,
+.stock-chart__fullscreen-btn:active,
 .stock-chart__close-btn:active {
   transform: scale(0.92);
 }
 
-/* Main chart wrapper - uses flexbox to take all available space */
-.stock-chart__wrapper {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-height: 400px;
-  height: auto;
-  flex: 1;
+/* --- Stage (Container for chart and overlays) --- */
+.stock-chart__stage {
+  position: relative;
 }
 
-/* Canvas - where the chart actually renders */
-.stock-chart__canvas {
+.stock-chart__container {
+  height: 460px;
   width: 100%;
-  height: 100%;
-  min-height: 400px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  padding: 0;
+  position: relative;
+  background: var(--bg-surface, #ffffff);
+  border-radius: var(--radius-md, 12px);
   overflow: hidden;
+  z-index: 1;
 }
 
-/* ============================================================
-   TOOLTIP - SOLID, NO TRANSPARENCY
-   ============================================================ */
-
-.stock-chart__tooltip {
-  background: var(--bg-surface);
-  border: 1.5px solid var(--color-primary-500);
-  border-radius: 8px;
-  padding: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  z-index: 10000;
-  pointer-events: none;
-  min-width: 160px;
-  max-width: 200px;
-  animation: tooltip-appear 0.1s ease-out;
-}
-
-@keyframes tooltip-appear {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.stock-chart__tooltip-time {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-default);
-  letter-spacing: 0.05px;
-}
-
-.stock-chart__tooltip-grid {
+.stock-chart__container::before {
+  content: attr(data-symbol);
+  position: absolute;
+  inset: 0;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.stock-chart__tooltip-row {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
+  font-size: clamp(32px, 7vw, 76px);
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--text-primary, #0a0e1a);
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+
+/* --- Legend (solid — no transparency/blur) --- */
+.stock-chart__legend {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-default, #e6e8f2);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  max-width: calc(100% - 16px);
+}
+
+.stock-chart__legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   gap: 12px;
 }
 
-.stock-chart__tooltip-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  min-width: 24px;
-  letter-spacing: 0.1px;
-}
-
-.stock-chart__tooltip-label--close {
-  font-weight: 800;
-}
-
-.stock-chart__tooltip-value {
+.stock-chart__legend-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-primary);
-  text-align: right;
-  min-width: 75px;
-  font-family: "Monaco", "Courier New", monospace;
-  letter-spacing: 0.02px;
+  color: var(--text-primary, #0a0e1a);
 }
 
-.stock-chart__tooltip-value.is-up {
-  color: var(--success-fill);
+.stock-chart__legend-item i {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-secondary, #98a1b3);
 }
 
-.stock-chart__tooltip-value.is-down {
-  color: var(--danger-fill);
+.stock-chart__legend-datetime {
+  margin-top: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-tertiary, #98a1b3);
+  font-variant-numeric: tabular-nums;
 }
 
-/* ============================================================
-   LOADING & ERROR STATES
-   ============================================================ */
+.stock-chart__legend.is-up .stock-chart__legend-item { color: var(--sd-up); }
+.stock-chart__legend.is-down .stock-chart__legend-item { color: var(--sd-down); }
 
-.stock-chart__loading,
-.stock-chart__error {
-  width: 100%;
-  height: 400px;
+/* --- Duration Badge (solid — no transparency/blur) --- */
+.stock-chart__duration-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  padding: 6px 11px;
+  border-radius: 9px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-default, #e6e8f2);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  pointer-events: none;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text-secondary, #626b7d);
+  white-space: nowrap;
+}
+
+.stock-chart__duration-note {
+  font-weight: 600;
+  color: var(--text-tertiary, #98a1b3);
+}
+
+/* --- Empty / Loading / Error States --- */
+.stock-chart--empty {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-secondary);
+  gap: 12px;
+  color: var(--text-secondary, #626b7d);
+  font-size: 13.5px;
+  text-align: center;
+  padding: 0 24px;
+  background: var(--bg-surface, #ffffff);
 }
 
-.stock-chart__error {
-  color: var(--danger-fill);
+.stock-chart--skeleton {
+  gap: 18px;
 }
 
-.stock-chart__spinner {
-  width: 22px;
-  height: 22px;
-  border: 2.5px solid var(--border-default);
-  border-top-color: var(--color-primary-500);
-  border-radius: 50%;
-  animation: stock-chart-spin 0.7s linear infinite;
-}
-
-@keyframes stock-chart-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ============================================================
-   LIVE INDICATOR
-   ============================================================ */
-
-.stock-chart__live-badge {
+.stock-chart__skeleton-bars {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: rgba(15, 157, 88, 0.1);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--success-fill);
-  letter-spacing: 0.05px;
-  width: fit-content;
-  margin-top: 4px;
-  flex-shrink: 0;
+  align-items: flex-end;
+  gap: 5px;
+  height: 110px;
+  width: min(70%, 420px);
 }
 
-.stock-chart__live-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--success-fill);
-  animation: live-pulse 1.5s ease-out infinite;
-  flex-shrink: 0;
+.stock-chart__skeleton-bars span {
+  flex: 1;
+  border-radius: 3px;
+  background: linear-gradient(
+    100deg,
+    var(--surface-secondary, #eef0f7) 30%,
+    var(--color-blue-50, #eef0fe) 50%,
+    var(--surface-secondary, #eef0f7) 70%
+  );
+  background-size: 200% 100%;
+  animation: stock-chart-shimmer 1.4s ease-in-out infinite;
 }
 
-@keyframes live-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(15, 157, 88, 0.7);
-  }
-  50% {
-    box-shadow: 0 0 0 4px rgba(15, 157, 88, 0.1);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(15, 157, 88, 0);
-  }
+@keyframes stock-chart-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* ============================================================
    EXPANDED / FULLSCREEN MODE
-   Solid, full-viewport overlay — deliberately NOT the native
-   Fullscreen API (unsupported on iOS Safari for elements), so it
-   behaves identically on every device. Respects notch/home-indicator
-   safe areas and animates in/out smoothly.
+   CSS overlay, not the native Fullscreen API — iOS Safari has no
+   requestFullscreen() support on arbitrary elements, so an overlay
+   is the only approach that behaves identically everywhere.
+   Respects notch/home-indicator safe areas.
    ============================================================ */
 
 .stock-chart__backdrop {
   position: fixed;
   inset: 0;
   z-index: 998;
-  background: var(--bg-surface);
+  background: var(--bg-surface, #ffffff);
   animation: stock-chart-fade-in 0.18s ease-out;
 }
 
 @keyframes stock-chart-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .stock-chart--expanded {
   position: fixed;
   inset: 0;
   z-index: 999;
-  border-radius: 0;
-  border: none;
   display: flex;
   flex-direction: column;
-  background: var(--bg-surface);
+  background: var(--bg-surface, #ffffff);
   padding: calc(env(safe-area-inset-top, 0px) + 44px)
-    calc(env(safe-area-inset-right, 0px) + 12px)
-    calc(env(safe-area-inset-bottom, 0px) + 12px)
-    calc(env(safe-area-inset-left, 0px) + 12px);
+    calc(env(safe-area-inset-right, 0px) + 14px)
+    calc(env(safe-area-inset-bottom, 0px) + 14px)
+    calc(env(safe-area-inset-left, 0px) + 14px);
   animation: stock-chart-scale-in 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @keyframes stock-chart-scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-.stock-chart--expanded .stock-chart__header {
+.stock-chart--expanded .stock-chart__toolbar {
   flex-shrink: 0;
 }
 
-.stock-chart--expanded .stock-chart__wrapper,
-.stock-chart--expanded .stock-chart__canvas {
+.stock-chart--expanded .stock-chart__stage {
   flex: 1;
   min-height: 0;
-  height: 100%;
 }
 
-.stock-chart--expanded .stock-chart__live-badge {
-  flex-shrink: 0;
+.stock-chart--expanded .stock-chart__container {
+  height: 100%;
 }
 
 .stock-chart__close-btn {
   position: absolute;
   top: calc(env(safe-area-inset-top, 0px) + 8px);
   right: calc(env(safe-area-inset-right, 0px) + 8px);
-  z-index: 1;
+  z-index: 1000;
   width: 34px;
   height: 34px;
-  background: var(--color-gray-100);
 }
 
-@media (max-width: 768px) {
-  .stock-chart--expanded {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 40px);
-  }
-
-  .stock-chart--expanded .stock-chart__header {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-}
-
-/* Landscape phones — reclaim vertical space, move close button aside */
 @media (max-width: 900px) and (orientation: landscape) {
   .stock-chart--expanded {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
-    padding-left: calc(env(safe-area-inset-left, 0px) + 44px);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 10px);
+    padding-left: calc(env(safe-area-inset-left, 0px) + 48px);
   }
-
-  .stock-chart--expanded .stock-chart__header {
-    padding-bottom: 6px;
-  }
-
   .stock-chart__close-btn {
-    top: calc(env(safe-area-inset-top, 0px) + 6px);
-    left: calc(env(safe-area-inset-left, 0px) + 6px);
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    left: calc(env(safe-area-inset-left, 0px) + 8px);
     right: auto;
   }
 }
 
-/* ============================================================
-   LIGHT MODE
-   ============================================================ */
-
-[data-mode="light"] .stock-chart {
-  background: #ffffff;
-  border-color: #e6e8f2;
-}
-
-[data-mode="light"] .stock-chart__header {
-  border-bottom-color: #f0f1f7;
-}
-
-[data-mode="light"] .stock-chart__canvas {
-  background: #fafbfc;
-  border-color: #e6e8f2;
-}
-
-[data-mode="light"] .stock-chart__tooltip {
-  background: #ffffff;
-  border-color: #3d4fe0;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
-}
-
-[data-mode="light"] .stock-chart__badge {
-  background: #f3f4f9;
-  color: #626b7d;
-  border-color: #e6e8f2;
-}
-
-[data-mode="light"] .stock-chart--expanded,
-[data-mode="light"] .stock-chart__backdrop {
-  background: #ffffff;
-}
-
-/* ============================================================
-   DARK MODE
-   ============================================================ */
-
-[data-mode="dark"] .stock-chart {
-  background: #1a1f3a;
-  border-color: #2d3452;
-}
-
-[data-mode="dark"] .stock-chart__header {
-  border-bottom-color: #252f4a;
-}
-
-[data-mode="dark"] .stock-chart__canvas {
-  background: #141829;
-  border-color: #2d3452;
-}
-
-[data-mode="dark"] .stock-chart__tooltip {
-  background: #1a1f3a;
-  border-color: #3d4fe0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-}
-
-[data-mode="dark"] .stock-chart__badge {
-  background: #2d3452;
-  color: #9ca3af;
-  border-color: #252f4a;
-}
-
-[data-mode="dark"] .stock-chart--expanded,
-[data-mode="dark"] .stock-chart__backdrop {
-  background: #1a1f3a;
-}
-
-/* ============================================================
-   RESPONSIVE - DESKTOP (1024px+)
-   ============================================================ */
-
-@media (min-width: 1025px) {
-  .stock-chart {
-    padding: 16px;
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .stock-chart__container {
+    height: 420px;
   }
+}
 
-  .stock-chart__wrapper {
-    min-height: 450px;
+@media (max-width: 768px) {
+  .stock-chart__toolbar {
+    gap: 8px;
   }
-
-  .stock-chart__canvas {
-    min-height: 450px;
-  }
-
-  .stock-chart__badge {
-    padding: 6px 12px;
+  .stock-chart__type-btn {
+    padding: 6px 10px;
     font-size: 12px;
   }
 }
 
-/* ============================================================
-   RESPONSIVE - TABLET (768px - 1024px)
-   ============================================================ */
-
-@media (max-width: 1024px) {
-  .stock-chart {
-    padding: 12px;
+@media (max-width: 480px) {
+  .stock-chart__container {
+    height: 340px;
   }
 
-  .stock-chart__wrapper {
-    min-height: 380px;
-  }
-
-  .stock-chart__canvas {
-    min-height: 380px;
-  }
-
-  .stock-chart__badge {
-    padding: 5px 10px;
-    font-size: 11px;
-  }
-
-  .stock-chart__tooltip {
-    min-width: 150px;
-    padding: 10px;
-  }
-
-  .stock-chart__tooltip-time {
-    font-size: 10px;
-    margin-bottom: 6px;
-    padding-bottom: 6px;
-  }
-
-  .stock-chart__tooltip-label {
-    font-size: 10px;
-    min-width: 22px;
-  }
-
-  .stock-chart__tooltip-value {
-    font-size: 11px;
-    min-width: 70px;
-  }
-}
-
-/* ============================================================
-   RESPONSIVE - MOBILE LARGE (480px - 768px)
-   ============================================================ */
-
-@media (max-width: 768px) {
-  .stock-chart {
-    padding: 10px;
-    border-radius: 10px;
-  }
-
-  .stock-chart__header {
+  .stock-chart__legend {
     gap: 8px;
-    padding-bottom: 6px;
+    padding: 6px 9px;
   }
 
-  .stock-chart__wrapper {
-    min-height: 340px;
+  .stock-chart__legend-item {
+    font-size: 11px;
   }
 
-  .stock-chart__canvas {
-    min-height: 340px;
-    border-radius: 6px;
-  }
-
-  .stock-chart__badge {
-    padding: 4px 8px;
-    font-size: 10px;
-  }
-
-  .stock-chart__tooltip {
-    min-width: 140px;
-    padding: 9px;
-  }
-
-  .stock-chart__tooltip-time {
-    font-size: 9px;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-  }
-
-  .stock-chart__tooltip-grid {
-    gap: 5px;
-  }
-
-  .stock-chart__tooltip-label {
-    font-size: 9px;
-    min-width: 20px;
-  }
-
-  .stock-chart__tooltip-value {
-    font-size: 10px;
-    min-width: 65px;
-  }
-
-  .stock-chart__live-badge {
-    font-size: 10px;
+  .stock-chart__duration-badge {
+    font-size: 10.5px;
     padding: 5px 8px;
   }
-}
-
-/* ============================================================
-   RESPONSIVE - MOBILE MEDIUM (420px - 480px)
-   ============================================================ */
-
-@media (max-width: 480px) {
-  .stock-chart {
-    padding: 8px;
-    border-radius: 8px;
-  }
-
-  .stock-chart__header {
-    gap: 6px;
-    padding-bottom: 4px;
-  }
-
-  .stock-chart__wrapper {
-    min-height: 320px;
-  }
-
-  .stock-chart__canvas {
-    min-height: 320px;
-    border-radius: 6px;
-  }
-
-  .stock-chart__badge {
-    padding: 3px 6px;
-    font-size: 9px;
-  }
-
-  .stock-chart__tooltip {
-    min-width: 130px;
-    padding: 8px;
-  }
-
-  .stock-chart__tooltip-time {
-    font-size: 8px;
-    margin-bottom: 4px;
-    padding-bottom: 4px;
-  }
-
-  .stock-chart__tooltip-grid {
-    gap: 4px;
-  }
-
-  .stock-chart__tooltip-label {
-    font-size: 8px;
-    min-width: 18px;
-  }
-
-  .stock-chart__tooltip-value {
-    font-size: 9px;
-    min-width: 60px;
-  }
-
-  .stock-chart__live-badge {
-    font-size: 9px;
-    padding: 4px 6px;
-  }
-
-  .stock-chart__live-dot {
-    width: 5px;
-    height: 5px;
+  .stock-chart__fullscreen-btn {
+    width: 28px;
+    height: 28px;
   }
 }
-
-/* ============================================================
-   RESPONSIVE - MOBILE SMALL (375px - 420px)
-   ============================================================ */
-
-@media (max-width: 420px) {
-  .stock-chart {
-    padding: 6px;
-  }
-
-  .stock-chart__wrapper {
-    min-height: 300px;
-  }
-
-  .stock-chart__canvas {
-    min-height: 300px;
-  }
-
-  .stock-chart__tooltip {
-    min-width: 120px;
-    padding: 7px;
-  }
-
-  .stock-chart__tooltip-label {
-    font-size: 7px;
-    min-width: 16px;
-  }
-
-  .stock-chart__tooltip-value {
-    font-size: 8px;
-    min-width: 55px;
-  }
-}
-
-/* ============================================================
-   RESPONSIVE - MOBILE EXTRA SMALL (320px - 375px)
-   ============================================================ */
-
-@media (max-width: 375px) {
-  .stock-chart {
-    padding: 4px;
-    border-radius: 6px;
-  }
-
-  .stock-chart__wrapper {
-    min-height: 280px;
-  }
-
-  .stock-chart__canvas {
-    min-height: 280px;
-    border-radius: 4px;
-  }
-
-  .stock-chart__header {
-    gap: 4px;
-  }
-
-  .stock-chart__badge {
-    padding: 2px 4px;
-    font-size: 8px;
-  }
-
-  .stock-chart__tooltip {
-    min-width: 110px;
-    padding: 6px;
-  }
-
-  .stock-chart__tooltip-time {
-    font-size: 7px;
-    margin-bottom: 3px;
-    padding-bottom: 3px;
-  }
-
-  .stock-chart__tooltip-label {
-    font-size: 6px;
-    min-width: 14px;
-  }
-
-  .stock-chart__tooltip-value {
-    font-size: 7px;
-    min-width: 50px;
-  }
-
-  .stock-chart__live-badge {
-    font-size: 8px;
-  }
-}
-
-/* ============================================================
-   UTILITY - PREVENT TEXT SELECTION
-   ============================================================ */
-
-.stock-chart,
-.stock-chart__tooltip {
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-/* ============================================================
-   REDUCED MOTION
-   ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .stock-chart__spinner,
-  .stock-chart__live-dot,
+  .stock-chart__skeleton-bars span,
   .stock-chart--expanded,
   .stock-chart__backdrop {
     animation: none;

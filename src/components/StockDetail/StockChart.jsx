@@ -593,15 +593,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import {
   createChart,
@@ -735,9 +726,41 @@ export default function StockChart({ symbol }) {
   // hover jank on dense charts (1D/1W with hundreds of 1-min candles).
   const crosshairFrameRef = useRef(null);
   const pendingLegendRef = useRef(null);
+  const overlayRef = useRef(null);
 
   const upColor = cssVar("--sd-up", "#0f9d58");
   const downColor = cssVar("--sd-down", "#e11d48");
+
+  // Reserves exactly enough space at the top of the price scale for the
+  // overlay's real rendered height, so lightweight-charts' own autoscale
+  // keeps every candle's peak at or below that line — the OHLCV box can
+  // never cover the highest candle, at any zoom level, without needing
+  // to track a specific candle's pixel position. Only called on layout
+  // events (mount, resize, range switch) — never per pan/zoom/hover
+  // tick — so this stays cheap and doesn't reintroduce the old lag.
+  const recalcTopMargin = useCallback(() => {
+    const chart = chartRef.current;
+    const container = containerRef.current;
+    const overlay = overlayRef.current;
+    if (!chart || !container || !overlay) return;
+
+    const containerHeight = container.clientHeight;
+    if (!containerHeight) return;
+
+    const overlayHeight = overlay.offsetHeight;
+    const fraction = Math.min(
+      0.45,
+      Math.max(0.14, (overlayHeight + 16) / containerHeight)
+    );
+
+    try {
+      chart.priceScale("right").applyOptions({
+        scaleMargins: { top: fraction, bottom: 0.28 },
+      });
+    } catch {
+      // price scale may not be ready yet
+    }
+  }, []);
 
   // --- Create Chart Effect ---
   useEffect(() => {
@@ -846,9 +869,12 @@ export default function StockChart({ symbol }) {
       const { width, height } = entry.contentRect;
       if (width > 0 && height > 0) {
         chart.applyOptions({ width, height });
+        recalcTopMargin();
       }
     });
     resizeObserver.observe(containerRef.current);
+
+    requestAnimationFrame(recalcTopMargin);
 
     return () => {
       resizeObserver.disconnect();
@@ -870,7 +896,7 @@ export default function StockChart({ symbol }) {
       volumeSeriesRef.current = null;
       renderedKeyRef.current = null;
     };
-  }, []);
+  }, [recalcTopMargin]);
 
   // --- Swap Series Type Effect ---
   useEffect(() => {
@@ -1065,6 +1091,18 @@ export default function StockChart({ symbol }) {
     };
   }, [legend?.time]);
 
+  // Recompute the reserved top margin whenever the duration label's text
+  // might have changed (range switch) or the OHLCV row just appeared for
+  // the first time (data just loaded). Deliberately depends on the
+  // BOOLEAN `hasLegend`, not the `legend` object itself — `legend`
+  // changes on every hover via `hoverLegend`, and depending on it
+  // directly would re-fire this on every mouse move, which is exactly
+  // the per-frame cost that caused the original lag.
+  const hasLegend = legend != null;
+  useEffect(() => {
+    requestAnimationFrame(recalcTopMargin);
+  }, [hasLegend, range, recalcTopMargin]);
+
   const ExpandIcon = () =>
     isExpanded ? (
       <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true">
@@ -1179,7 +1217,7 @@ export default function StockChart({ symbol }) {
               beneath it — a single block, not two separately-positioned
               pieces, so there's nothing to recompute or drift out of
               place while zooming/panning. */}
-          <div className="stock-chart__overlay">
+          <div className="stock-chart__overlay" ref={overlayRef}>
             <div className="stock-chart__overlay-duration">
               {rangeConfig ? candleDurationLabel(rangeConfig) : "…"} candles
               {range === "1D" && !oneDayPlan.isToday && (

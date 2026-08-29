@@ -113,6 +113,33 @@
   transform: scale(0.92);
 }
 
+/* --- Duration row: its own line, between RangeSelector and the chart.
+   No longer overlaps the chart or the OHLC legend. --- */
+.stock-chart__duration-row {
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 0 8px;
+}
+
+.stock-chart__duration-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 7px;
+  background: var(--surface-secondary, #f3f4f9);
+  border: 1px solid var(--border-default, #e6e8f2);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text-secondary, #626b7d);
+  white-space: nowrap;
+}
+
+.stock-chart__duration-note {
+  font-weight: 600;
+  color: var(--text-tertiary, #98a1b3);
+}
+
 /* --- Stage (Container for chart and overlays) --- */
 .stock-chart__stage {
   position: relative;
@@ -145,30 +172,45 @@
   user-select: none;
 }
 
-/* --- Legend (solid — no transparency/blur) --- */
+/* --- OHLC Legend — solid box, dynamically positioned above the peak
+   candle via inline `left`/`top` set from JS. NEVER transparent. --- */
 .stock-chart__legend {
   position: absolute;
-  top: 8px;
-  left: 8px;
   z-index: 10;
+  transform: translate(-50%, -100%);
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  padding: 7px 12px;
-  border-radius: 9px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 13px;
+  border-radius: 10px;
   background: var(--bg-surface, #ffffff);
   border: 1px solid var(--border-default, #e6e8f2);
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.06);
   pointer-events: none;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
-  max-width: calc(100% - 16px);
+  white-space: nowrap;
+  transition: left 0.12s ease-out, top 0.12s ease-out;
+}
+
+/* Small solid "pointer" tail so the box visibly relates to the peak
+   point beneath it, like a native tooltip. */
+.stock-chart__legend::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 11px;
+  height: 11px;
+  background: var(--bg-surface, #ffffff);
+  border-right: 1px solid var(--border-default, #e6e8f2);
+  border-bottom: 1px solid var(--border-default, #e6e8f2);
+  transform: translateX(-50%) rotate(45deg);
 }
 
 .stock-chart__legend-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: baseline;
   gap: 12px;
 }
@@ -192,7 +234,6 @@
 }
 
 .stock-chart__legend-datetime {
-  margin-top: 4px;
   font-size: 10.5px;
   font-weight: 600;
   color: var(--text-tertiary, #98a1b3);
@@ -201,30 +242,6 @@
 
 .stock-chart__legend.is-up .stock-chart__legend-item { color: var(--sd-up); }
 .stock-chart__legend.is-down .stock-chart__legend-item { color: var(--sd-down); }
-
-/* --- Duration Badge (solid — no transparency/blur) --- */
-.stock-chart__duration-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 10;
-  padding: 6px 11px;
-  border-radius: 9px;
-  background: var(--bg-surface, #ffffff);
-  border: 1px solid var(--border-default, #e6e8f2);
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
-  pointer-events: none;
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  color: var(--text-secondary, #626b7d);
-  white-space: nowrap;
-}
-
-.stock-chart__duration-note {
-  font-weight: 600;
-  color: var(--text-tertiary, #98a1b3);
-}
 
 /* --- Empty / Loading / Error States --- */
 .stock-chart--empty {
@@ -275,10 +292,7 @@
 
 /* ============================================================
    EXPANDED / FULLSCREEN MODE
-   CSS overlay, not the native Fullscreen API — iOS Safari has no
-   requestFullscreen() support on arbitrary elements, so an overlay
-   is the only approach that behaves identically everywhere.
-   Respects notch/home-indicator safe areas.
+   CSS overlay, not the native Fullscreen API.
    ============================================================ */
 
 .stock-chart__backdrop {
@@ -313,7 +327,8 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-.stock-chart--expanded .stock-chart__toolbar {
+.stock-chart--expanded .stock-chart__toolbar,
+.stock-chart--expanded .stock-chart__duration-row {
   flex-shrink: 0;
 }
 
@@ -370,8 +385,11 @@
   }
 
   .stock-chart__legend {
-    gap: 8px;
-    padding: 6px 9px;
+    padding: 7px 10px;
+  }
+
+  .stock-chart__legend-row {
+    gap: 9px;
   }
 
   .stock-chart__legend-item {
@@ -380,18 +398,33 @@
 
   .stock-chart__duration-badge {
     font-size: 10.5px;
-    padding: 5px 8px;
+    padding: 4px 8px;
   }
+
   .stock-chart__fullscreen-btn {
     width: 28px;
     height: 28px;
   }
 }
 
+/* --- Theming: light / dark --- */
+[data-mode="dark"] .stock-chart__legend,
+[data-mode="dark"] .stock-chart__legend::after {
+  background: var(--bg-surface, #1a1f3a);
+  border-color: var(--border-default, #2d3452);
+}
+
+[data-mode="dark"] .stock-chart--expanded,
+[data-mode="dark"] .stock-chart__backdrop {
+  background: var(--bg-surface, #1a1f3a);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .stock-chart__skeleton-bars span,
   .stock-chart--expanded,
-  .stock-chart__backdrop {
+  .stock-chart__backdrop,
+  .stock-chart__legend {
     animation: none;
+    transition: none;
   }
 }

@@ -1,5 +1,3 @@
-
-
 :root {
   /* ==========================================================
    PAGE ICON — chip sizes
@@ -10,57 +8,46 @@
   --page-icon-size-lg: 56px;
   --page-icon-size-xl: 88px;
 
-  /* ==========================================================
-   PAGE ICON — per-section color assignment
-   Each page gets its own accent so the icon also functions as
-   a quiet color-coded wayfinding cue (Holdings/Positions/
-   Orders/Funds never get visually confused with each other),
-   while still being built entirely from tokens that already
-   exist and already adapt per theme + per mode.
-   ========================================================== */
-
   --page-icon-holdings: var(--brand-primary);
-  /* UPDATED — was var(--info-fill) (a flat sky-500 that never changes
-     across navy/olive/charcoal/sand), so Positions was the one page
-     whose icon didn't repaint with the rest of the app's theme system.
-     This mixes the same two theme-reactive brand tokens Holdings and
-     Orders already use, just at a different ratio, so Positions reads
-     as the same color family — one clear step past Holdings, one clear
-     step before Orders — instead of an unrelated blue. */
-  --page-icon-positions: color-mix(in srgb, var(--brand-primary) 45%, var(--brand-secondary) 55%);
+
+  --page-icon-positions: color-mix(
+    in srgb,
+    var(--brand-primary) 45%,
+    var(--brand-secondary) 55%
+  );
   --page-icon-orders: var(--brand-secondary);
-  /* UPDATED again — the color-mix blend with --success-fill was still
-     producing a slightly different color from Holdings/Positions/Orders
-     (a mix is never pixel-identical to its source token). Set directly
-     to var(--brand-primary) — the exact same token Holdings uses — so
-     the Funds icon is now 100% the same color, not just "in the same
-     family," and still fully theme-reactive since --brand-primary
-     already shifts correctly across navy/olive/charcoal/sand. */
+
   --page-icon-funds: var(--brand-primary);
   --page-icon-growth: var(--ai-icon);
   --page-icon-muted: var(--text-muted);
 
-  /* Chip background = a soft tint of the accent, mixed into the
-     surface (same color-mix pattern already used for the P&L
-     heatmap cells in variables.css Part 10), so it's never a
-     hardcoded rgba() that goes wrong in dark mode. */
-  --page-icon-bg-holdings: color-mix(in srgb, var(--page-icon-holdings) 16%, var(--surface-tertiary));
-  --page-icon-bg-positions: color-mix(in srgb, var(--page-icon-positions) 16%, var(--surface-tertiary));
-  --page-icon-bg-orders: color-mix(in srgb, var(--page-icon-orders) 16%, var(--surface-tertiary));
-  --page-icon-bg-funds: color-mix(in srgb, var(--page-icon-funds) 16%, var(--surface-tertiary));
-  --page-icon-bg-growth: color-mix(in srgb, var(--page-icon-growth) 16%, var(--surface-tertiary));
+  --page-icon-bg-holdings: color-mix(
+    in srgb,
+    var(--page-icon-holdings) 16%,
+    var(--surface-tertiary)
+  );
+  --page-icon-bg-positions: color-mix(
+    in srgb,
+    var(--page-icon-positions) 16%,
+    var(--surface-tertiary)
+  );
+  --page-icon-bg-orders: color-mix(
+    in srgb,
+    var(--page-icon-orders) 16%,
+    var(--surface-tertiary)
+  );
+  --page-icon-bg-funds: color-mix(
+    in srgb,
+    var(--page-icon-funds) 16%,
+    var(--surface-tertiary)
+  );
+  --page-icon-bg-growth: color-mix(
+    in srgb,
+    var(--page-icon-growth) 16%,
+    var(--surface-tertiary)
+  );
   --page-icon-bg-muted: var(--surface-tertiary);
 }
-
-/* ==========================================================
-   .page-icon — the chip itself
-   Uses CSS mask-image (set inline per-instance via the
-   PageIcon.jsx component using the PNGs in src/assets/icons/),
-   so the icon is filled with `background`, i.e. a real color
-   token — not a flat baked-in black PNG. This is what makes it
-   stay crisp and clearly visible in dark mode and in every
-   theme without needing 4 separate icon exports.
-   ========================================================== */
 
 .page-icon {
   display: inline-flex;
@@ -104,30 +91,47 @@
   mask-size: contain;
 }
 
-.page-icon--holdings { background: var(--page-icon-bg-holdings); }
-.page-icon--holdings .page-icon__mask { background: var(--page-icon-holdings); }
+.page-icon--holdings {
+  background: var(--page-icon-bg-holdings);
+}
+.page-icon--holdings .page-icon__mask {
+  background: var(--page-icon-holdings);
+}
 
-.page-icon--positions { background: var(--page-icon-bg-positions); }
-.page-icon--positions .page-icon__mask { background: var(--page-icon-positions); }
+.page-icon--positions {
+  background: var(--page-icon-bg-positions);
+}
+.page-icon--positions .page-icon__mask {
+  background: var(--page-icon-positions);
+}
 
-.page-icon--orders { background: var(--page-icon-bg-orders); }
-.page-icon--orders .page-icon__mask { background: var(--page-icon-orders); }
+.page-icon--orders {
+  background: var(--page-icon-bg-orders);
+}
+.page-icon--orders .page-icon__mask {
+  background: var(--page-icon-orders);
+}
 
-.page-icon--funds { background: var(--page-icon-bg-funds); }
-.page-icon--funds .page-icon__mask { background: var(--page-icon-funds); }
+.page-icon--funds {
+  background: var(--page-icon-bg-funds);
+}
+.page-icon--funds .page-icon__mask {
+  background: var(--page-icon-funds);
+}
 
-.page-icon--growth { background: var(--page-icon-bg-growth); }
-.page-icon--growth .page-icon__mask { background: var(--page-icon-growth); }
+.page-icon--growth {
+  background: var(--page-icon-bg-growth);
+}
+.page-icon--growth .page-icon__mask {
+  background: var(--page-icon-growth);
+}
 
-.page-icon--muted { background: var(--page-icon-bg-muted); }
-.page-icon--muted .page-icon__mask { background: var(--page-icon-muted); }
-
-/* ==========================================================
-   .page-header — shared header pattern
-   Same markup/classes used at the top of Holdings, Positions,
-   Orders and Funds so the four pages read as one consistent
-   system instead of four separately-designed screens.
-   ========================================================== */
+.page-icon--muted {
+  background: var(--page-icon-bg-muted);
+}
+.page-icon--muted .page-icon__mask {
+  background: var(--page-icon-muted);
+}
 
 .page-header {
   display: flex;
@@ -171,12 +175,6 @@
     display: none;
   }
 }
-
-/* ==========================================================
-   .section-heading — smaller inline icon+title used above
-   individual chart cards / analytics sub-sections (as opposed
-   to the big page-level header above).
-   ========================================================== */
 
 .section-heading {
   display: flex;

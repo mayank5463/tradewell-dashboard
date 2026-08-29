@@ -1,9 +1,24 @@
-
 const BASE_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:3002";
+
+if (
+  !process.env.REACT_APP_BACKEND_URL &&
+  process.env.NODE_ENV === "production"
+) {
+  // Same class of bug that broke the marketing site's login earlier —
+  // fails loudly in the console instead of silently hitting localhost.
+  console.error(
+    "[CONFIG] REACT_APP_BACKEND_URL is not set. Set it in Vercel's environment variables and redeploy.",
+  );
+}
 
 async function apiFetch(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json", ...options.headers },
+    headers: {
+      "Content-Type": "application/json",
+
+      "X-Requested-With": "XMLHttpRequest",
+      ...options.headers,
+    },
     credentials: "include", // send auth cookie/session
     ...options,
   });
@@ -11,11 +26,9 @@ async function apiFetch(path, options = {}) {
   const body = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    // Backend isn't consistent about the error key: historicalController.js
-    // uses `message`, orderController.js uses `error`. Check both so real
-    // server error text (e.g. "You only have 3 shares of RELIANCE.") always
-    // reaches the UI instead of falling back to a generic HTTP message.
-    throw new Error(body?.message || body?.error || `Request failed: HTTP ${res.status}`);
+    throw new Error(
+      body?.message || body?.error || `Request failed: HTTP ${res.status}`,
+    );
   }
   return body;
 }

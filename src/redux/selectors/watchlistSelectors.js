@@ -1,4 +1,4 @@
-// src/redux/selectors/watchlistSelectors.js
+
 
 export function selectWatchlistLists(state) {
   return state.watchlist.lists;
@@ -13,8 +13,7 @@ export function selectActiveList(state) {
   return lists.find((l) => l.id === activeListId) ?? lists[0] ?? null;
 }
 
-// Always returns an array — never undefined — so callers never need their
-// own fallback or optional chaining past this point.
+
 export function selectActiveListSymbols(state) {
   return selectActiveList(state)?.symbols ?? [];
 }

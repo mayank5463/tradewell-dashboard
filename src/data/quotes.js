@@ -1,5 +1,4 @@
-// Quotes shown on login greeting + "start investing" empty state.
-// "timeOfDay: 'any'" means it can show regardless of morning/afternoon/evening.
+
 export const quotes = [
   { text: "The stock market is a device for transferring money from the impatient to the patient.", timeOfDay: "any" },
   { text: "Good morning — the best trades are made with a calm mind, not a rushed one.", timeOfDay: "morning" },

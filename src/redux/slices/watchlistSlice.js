@@ -9,11 +9,7 @@ import {
   removeStockFromWatchlistRequest,
 } from "../../services/watchlistService";
 
-// Backend-persisted (MongoDB) — see watchlistController.js /
-// watchlistService.js on the server. Every mutation below round-trips to
-// the DB and applies whatever it returns as the new state, so the UI can
-// never drift from what's actually stored — a refresh or a login on a
-// different device always shows the exact same lists.
+
 
 const initialState = {
   lists: [],

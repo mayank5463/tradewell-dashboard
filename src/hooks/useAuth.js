@@ -14,6 +14,12 @@ import { fetchWatchlist } from "../redux/slices/watchlistSlice";
 const FRONTEND_URL =
   process.env.REACT_APP_FRONTEND_URL || "http://localhost:3001";
 
+if (!process.env.REACT_APP_FRONTEND_URL && process.env.NODE_ENV === "production") {
+  console.error(
+    "[CONFIG] REACT_APP_FRONTEND_URL is not set. Logged-out users will be sent to localhost instead of the real login page. Set it in Vercel's environment variables and redeploy.",
+  );
+}
+
 export function useAuth() {
   const dispatch = useDispatch();
   const { user, status } = useSelector((state) => state.auth);

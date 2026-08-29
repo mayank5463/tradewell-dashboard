@@ -1,10 +1,5 @@
 import { apiFetch } from "./api";
 
-// Thin wrappers around the backend's multi-list watchlist endpoints.
-// Every function returns { lists, activeListId } (or a superset of it) —
-// watchlistSlice.js's applyServerState() reads exactly that shape and
-// replaces local state with it, so the client can never drift from the DB.
-
 export function fetchWatchlistRequest() {
   return apiFetch("/watchlist");
 }

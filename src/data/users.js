@@ -1,6 +1,4 @@
-// Demo users — each with their own portfolio and watchlists.
-// Real app only ever cares about "the current user," matched by
-// whatever id/email comes back from /check-auth.
+
 export const demoUsers = {
   "user_1": {
     id: "user_1",

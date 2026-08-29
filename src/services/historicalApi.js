@@ -1,9 +1,6 @@
 import { apiFetch } from "./api";
 
-// GET /market/history/:symbol?unit=&interval=&from=&to=&live=
-// Mirrors historicalController.js's query params exactly.
-// options: { unit, interval, from, to, live }
-//   live: pass `false` to exclude today's still-forming candle
+
 export function fetchHistory(symbol, options = {}) {
   const params = new URLSearchParams();
   if (options.unit) params.set("unit", options.unit);
@@ -17,9 +14,7 @@ export function fetchHistory(symbol, options = {}) {
   return apiFetch(`/market/history/${symbol}${qs ? `?${qs}` : ""}`);
 }
 
-// ADDED — GET /market/history/:symbol/intraday?unit=&interval=
-// For the "1D" chart tab specifically. No from/to — always "today so far".
-// options: { unit, interval } — defaults to 1-minute bars.
+
 export function fetchIntraday(symbol, options = {}) {
   const params = new URLSearchParams();
   if (options.unit) params.set("unit", options.unit);

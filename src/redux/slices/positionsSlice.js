@@ -1,30 +1,17 @@
 
 
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { apiFetch } from "../../services/api";
+import { fetchPositionsRequest } from "../../services/positionService";
 
-// CONFIRMED against positionController.js:
-//   GET /allpositions — array of positions, ALREADY live-enriched the same
-//   way holdings are (ltp/dayChangePercent/netChangePercent/isLoss computed
-//   server-side). Auth-scoped to req.user.id via cookie.
-//
-// NOTE: there's no order-placement path for positions the way there is for
-// holdings (orderController.js only ever writes to HoldingModel on
-// BUY/SELL, never PositionModel). If you want MIS/intraday orders to
-// create Positions instead of Holdings, that logic still needs to be added
-// on the backend — right now positionsSlice has nothing that populates it.
+
 
 const initialState = { list: [], status: "idle", error: null };
 
-// Same condition guard as holdingsSlice's fetchHoldings — only one
-// dispatcher (Positions.jsx) exists today, but this keeps the two data
-// slices consistent and avoids a repeat of the holdings duplicate-fetch
-// issue if another component starts reading state.positions.list later.
+
 export const fetchPositions = createAsyncThunk(
   "positions/fetch",
   async () => {
-    return await apiFetch("/allpositions");
+    return await fetchPositionsRequest();
   },
   {
     condition: (_, { getState }) => getState().positions.status !== "loading",

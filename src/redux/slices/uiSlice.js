@@ -8,8 +8,12 @@ const initialState = {
   mode: "light",
   initialized: false,
   searchQuery: "",
-  watchlistPanelOpen: true, // ← Panel starts OPEN
-  isWatchlistExpanded: true, // ← ADD THIS (matches WatchList.jsx)
+  // DESKTOP ONLY — whether the sidebar shows full content or is collapsed
+  // to a 60px icon rail. Mobile ignores this entirely (see WatchList.jsx);
+  // the mobile drawer's open/closed state lives as local component state
+  // in Home.jsx, not here, since it's a transient UI concern with no
+  // reason to round-trip through Redux.
+  isWatchlistExpanded: true,
 };
 
 const uiSlice = createSlice({
@@ -35,17 +39,24 @@ const uiSlice = createSlice({
     setSearchQuery(state, action) {
       state.searchQuery = action.payload;
     },
+    // FIXED — previously this toggled BOTH `watchlistPanelOpen` (unused
+    // now that the mobile drawer is local state) AND `isWatchlistExpanded`
+    // (a desktop-only concept) together as one action. That coupling was
+    // the actual root cause of the mobile watchlist bug: collapsing the
+    // rail on desktop, then resizing to mobile, left the drawer's content
+    // un-rendered with no way for CSS to recover it. This action now does
+    // exactly one thing — toggle the desktop rail — and nothing else reads
+    // or depends on a second flag.
     toggleWatchlistPanel(state) {
-      state.watchlistPanelOpen = !state.watchlistPanelOpen;
-      state.isWatchlistExpanded = !state.isWatchlistExpanded; // ← Sync both
+      state.isWatchlistExpanded = !state.isWatchlistExpanded;
     },
   },
 });
 
-export const { 
-  setColorTheme, 
-  setMode, 
-  toggleMode, 
+export const {
+  setColorTheme,
+  setMode,
+  toggleMode,
   markInitialized,
   setSearchQuery,
   toggleWatchlistPanel,

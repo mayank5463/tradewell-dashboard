@@ -1,23 +1,18 @@
-
-
-
-
-
-
-
-
-
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuth, logout } from "../services/authService";
-import { setAuthenticated, setUnauthenticated } from "../redux/slices/authSlice";
+import {
+  setAuthenticated,
+  setUnauthenticated,
+} from "../redux/slices/authSlice";
 import { fetchHoldings } from "../redux/slices/holdingsSlice";
 import { fetchPositions } from "../redux/slices/positionsSlice";
 import { fetchOrders } from "../redux/slices/ordersSlice";
 import { fetchWallet, fetchWalletLedger } from "../redux/slices/fundsSlice";
 import { fetchWatchlist } from "../redux/slices/watchlistSlice";
 
-const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL || "http://localhost:3001";
+const FRONTEND_URL =
+  process.env.REACT_APP_FRONTEND_URL || "http://localhost:3001";
 
 export function useAuth() {
   const dispatch = useDispatch();
@@ -27,7 +22,7 @@ export function useAuth() {
     if (status !== "checking") return;
 
     console.log("[useAuth] Verifying session via check-auth...");
-    
+
     checkAuth()
       .then((data) => {
         // Only proceed if truly authenticated
@@ -50,10 +45,10 @@ export function useAuth() {
       .catch((err) => {
         console.warn("[useAuth] ❌ Not authenticated:", err.message);
         dispatch(setUnauthenticated());
-        
+
         // Set flag that user was logged out
         sessionStorage.setItem("just_logged_out", "true");
-        
+
         // Redirect to login page
         window.location.href = `${FRONTEND_URL}/login`;
       });
@@ -62,10 +57,10 @@ export function useAuth() {
   // Handle logout
   const handleLogout = async () => {
     console.log("[useAuth] Logging out...");
-    
+
     // Set flag BEFORE calling backend
     sessionStorage.setItem("just_logged_out", "true");
-    
+
     try {
       await logout();
       console.log("[useAuth] ✅ Logout successful");
@@ -74,10 +69,10 @@ export function useAuth() {
     } finally {
       // Clear all local storage
       localStorage.clear();
-      
+
       // Dispatch logout action
       dispatch(setUnauthenticated());
-      
+
       // Redirect to login page
       window.location.href = `${FRONTEND_URL}/login`;
     }

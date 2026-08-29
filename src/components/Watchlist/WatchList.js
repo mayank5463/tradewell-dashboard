@@ -229,7 +229,6 @@
 
 
 
-
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleWatchlistPanel } from "../../redux/slices/uiSlice";
@@ -242,6 +241,7 @@ import {
   selectWatchlistLists,
   selectActiveList,
 } from "../../redux/selectors/watchlistSelectors";
+import { useResponsive } from "../../hooks/useResponsive";
 import WatchlistSwitcher from "./watchlistSwitcher";
 import WatchlistItem from "./watchlistItem";
 import "./WatchList.css";
@@ -254,7 +254,28 @@ export default function WatchList({ onCloseMobile }) {
   const activeList = useSelector(selectActiveList);
   const status = useSelector((state) => state.watchlist.status);
   const stocks = useSelector((state) => state.market.stocks);
-  const isExpanded = useSelector((state) => state.ui.isWatchlistExpanded ?? true);
+
+  // "Collapsed to a 60px icon rail" is a DESKTOP-only concept. On mobile
+  // the watchlist renders as a full-width slide-in drawer — there is no
+  // rail to collapse to, so isWatchlistExpanded (which toggleWatchlistPanel
+  // in uiSlice.js also flips whenever the user collapses the rail on
+  // desktop) must never be allowed to hide content here.
+  //
+  // FIXED — this was previously read directly as `isExpanded` and used to
+  // gate whether WatchlistSwitcher / the item list / the rename-delete
+  // footer rendered AT ALL (a JS conditional, not a CSS class). If a user
+  // collapsed the rail on desktop and then resized down to mobile width,
+  // isWatchlistExpanded stayed false, and the mobile drawer opened with
+  // those elements never mounted in the first place — no CSS override can
+  // un-hide something that was never rendered. `effectiveExpanded` below
+  // ignores the Redux flag entirely on mobile/tablet, so the drawer always
+  // shows its full structure regardless of whatever the desktop rail state
+  // happens to be.
+  const isWatchlistExpanded = useSelector(
+    (state) => state.ui.isWatchlistExpanded ?? true,
+  );
+  const { isMobileOrTablet } = useResponsive();
+  const isExpanded = isMobileOrTablet ? true : isWatchlistExpanded;
 
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState("");
@@ -296,23 +317,18 @@ export default function WatchList({ onCloseMobile }) {
     setIsRenaming(false);
   };
 
+  // Collapse/expand the rail — desktop only. On mobile this button isn't
+  // rendered at all (see below), so there's nothing to guard here anymore.
   const handleTogglePanel = () => {
     dispatch(toggleWatchlistPanel());
   };
 
   const handleClosePanel = (e) => {
     e.stopPropagation();
-    const isMobile = window.innerWidth <= 768;
-
-    if (isMobile) {
-      // On mobile: close the slide-in drawer via parent callback
-      if (onCloseMobile) {
-        onCloseMobile();
-      }
+    if (isMobileOrTablet) {
+      onCloseMobile?.();
       return;
     }
-
-    // On desktop: collapse the panel
     dispatch(toggleWatchlistPanel());
   };
 
@@ -348,15 +364,22 @@ export default function WatchList({ onCloseMobile }) {
             </button>
           )}
 
-          <button
-            type="button"
-            className="watchlist-panel__collapse"
-            onClick={handleTogglePanel}
-            aria-label={isExpanded ? "Collapse watchlist" : "Expand watchlist"}
-            title={isExpanded ? "Collapse" : "Expand"}
-          >
-            {isExpanded ? "◀" : "▶"}
-          </button>
+          {/* Collapse-to-rail toggle — desktop only. Rendering this on
+              mobile made no sense (there's no rail to collapse a full-width
+              drawer to) and was the button most likely to accidentally
+              flip isWatchlistExpanded false right before someone resized
+              down to mobile. */}
+          {!isMobileOrTablet && (
+            <button
+              type="button"
+              className="watchlist-panel__collapse"
+              onClick={handleTogglePanel}
+              aria-label={isExpanded ? "Collapse watchlist" : "Expand watchlist"}
+              title={isExpanded ? "Collapse" : "Expand"}
+            >
+              {isExpanded ? "◀" : "▶"}
+            </button>
+          )}
         </div>
       </div>
 

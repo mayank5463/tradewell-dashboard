@@ -1,28 +1,4 @@
-/* ==========================================================
-   NiveshAI Design System
-   variables.css
-   PART 1 / 10
-   ----------------------------------------------------------
-   FOUNDATION
 
-   Contains:
-   • Fonts
-   • Typography
-   • Font Weights
-   • Line Heights
-   • Letter Spacing
-   • Spacing Scale
-   • Radius Scale
-   • Layout
-   • Sidebar Sizes
-   • Navbar Sizes
-   • Topbar Sizes
-   • Z-Index
-   • Transition System
-   • Shadow System
-
-   NO COLORS IN THIS PART.
-   ========================================================== */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Inter+Tight:wght@500;600;700;800;900&display=swap");
 

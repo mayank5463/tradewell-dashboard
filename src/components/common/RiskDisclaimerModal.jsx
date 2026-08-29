@@ -35,7 +35,7 @@ export default function RiskDisclaimerModal({ isOpen, onAcknowledge }) {
           Before you start trading
         </h2>
         <p className="risk-modal-subtitle">
-          Please read and acknowledge the following before using NiveshAI.
+          Please read and acknowledge the following before using Tradewell.
         </p>
 
         <ul className="risk-modal-list">

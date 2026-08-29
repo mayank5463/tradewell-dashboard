@@ -113,33 +113,6 @@
   transform: scale(0.92);
 }
 
-/* --- Duration row: its own line, between RangeSelector and the chart.
-   No longer overlaps the chart or the OHLC legend. --- */
-.stock-chart__duration-row {
-  display: flex;
-  justify-content: flex-start;
-  margin: 0 0 8px;
-}
-
-.stock-chart__duration-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 10px;
-  border-radius: 7px;
-  background: var(--surface-secondary, #f3f4f9);
-  border: 1px solid var(--border-default, #e6e8f2);
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  color: var(--text-secondary, #626b7d);
-  white-space: nowrap;
-}
-
-.stock-chart__duration-note {
-  font-weight: 600;
-  color: var(--text-tertiary, #98a1b3);
-}
-
 /* --- Stage (Container for chart and overlays) --- */
 .stock-chart__stage {
   position: relative;
@@ -172,47 +145,50 @@
   user-select: none;
 }
 
-/* --- OHLC Legend — solid box, dynamically positioned above the peak
-   candle via inline `left`/`top` set from JS. NEVER transparent. --- */
-.stock-chart__legend {
+/* --- Combined overlay: candle-size label + OHLCV, one fixed block.
+   Sits at the top-left, deliberately OVERLAPPING the chart canvas
+   (z-index above it) rather than pushing the chart down or floating
+   above a tracked candle. Never moves during pan/zoom/hover — only its
+   text content changes — so there is nothing to recompute per frame,
+   which is what made hovering/zooming feel laggy before. --- */
+.stock-chart__overlay {
   position: absolute;
+  top: 10px;
+  left: 12px;
   z-index: 10;
-  transform: translate(-50%, -100%);
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 8px 13px;
+  gap: 4px;
+  padding: 8px 12px;
   border-radius: 10px;
-  background: var(--bg-surface, #ffffff);
+  background: color-mix(in srgb, var(--bg-surface, #ffffff) 88%, transparent);
+  backdrop-filter: blur(6px);
   border: 1px solid var(--border-default, #e6e8f2);
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
   pointer-events: none;
+  max-width: calc(100% - 24px);
+}
+
+.stock-chart__overlay-duration {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text-secondary, #626b7d);
+  white-space: nowrap;
+}
+
+.stock-chart__duration-note {
+  font-weight: 600;
+  color: var(--text-tertiary, #98a1b3);
+}
+
+.stock-chart__overlay-ohlcv {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
-  white-space: nowrap;
-  transition: left 0.12s ease-out, top 0.12s ease-out;
-}
-
-/* Small solid "pointer" tail so the box visibly relates to the peak
-   point beneath it, like a native tooltip. */
-.stock-chart__legend::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -6px;
-  width: 11px;
-  height: 11px;
-  background: var(--bg-surface, #ffffff);
-  border-right: 1px solid var(--border-default, #e6e8f2);
-  border-bottom: 1px solid var(--border-default, #e6e8f2);
-  transform: translateX(-50%) rotate(45deg);
-}
-
-.stock-chart__legend-row {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: baseline;
-  gap: 12px;
 }
 
 .stock-chart__legend-item {
@@ -222,6 +198,7 @@
   font-size: 12px;
   font-weight: 700;
   color: var(--text-primary, #0a0e1a);
+  white-space: nowrap;
 }
 
 .stock-chart__legend-item i {
@@ -238,10 +215,11 @@
   font-weight: 600;
   color: var(--text-tertiary, #98a1b3);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-.stock-chart__legend.is-up .stock-chart__legend-item { color: var(--sd-up); }
-.stock-chart__legend.is-down .stock-chart__legend-item { color: var(--sd-down); }
+.stock-chart__overlay-ohlcv.is-up .stock-chart__legend-item { color: var(--sd-up); }
+.stock-chart__overlay-ohlcv.is-down .stock-chart__legend-item { color: var(--sd-down); }
 
 /* --- Empty / Loading / Error States --- */
 .stock-chart--empty {
@@ -327,8 +305,7 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-.stock-chart--expanded .stock-chart__toolbar,
-.stock-chart--expanded .stock-chart__duration-row {
+.stock-chart--expanded .stock-chart__toolbar {
   flex-shrink: 0;
 }
 
@@ -384,21 +361,23 @@
     height: 340px;
   }
 
-  .stock-chart__legend {
-    padding: 7px 10px;
+  .stock-chart__overlay {
+    top: 8px;
+    left: 8px;
+    padding: 6px 9px;
+    gap: 3px;
   }
 
-  .stock-chart__legend-row {
-    gap: 9px;
+  .stock-chart__overlay-ohlcv {
+    gap: 8px;
   }
 
   .stock-chart__legend-item {
-    font-size: 11px;
+    font-size: 10.5px;
   }
 
-  .stock-chart__duration-badge {
-    font-size: 10.5px;
-    padding: 4px 8px;
+  .stock-chart__overlay-duration {
+    font-size: 10px;
   }
 
   .stock-chart__fullscreen-btn {
@@ -408,9 +387,8 @@
 }
 
 /* --- Theming: light / dark --- */
-[data-mode="dark"] .stock-chart__legend,
-[data-mode="dark"] .stock-chart__legend::after {
-  background: var(--bg-surface, #1a1f3a);
+[data-mode="dark"] .stock-chart__overlay {
+  background: color-mix(in srgb, var(--bg-surface, #1a1f3a) 88%, transparent);
   border-color: var(--border-default, #2d3452);
 }
 
@@ -422,9 +400,7 @@
 @media (prefers-reduced-motion: reduce) {
   .stock-chart__skeleton-bars span,
   .stock-chart--expanded,
-  .stock-chart__backdrop,
-  .stock-chart__legend {
+  .stock-chart__backdrop {
     animation: none;
-    transition: none;
   }
 }

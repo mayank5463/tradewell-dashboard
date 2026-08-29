@@ -602,9 +602,6 @@
 
 
 
-
-
-
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import {
   createChart,
@@ -710,10 +707,6 @@ const CHART_TYPES = [
   { key: "area", label: "Area" },
 ];
 
-const LEGEND_MARGIN_ABOVE = 14; // px gap between the box and the peak candle's wick
-const LEGEND_TOP_CLAMP = 8; // never let the box go above the chart's own top edge
-const LEGEND_HALF_WIDTH_ESTIMATE = 130; // used only to keep the box on-screen horizontally
-
 // --- Main Component ---
 
 export default function StockChart({ symbol }) {
@@ -723,7 +716,6 @@ export default function StockChart({ symbol }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hoverLegend, setHoverLegend] = useState(null);
   const [chartError, setChartError] = useState(false);
-  const [anchor, setAnchor] = useState(null); // { left, top } in px, relative to .stock-chart__stage
 
   const rangeConfig = useMemo(
     () => RANGES.find((r) => r.key === range),
@@ -738,49 +730,14 @@ export default function StockChart({ symbol }) {
   const volumeSeriesRef = useRef(null);
   const renderedKeyRef = useRef(null);
   const nearLiveEdgeRef = useRef(true);
-  const sortedCandlesRef = useRef([]);
-  const unitRef = useRef(unit);
-  unitRef.current = unit;
+  // Throttles the crosshair handler to one React state update per
+  // animation frame instead of one per raw mousemove event — fixes
+  // hover jank on dense charts (1D/1W with hundreds of 1-min candles).
+  const crosshairFrameRef = useRef(null);
+  const pendingLegendRef = useRef(null);
 
   const upColor = cssVar("--sd-up", "#0f9d58");
   const downColor = cssVar("--sd-down", "#e11d48");
-
-  // Recomputes where the OHLC box should sit: directly above the
-  // highest-high candle currently loaded, using the chart's own pixel
-  // coordinate conversion so it tracks zoom/pan/resize correctly.
-  // Falls back to a safe top-center position if the chart can't yet
-  // resolve a coordinate (e.g. right after data loads).
-  const recomputeAnchor = useCallback(() => {
-    const chart = chartRef.current;
-    const series = seriesRef.current;
-    const container = containerRef.current;
-    const data = sortedCandlesRef.current;
-    if (!chart || !series || !container || data.length === 0) return;
-
-    let peak = data[0];
-    for (const c of data) {
-      if (c.high > peak.high) peak = c;
-    }
-
-    const time = toChartTime(peak.timestamp, unitRef.current);
-    let x = chart.timeScale().timeToCoordinate(time);
-    let y = series.priceToCoordinate(peak.high);
-
-    const width = container.clientWidth || 300;
-
-    if (x == null || y == null || Number.isNaN(x) || Number.isNaN(y)) {
-      setAnchor({ left: width / 2, top: LEGEND_TOP_CLAMP });
-      return;
-    }
-
-    x = Math.min(
-      Math.max(x, LEGEND_HALF_WIDTH_ESTIMATE),
-      Math.max(width - LEGEND_HALF_WIDTH_ESTIMATE, LEGEND_HALF_WIDTH_ESTIMATE)
-    );
-    y = Math.max(y - LEGEND_MARGIN_ABOVE, LEGEND_TOP_CLAMP);
-
-    setAnchor({ left: x, top: y });
-  }, []);
 
   // --- Create Chart Effect ---
   useEffect(() => {
@@ -842,34 +799,43 @@ export default function StockChart({ symbol }) {
       const info = seriesRef.current.barsInLogicalRange(logicalRange);
       nearLiveEdgeRef.current =
         !info || info.barsAfter == null || info.barsAfter <= 2;
-      recomputeAnchor();
     };
     chart
       .timeScale()
       .subscribeVisibleLogicalRangeChange(handleVisibleLogicalRangeChange);
 
-    // Crosshair-driven OHLCV legend content (position stays peak-anchored;
-    // only the numbers inside the box change on hover/click).
+    // Crosshair-driven OHLCV overlay content. Throttled via
+    // requestAnimationFrame: lightweight-charts can fire this dozens of
+    // times per second while the mouse moves across a dense 1D/1W chart,
+    // and calling setState that often was the main source of hover lag.
+    // Only the LAST point seen within a frame actually triggers a
+    // re-render.
     const handleCrosshairMove = (param) => {
       if (!param || !param.time || !seriesRef.current) {
-        setHoverLegend(null);
-        return;
+        pendingLegendRef.current = null;
+      } else {
+        const point = param.seriesData.get(seriesRef.current);
+        if (!point) {
+          pendingLegendRef.current = null;
+        } else {
+          const volumePoint = volumeSeriesRef.current
+            ? param.seriesData.get(volumeSeriesRef.current)
+            : null;
+          pendingLegendRef.current = {
+            open: point.open,
+            high: point.high,
+            low: point.low,
+            close: point.close ?? point.value,
+            volume: volumePoint?.value,
+            time: param.time,
+          };
+        }
       }
-      const point = param.seriesData.get(seriesRef.current);
-      if (!point) {
-        setHoverLegend(null);
-        return;
-      }
-      const volumePoint = volumeSeriesRef.current
-        ? param.seriesData.get(volumeSeriesRef.current)
-        : null;
-      setHoverLegend({
-        open: point.open,
-        high: point.high,
-        low: point.low,
-        close: point.close ?? point.value,
-        volume: volumePoint?.value,
-        time: param.time,
+
+      if (crosshairFrameRef.current != null) return;
+      crosshairFrameRef.current = requestAnimationFrame(() => {
+        crosshairFrameRef.current = null;
+        setHoverLegend(pendingLegendRef.current);
       });
     };
     chart.subscribeCrosshairMove(handleCrosshairMove);
@@ -880,13 +846,16 @@ export default function StockChart({ symbol }) {
       const { width, height } = entry.contentRect;
       if (width > 0 && height > 0) {
         chart.applyOptions({ width, height });
-        recomputeAnchor();
       }
     });
     resizeObserver.observe(containerRef.current);
 
     return () => {
       resizeObserver.disconnect();
+      if (crosshairFrameRef.current != null) {
+        cancelAnimationFrame(crosshairFrameRef.current);
+        crosshairFrameRef.current = null;
+      }
       try {
         chart
           .timeScale()
@@ -901,7 +870,7 @@ export default function StockChart({ symbol }) {
       volumeSeriesRef.current = null;
       renderedKeyRef.current = null;
     };
-  }, [recomputeAnchor]);
+  }, []);
 
   // --- Swap Series Type Effect ---
   useEffect(() => {
@@ -956,7 +925,6 @@ export default function StockChart({ symbol }) {
     const sortedCandles = [...candles].sort(
       (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
     );
-    sortedCandlesRef.current = sortedCandles;
 
     const toPoint = chartType === "candles" ? toCandlestickPoint : toLinePoint;
     const renderKey = `${symbol}_${range}_${chartType}`;
@@ -995,11 +963,7 @@ export default function StockChart({ symbol }) {
         chartRef.current?.timeScale().scrollToRealTime();
       }
     }
-
-    // Recompute after the next paint so timeToCoordinate/priceToCoordinate
-    // resolve against the freshly-set data instead of stale scales.
-    requestAnimationFrame(recomputeAnchor);
-  }, [candles, range, symbol, chartType, unit, upColor, downColor, recomputeAnchor]);
+  }, [candles, range, symbol, chartType, unit, upColor, downColor]);
 
   // --- Expanded (fullscreen-style) mode ---
   // CSS overlay, not the native Fullscreen API — iOS Safari has no
@@ -1023,7 +987,6 @@ export default function StockChart({ symbol }) {
           width: containerRef.current.clientWidth,
           height: containerRef.current.clientHeight,
         });
-        recomputeAnchor();
       }
     }, 220);
 
@@ -1033,25 +996,21 @@ export default function StockChart({ symbol }) {
       tryUnlockOrientation();
       clearTimeout(resizeTimer);
     };
-  }, [isExpanded, recomputeAnchor]);
+  }, [isExpanded]);
 
   const toggleExpanded = useCallback(() => setIsExpanded((v) => !v), []);
 
   // --- Zoom Handlers ---
-  const handleZoom = useCallback(
-    (factor) => {
-      const chart = chartRef.current;
-      if (!chart) return;
-      const timeScale = chart.timeScale();
-      const current = timeScale.options().barSpacing ?? 6;
-      const next = Math.min(60, Math.max(2, current * factor));
-      timeScale.applyOptions({ barSpacing: next });
-      requestAnimationFrame(recomputeAnchor);
-    },
-    [recomputeAnchor]
-  );
+  const handleZoom = useCallback((factor) => {
+    const chart = chartRef.current;
+    if (!chart) return;
+    const timeScale = chart.timeScale();
+    const current = timeScale.options().barSpacing ?? 6;
+    const next = Math.min(60, Math.max(2, current * factor));
+    timeScale.applyOptions({ barSpacing: next });
+  }, []);
 
-  // --- Legend Data (content only — position comes from `anchor`) ---
+  // --- Overlay Data (duration label + OHLCV, merged into one block) ---
   const latestCandle = useMemo(() => {
     if (candles.length === 0) return null;
     return candles.reduce((latest, c) =>
@@ -1213,31 +1172,28 @@ export default function StockChart({ symbol }) {
 
         <RangeSelector range={range} onChange={setRange} isLive={isLive} />
 
-        {/* Candle-size label — its own row, below the range selector and
-            above the chart. No longer overlaps the OHLC box or the chart
-            itself. */}
-        <div className="stock-chart__duration-row">
-          <span className="stock-chart__duration-badge">
-            {rangeConfig ? candleDurationLabel(rangeConfig) : "…"} candles
-            {range === "1D" && !oneDayPlan.isToday && (
-              <span className="stock-chart__duration-note">
-                {" "}
-                · {oneDayPlan.dateStr} session
-              </span>
-            )}
-          </span>
-        </div>
-
         <div className="stock-chart__stage">
-          {legend && anchor && (
-            <div
-              className={`stock-chart__legend ${legendIsUp ? "is-up" : "is-down"}`}
-              style={{
-                left: `${anchor.left}px`,
-                top: `${anchor.top}px`,
-              }}
-            >
-              <div className="stock-chart__legend-row">
+          {/* Fixed top-left overlay, sitting directly on the chart canvas
+              (below the range tabs above, which are outside the stage).
+              Two stacked lines: candle-size label on top, OHLCV row
+              beneath it — a single block, not two separately-positioned
+              pieces, so there's nothing to recompute or drift out of
+              place while zooming/panning. */}
+          <div className="stock-chart__overlay">
+            <div className="stock-chart__overlay-duration">
+              {rangeConfig ? candleDurationLabel(rangeConfig) : "…"} candles
+              {range === "1D" && !oneDayPlan.isToday && (
+                <span className="stock-chart__duration-note">
+                  {" "}
+                  · {oneDayPlan.dateStr} session
+                </span>
+              )}
+            </div>
+
+            {legend && (
+              <div
+                className={`stock-chart__overlay-ohlcv ${legendIsUp ? "is-up" : "is-down"}`}
+              >
                 <span className="stock-chart__legend-item">
                   <i>O</i>
                   {formatCurrency(legend.open)}
@@ -1260,17 +1216,15 @@ export default function StockChart({ symbol }) {
                     {formatVolume(legend.volume)}
                   </span>
                 )}
+                {legendDateTime && (
+                  <span className="stock-chart__legend-datetime">
+                    {legendDateTime.dateStr}
+                    {legendDateTime.timeStr && ` · ${legendDateTime.timeStr}`}
+                  </span>
+                )}
               </div>
-              {legendDateTime && (
-                <div className="stock-chart__legend-datetime">
-                  {legendDateTime.dateStr}
-                  {legendDateTime.timeStr && (
-                    <span> · {legendDateTime.timeStr}</span>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
+            )}
+          </div>
 
           {status === "loading" && candles.length === 0 && (
             <div className="stock-chart--empty stock-chart--skeleton">

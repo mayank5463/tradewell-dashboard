@@ -1,1 +1,3 @@
-This is tradewell paper stock trading dashboard UI and it consist of the watchlists , holdings and collelctions , trade analystics etc.
+# Tradewell Dashboard
+
+Tradewell is a paper trading platform where you can practise investing in the Indian stock market with virtual money and live market prices, without risking a rupee. This dashboard is its main workspace: track stocks in your **watchlists**, review your **holdings** and open positions, organise stocks into **collections**, and study your performance in **trade analytics**. It also covers orders, funds, and interactive price charts, so you can place buy and sell trades against live rates and see how your strategy performs. Built with React, Redux, and Recharts, with live data from the Upstox API.
